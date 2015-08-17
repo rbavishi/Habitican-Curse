@@ -20,6 +20,8 @@ class Screen:
     self.screen=curses.getwin(self.tmpfile)
     self.screen.refresh()
 
+    removed=self.stack.pop()
+
   def Display(self, string, x=0, y=0):
     self.screen.addstr(x, y, string)
     self.screen.refresh()
