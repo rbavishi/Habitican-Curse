@@ -25,12 +25,10 @@ class Line:
     self.screen=screen
 
   def Display(self):
-    self.screen.addstr(self.x, self.y, self.text.ColumnText())
-    self.screen.refresh()
+    self.screen.Display(self.text.ColumnText(), self.x, self.y)
 
   def Highlight(self):
-    self.screen.addstr(self.x, self.y, self.text.ColumnText(), curses.color_pair(1)|curses.A_BOLD)
-    self.screen.refresh()
+    self.screen.Highlight(self.text.ColumnText(), self.x, self.y)
 
   def Toggle(self):
     if self.highlighted==0:

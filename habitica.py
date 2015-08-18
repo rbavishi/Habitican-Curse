@@ -1,6 +1,7 @@
 import curses
 from lines_and_text import *
 from global_settings import *
+from screen_class import *
 
 #Preliminary Testing of the above code - Press 'q' to quit. Press TAB to toggle.
 
@@ -12,9 +13,11 @@ def main(screen):
   curses.init_pair(1, 19, 244)
   curses.curs_set(0)
 
-  line=Line(10, 0, "Hello World! I am the stupidest person ever", screen)
-  line1=Line(12, 0, "Hello World! I am the stupid", screen)
-  screen.addstr("Press TAB to toggle 'Hello World!'. Press 'q' to exit")
+  scr=Screen(screen)
+
+  line=Line(10, 0, "Hello World! I am the stupidest person ever", scr)
+  line1=Line(12, 0, "Hello World! I am the stupid", scr)
+  scr.Display("Press TAB to toggle 'Hello World!'. Press 'q' to exit")
 
   while 1:
     c = screen.getch()
