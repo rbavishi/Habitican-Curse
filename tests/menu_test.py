@@ -32,9 +32,10 @@ def main(screen):
   menu_item11 = MenuItem("Item 11", scr)
   menu_item12 = MenuItem("Item 12", scr)
   menu_item13 = MenuItem("Item 13", scr)
-  item_list=[menu_item1, menu_item2, menu_item3, menu_item4, menu_item5, menu_item6, menu_item7, menu_item8, menu_item9, menu_item10, menu_item11, menu_item12, menu_item13]
+  #item_list=[menu_item1, menu_item2, menu_item3, menu_item4, menu_item5, menu_item6, menu_item7, menu_item8, menu_item9, menu_item10, menu_item11, menu_item12, menu_item13]
+  item_list=[menu_item1, menu_item2, menu_item3, menu_item4, menu_item5, menu_item6, menu_item7, menu_item8]
 
-  mymenu = Menu(item_list, "Habits", scr, 10, 10)
+  mymenu = Menu(item_list, "Habits", scr, 10, 50)
   mymenu.Init()
 
   while 1:

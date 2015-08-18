@@ -38,6 +38,11 @@ class Menu:
   def Init(self):
     self.title.DisplayBold()
     new_x=self.x + 2
+    box = curses.newwin(MAX_MENU_ROWS+2, COLUMN_TEXT_WIDTH+2, self.x+1, self.y-1)
+    box.box()
+    self.screen.screen.refresh()
+    box.refresh()
+
 
     for i in xrange(self.start, self.end+1):
       item=self.items[i]
