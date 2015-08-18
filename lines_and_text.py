@@ -27,6 +27,9 @@ class Line:
   def Display(self):
     self.screen.Display(self.text.ColumnText(), self.x, self.y)
 
+  def DisplayBold(self):
+    self.screen.DisplayBold(self.text.ColumnText(), self.x, self.y)
+
   def Highlight(self):
     self.screen.Highlight(self.text.ColumnText(), self.x, self.y)
 
