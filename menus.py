@@ -32,14 +32,17 @@ class Menu:
     self.x=x
     self.y=y
     self.counter=0
+    self.start=0
+    self.end=min(MAX_MENU_ROWS-1, len(item_list)-1)
 
   def Init(self):
     self.title.DisplayBold()
     new_x=self.x + 2
 
-    for i in self.items:
-      i.SetXY(new_x, self.y)
-      i.Display()
+    for i in xrange(self.start, self.end+1):
+      item=self.items[i]
+      item.SetXY(new_x, self.y)
+      item.Display()
       new_x+=1
 
     self.items[self.counter].Highlight()
@@ -52,8 +55,14 @@ class Menu:
     self.counter=-1
 
   def ScrollUp(self):
-    if self.counter==0:
+    if self.counter==self.start and self.start==0:
       return
+
+    elif self.counter==self.start:
+      self.start-=1
+      self.end-=1
+      self.counter-=1
+      self.Init()
 
     else:
       self.items[self.counter].Display()
@@ -61,8 +70,14 @@ class Menu:
       self.items[self.counter].Highlight()
 
   def ScrollDown(self):
-    if self.counter==(len(self.items)-1):
+    if self.counter==self.end and self.end==(len(self.items)-1):
       return
+
+    elif self.counter==self.end:
+      self.end+=1
+      self.start+=1
+      self.counter+=1
+      self.Init()
 
     else:
       self.items[self.counter].Display()
