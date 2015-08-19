@@ -44,6 +44,10 @@ def main(screen):
       mymenu.ScrollUp()
     elif(c==curses.KEY_DOWN):
       mymenu.ScrollDown()
+    elif(c==curses.KEY_LEFT):
+      mymenu.NoHighlight()
+    elif(c==curses.KEY_RIGHT):
+      mymenu.NoHighlight()
     elif(c==ord('q')):
       break
     else:

@@ -57,7 +57,6 @@ class Menu:
       return
 
     self.items[self.counter].Display()
-    self.counter=-1
 
   def ScrollUp(self):
     if self.counter==self.start and self.start==0:

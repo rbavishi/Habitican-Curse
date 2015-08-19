@@ -34,4 +34,10 @@ class Screen:
     self.screen.addstr(x, y, string, curses.color_pair(1)|curses.A_BOLD)
     self.screen.refresh()
 
+  def DisplayCustomColor(self, string, color=0, x=0, y=0):
+    self.screen.addstr(x, y, string, curses.color_pair(color))
+
+  def DisplayCustomColorBold(self, string, color=0, x=0, y=0):
+    self.screen.addstr(x, y, string, curses.A_BOLD|curses.color_pair(color))
+
 
