@@ -2,6 +2,7 @@
 
 import sys
 import time
+import locale
 sys.path.append('../')
 
 import curses
@@ -15,6 +16,8 @@ from tasks import *
 user_id=''
 api_token=''
 
+locale.setlocale(locale.LC_ALL, '') 
+
 def main(screen):
   #Colors - Placeholders for now
   curses.start_color()
@@ -24,6 +27,7 @@ def main(screen):
   curses.init_pair(2, curses.COLOR_RED, -1)
   curses.init_pair(3, curses.COLOR_GREEN, -1)
   curses.init_pair(4, curses.COLOR_YELLOW, -1)
+  curses.init_pair(5, curses.COLOR_MAGENTA, -1)
 
   scr=Screen(screen)
   scr.Display("Connecting...")
@@ -48,7 +52,17 @@ def main(screen):
       if i['type']=='habit':
 	habit=Habit(i, scr)
 	habit.Init()
-	time.sleep(3)
+	time.sleep(2)
+	scr.screen.clear()
+      elif i['type']=='daily':
+	daily=Daily(i, scr)
+	daily.Init()
+	time.sleep(2)
+	scr.screen.clear()
+      elif i['type']=='todo' and i['completed']==False:
+	todo=TODO(i, scr)
+	todo.Init()
+	time.sleep(2)
 	scr.screen.clear()
   else:
     if j['type']!='habit':
