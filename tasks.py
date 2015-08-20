@@ -13,6 +13,7 @@ class Habit:
     self.up            = json_dict['up']
     self.down          = json_dict['down']
     self.text          = str(json_dict['text'])
+    self.TextLine      = Text(self.text)
     diff               = {1:'easy', 1.5:'medium', 2:'hard'}
     self.difficulty    = diff[json_dict['priority']]
     self.taskID        = str(json_dict['id'])
@@ -30,10 +31,6 @@ class Habit:
     self.y=TASK_WINDOW_Y
 
   def Init(self):
-    box = curses.newwin(8, max(20, len(self.text)+4, len(self.dateCreated)+18), self.x+2, self.y-2)
-    box.box()
-    self.screen.screen.refresh()
-    box.refresh()
 
     X=self.x; Y=self.y
     self.screen.DisplayBold("Habit", X, Y)
@@ -52,6 +49,18 @@ class Habit:
     X+=2
     self.screen.Display("Date Created: "+self.dateCreated, X, Y)
 
+  def Display_Title(self, X, Y):
+    self.screen.DisplayCustomColorBold(self.TextLine.ColumnText(), self.color, X, Y)
+
+  def Highlight_Title(self, X, Y, show=True):
+    if show==True:
+      self.screen.Restore()
+      self.screen.SaveState()
+      self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
+      self.Init()
+    else:
+      self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
+
 class Daily:
   def __init__(self, json_dict, screen):
     self.json=json_dict
@@ -59,6 +68,7 @@ class Daily:
 
     self.task_type='daily'
     self.text          = str(json_dict['text'])
+    self.TextLine      = Text(self.text)
     diff               = {1:'easy', 1.5:'medium', 2:'hard'}
     self.difficulty    = diff[json_dict['priority']]
     self.taskID        = str(json_dict['id'])
@@ -77,16 +87,12 @@ class Daily:
     self.y=TASK_WINDOW_Y
 
   def Init(self):
-    box = curses.newwin(8, max(20, len(self.text)+4, len(self.dateCreated)+18), self.x+2, self.y-2)
-    box.box()
-    self.screen.screen.refresh()
-    box.refresh()
 
     X=self.x; Y=self.y
     completed_string=u''
     if self.completed==True:
       completed_string=u'\u2174'
-    self.screen.DisplayBold("Daily " + u'\u2714'.encode("utf-8"), X, Y)
+    self.screen.DisplayBold("Daily " + completed_string.encode("utf-8"), X, Y)
     self.screen.screen.refresh()
     X+=3
     self.screen.DisplayCustomColorBold(self.text, self.color, X, Y)
@@ -103,6 +109,17 @@ class Daily:
     X+=2
     self.screen.Display("Date Created: "+self.dateCreated, X, Y)
     
+  def Display_Title(self, X, Y):
+    self.screen.DisplayCustomColorBold(self.TextLine.ColumnText(), self.color, X, Y)
+
+  def Highlight_Title(self, X, Y, show=True):
+    if show==True:
+      self.screen.Restore()
+      self.screen.SaveState()
+      self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
+      self.Init()
+    else:
+      self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
 
 class TODO:
   def __init__(self, json_dict, screen):
@@ -111,6 +128,7 @@ class TODO:
 
     self.task_type='todo'
     self.text          = str(json_dict['text'])
+    self.TextLine      = Text(self.text)
     diff               = {1:'easy', 1.5:'medium', 2:'hard'}
     self.difficulty    = diff[json_dict['priority']]
     self.taskID        = str(json_dict['id'])
@@ -128,11 +146,6 @@ class TODO:
     self.y=TASK_WINDOW_Y
 
   def Init(self):
-    box = curses.newwin(8, max(20, len(self.text)+4, len(self.dateCreated)+18), self.x+2, self.y-2)
-    box.box()
-    self.screen.screen.refresh()
-    box.refresh()
-
     X=self.x; Y=self.y
     self.screen.DisplayBold("TODO", X, Y)
     X+=3
@@ -150,4 +163,14 @@ class TODO:
     X+=2
     self.screen.Display("Date Created: "+self.dateCreated, X, Y)
 
+  def Display_Title(self, X, Y):
+    self.screen.DisplayCustomColorBold(self.TextLine.ColumnText(), self.color, X, Y)
 
+  def Highlight_Title(self, X, Y, show=True):
+    if show==True:
+      self.screen.Restore()
+      self.screen.SaveState()
+      self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
+      self.Init()
+    else:
+      self.screen.Highlight(self.TextLine.ColumnText(), X, Y)

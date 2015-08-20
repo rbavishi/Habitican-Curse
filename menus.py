@@ -4,8 +4,9 @@ from global_settings import *
 from screen_class import *
 
 class MenuItem:
-  def __init__(self, text, screen):
-    self.text=Text(text)
+  def __init__(self, item, screen):
+    self.item=item
+    self.task_type=item.task_type
     self.screen=screen
     self.x=0
     self.y=0
@@ -15,10 +16,10 @@ class MenuItem:
     self.y=y
 
   def Display(self, x=0, y=0):
-    self.screen.Display(self.text.ColumnText(), self.x, self.y)
+    self.item.Display_Title(self.x, self.y)
 
-  def Highlight(self, x=0, y=0):
-    self.screen.Highlight(self.text.ColumnText(), self.x, self.y)
+  def Highlight(self, x=0, y=0, show=True):
+    self.item.Highlight_Title(self.x, self.y, show)
 
   def Enter(self):
     a = 10 ## Placeholder
@@ -32,17 +33,14 @@ class Menu:
     self.x=x
     self.y=y
     self.counter=0
+    if(len(item_list)==0):
+      self.counter=-1
     self.start=0
     self.end=min(MAX_MENU_ROWS-1, len(item_list)-1)
 
-  def Init(self):
+  def Init(self, highlight=True):
     self.title.DisplayBold()
     new_x=self.x + 2
-    box = curses.newwin(MAX_MENU_ROWS+2, COLUMN_TEXT_WIDTH+2, self.x+1, self.y-1)
-    box.box()
-    self.screen.screen.refresh()
-    box.refresh()
-
 
     for i in xrange(self.start, self.end+1):
       item=self.items[i]
@@ -50,13 +48,22 @@ class Menu:
       item.Display()
       new_x+=1
 
-    self.items[self.counter].Highlight()
+    self.screen.SaveState()
+    if highlight==True and self.counter!=-1:
+      self.items[self.counter].Highlight(False)
+
+    self.screen.screen.refresh()
 
   def NoHighlight(self):
     if self.counter==-1:
       return
 
     self.items[self.counter].Display()
+    self.screen.screen.refresh()
+
+  def Highlight(self):
+    self.items[self.counter].Highlight()
+    self.screen.screen.refresh()
 
   def ScrollUp(self):
     if self.counter==self.start and self.start==0:
@@ -67,11 +74,13 @@ class Menu:
       self.end-=1
       self.counter-=1
       self.Init()
+      self.screen.screen.refresh()
 
     else:
       self.items[self.counter].Display()
       self.counter-=1
       self.items[self.counter].Highlight()
+      self.screen.screen.refresh()
 
   def ScrollDown(self):
     if self.counter==self.end and self.end==(len(self.items)-1):
@@ -82,11 +91,16 @@ class Menu:
       self.start+=1
       self.counter+=1
       self.Init()
+      self.screen.screen.refresh()
 
     else:
       self.items[self.counter].Display()
       self.counter+=1
       self.items[self.counter].Highlight()
+      self.screen.screen.refresh()
+
+  def IsEmpty(self):
+    return len(self.items)==0
 
 
 
