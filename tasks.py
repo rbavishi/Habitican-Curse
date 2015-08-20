@@ -14,7 +14,7 @@ class Habit:
     self.down          = json_dict['down']
     self.text          = str(json_dict['text'])
     self.TextLine      = Text(self.text)
-    diff               = {1:'easy', 1.5:'medium', 2:'hard'}
+    diff               = {0.1:'trivial', 1:'easy', 1.5:'medium', 2:'hard'}
     self.difficulty    = diff[json_dict['priority']]
     self.taskID        = str(json_dict['id'])
     self.dateCreated   = str(json_dict['dateCreated']).split('T')[0]
@@ -38,13 +38,15 @@ class Habit:
     self.screen.DisplayCustomColorBold(self.text, self.color, X, Y)
 
     X+=2
-    self.screen.DisplayBold("easy  medium  hard", X, Y)
+    self.screen.DisplayBold("trivial  easy  medium  hard", X, Y)
     if(self.difficulty=="easy"):
-      self.screen.DisplayCustomColorBold("easy", 5, X, Y)
+      self.screen.DisplayCustomColorBold("easy", 5, X, Y+9)
     elif(self.difficulty=="medium"):
-      self.screen.DisplayCustomColorBold("medium", 5, X, Y+6)
+      self.screen.DisplayCustomColorBold("medium", 5, X, Y+15)
+    elif(self.difficulty=="hard"):
+      self.screen.DisplayCustomColorBold("hard", 5, X, Y+23)
     else:
-      self.screen.DisplayCustomColorBold("hard", 5, X, Y+14)
+      self.screen.DisplayCustomColorBold("trivial", 5, X, Y)
 
     X+=2
     self.screen.Display("Date Created: "+self.dateCreated, X, Y)
@@ -69,7 +71,7 @@ class Daily:
     self.task_type='daily'
     self.text          = str(json_dict['text'])
     self.TextLine      = Text(self.text)
-    diff               = {1:'easy', 1.5:'medium', 2:'hard'}
+    diff               = {0.1:'trivial', 1:'easy', 1.5:'medium', 2:'hard'}
     self.difficulty    = diff[json_dict['priority']]
     self.taskID        = str(json_dict['id'])
     self.dateCreated   = str(json_dict['dateCreated']).split('T')[0]
@@ -98,13 +100,15 @@ class Daily:
     self.screen.DisplayCustomColorBold(self.text, self.color, X, Y)
 
     X+=2
-    self.screen.DisplayBold("easy  medium  hard", X, Y)
+    self.screen.DisplayBold("trivial  easy  medium  hard", X, Y)
     if(self.difficulty=="easy"):
-      self.screen.DisplayCustomColorBold("easy", 5, X, Y)
+      self.screen.DisplayCustomColorBold("easy", 5, X, Y+9)
     elif(self.difficulty=="medium"):
-      self.screen.DisplayCustomColorBold("medium", 5, X, Y+6)
+      self.screen.DisplayCustomColorBold("medium", 5, X, Y+15)
+    elif(self.difficulty=="hard"):
+      self.screen.DisplayCustomColorBold("hard", 5, X, Y+23)
     else:
-      self.screen.DisplayCustomColorBold("hard", 5, X, Y+14)
+      self.screen.DisplayCustomColorBold("trivial", 5, X, Y)
 
     X+=2
     self.screen.Display("Date Created: "+self.dateCreated, X, Y)
@@ -129,7 +133,7 @@ class TODO:
     self.task_type='todo'
     self.text          = str(json_dict['text'])
     self.TextLine      = Text(self.text)
-    diff               = {1:'easy', 1.5:'medium', 2:'hard'}
+    diff               = {0.1:'trivial', 1:'easy', 1.5:'medium', 2:'hard'}
     self.difficulty    = diff[json_dict['priority']]
     self.taskID        = str(json_dict['id'])
     self.dateCreated   = str(json_dict['dateCreated']).split('T')[0]
@@ -152,13 +156,15 @@ class TODO:
     self.screen.DisplayCustomColorBold(self.text, self.color, X, Y)
 
     X+=2
-    self.screen.DisplayBold("easy  medium  hard", X, Y)
+    self.screen.DisplayBold("trivial  easy  medium  hard", X, Y)
     if(self.difficulty=="easy"):
-      self.screen.DisplayCustomColorBold("easy", 5, X, Y)
+      self.screen.DisplayCustomColorBold("easy", 5, X, Y+9)
     elif(self.difficulty=="medium"):
-      self.screen.DisplayCustomColorBold("medium", 5, X, Y+6)
+      self.screen.DisplayCustomColorBold("medium", 5, X, Y+15)
+    elif(self.difficulty=="hard"):
+      self.screen.DisplayCustomColorBold("hard", 5, X, Y+23)
     else:
-      self.screen.DisplayCustomColorBold("hard", 5, X, Y+14)
+      self.screen.DisplayCustomColorBold("trivial", 5, X, Y)
 
     X+=2
     self.screen.Display("Date Created: "+self.dateCreated, X, Y)
