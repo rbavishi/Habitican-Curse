@@ -93,7 +93,7 @@ class Daily:
     X=self.x; Y=self.y
     completed_string=u''
     if self.completed==True:
-      completed_string=u'\u2174'
+      completed_string=u'\u2714'
     self.screen.DisplayBold("Daily " + completed_string.encode("utf-8"), X, Y)
     self.screen.screen.refresh()
     X+=3
