@@ -15,14 +15,20 @@ class MenuItem:
     self.x=x
     self.y=y
 
-  def Display(self, x=0, y=0):
-    self.item.Display_Title(self.x, self.y)
+  def Display(self, x=0, y=0, restore=True):
+    self.item.Display_Title(self.x, self.y, restore)
 
   def Highlight(self, x=0, y=0, show=True):
     self.item.Highlight_Title(self.x, self.y, show)
 
   def Enter(self):
     a = 10 ## Placeholder
+
+  def Mark(self):
+    if self.item.task_type=='habit':
+      return
+    else:
+      self.item.Mark(self.x, self.y)
 
 
 class Menu:
@@ -36,7 +42,7 @@ class Menu:
     if(len(item_list)==0):
       self.counter=-1
     self.start=0
-    self.end=min(MAX_MENU_ROWS-1, len(item_list)-1)
+    self.end=min(SETTINGS.MAX_MENU_ROWS-1, len(item_list)-1)
 
   def Init(self, highlight=True):
     self.title.DisplayBold()
@@ -45,7 +51,7 @@ class Menu:
     for i in xrange(self.start, self.end+1):
       item=self.items[i]
       item.SetXY(new_x, self.y)
-      item.Display()
+      item.Display(restore=False)
       new_x+=1
 
     self.screen.SaveState()
@@ -101,6 +107,15 @@ class Menu:
 
   def IsEmpty(self):
     return len(self.items)==0
+
+  def Mark(self):
+    self.items[self.counter].Mark()
+
+  def Reload(self):
+    if(len(self.items)==0):
+      self.counter=-1
+    self.start=0
+    self.end=min(SETTINGS.MAX_MENU_ROWS-1, len(self.items)-1)
 
 
 

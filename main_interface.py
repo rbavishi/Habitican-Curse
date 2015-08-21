@@ -3,11 +3,13 @@ from lines_and_text import *
 from global_settings import *
 from screen_class import *
 from menus import *
+from request_queue import *
 
 class Interface:
-  def __init__(self, tasks, screen):
+  def __init__(self, tasks, screen, manager):
     self.screen=screen
     self.tasks=tasks
+    self.manager=manager
 
     self.habits=[]
     self.dailies=[]
@@ -24,8 +26,8 @@ class Interface:
 	self.todos+=[i]
 
     self.HabitMenu=Menu(self.habits, "Habits", screen, 2, 1)
-    self.DailyMenu=Menu(self.dailies, "Dailies", screen, 2, 3+COLUMN_TEXT_WIDTH)
-    self.TODOMenu =Menu(self.todos,  "TODOs", screen, 2, 5+2*COLUMN_TEXT_WIDTH)
+    self.DailyMenu=Menu(self.dailies, "Dailies", screen, 2, 3+SETTINGS.COLUMN_TEXT_WIDTH)
+    self.TODOMenu =Menu(self.todos,  "TODOs", screen, 2, 5+2*SETTINGS.COLUMN_TEXT_WIDTH)
 
     self.current=0
 
@@ -88,22 +90,46 @@ class Interface:
 	  self.DailyMenu.Highlight()     
 	  self.current=1
 
+  def Mark(self):
+    if self.current==0:
+      return
+    elif self.current==1:
+      self.DailyMenu.Mark()
+    else:
+      self.TODOMenu.Mark()
+
   def Input(self):
     while(1):
       c=self.screen.screen.getch()
-      if(c==curses.KEY_UP):
+      if(c==curses.KEY_UP or c==ord('k') ):
 	self.IntfScrollUp()
-      elif(c==curses.KEY_DOWN):
+      elif(c==curses.KEY_DOWN or c==ord('j')):
 	self.IntfScrollDown()
-      elif(c==curses.KEY_LEFT):
+      elif(c==curses.KEY_LEFT or c==ord('h')):
 	self.IntfScrollLeft()
-      elif(c==curses.KEY_RIGHT):
+      elif(c==curses.KEY_RIGHT or c==ord('l')):
 	self.IntfScrollRight()
-
+      elif(c==ord('m')):
+	self.Mark()
+      elif(c==ord(':')):
+	self.Command()
       elif(c==ord('q')):
 	break
       else:
 	continue
+
+  def Command(self):
+    global MANAGER
+    y,x=self.screen.screen.getmaxyx()
+    self.screen.Display(":", y-1, 0)
+    curses.echo()
+    s=self.screen.screen.getstr(y-1, 1)
+    curses.noecho()
+    if(s=="w"):
+      self.screen.Display("Connecting...", y-1, 0)
+      self.manager.Flush()
+      self.screen.Display(" "*(x-1), y-1, 0)
+      self.screen.Display("Done", y-1, 0)
 
 
       

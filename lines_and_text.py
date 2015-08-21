@@ -5,10 +5,16 @@ class Text:
   def __init__(self, string):
     self.string=string
     self.column_string=""
-    if len(string) > (COLUMN_TEXT_WIDTH - 1):
-      self.column_string=string[:(COLUMN_TEXT_WIDTH - 4)]+"... "
+    if len(string) > (SETTINGS.COLUMN_TEXT_WIDTH - 2):
+      self.column_string=string[:(SETTINGS.COLUMN_TEXT_WIDTH - 5)]+"...  "
     else:
-      self.column_string=string+" "*(COLUMN_TEXT_WIDTH - len(string))
+      self.column_string=string+" "*(SETTINGS.COLUMN_TEXT_WIDTH - len(string))
+
+  def Redefine(self):
+    if len(self.string) > (SETTINGS.COLUMN_TEXT_WIDTH - 2):
+      self.column_string=self.string[:(SETTINGS.COLUMN_TEXT_WIDTH - 5)]+"...  "
+    else:
+      self.column_string=self.string+" "*(SETTINGS.COLUMN_TEXT_WIDTH - len(self.string))
 
   def RawText(self):
     return self.string

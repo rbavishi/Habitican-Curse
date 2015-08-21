@@ -2,6 +2,7 @@ import curses
 from lines_and_text import *
 from global_settings import *
 from screen_class import *
+from request_queue import *
 import locale
 
 class Habit:
@@ -20,6 +21,8 @@ class Habit:
     self.dateCreated   = str(json_dict['dateCreated']).split('T')[0]
     self.value         = json_dict['value']
     self.color         = 0
+    self.mark          = 'up'
+    self.marked        = False
     if(self.value < -1):
       self.color=curses.COLOR_RED+1
     elif(self.value < 1):
@@ -27,8 +30,8 @@ class Habit:
     else:
       self.color=curses.COLOR_GREEN+1
 
-    self.x=TASK_WINDOW_X
-    self.y=TASK_WINDOW_Y
+    self.x=SETTINGS.TASK_WINDOW_X
+    self.y=SETTINGS.TASK_WINDOW_Y
 
   def Init(self):
 
@@ -51,8 +54,14 @@ class Habit:
     X+=2
     self.screen.Display("Date Created: "+self.dateCreated, X, Y)
 
-  def Display_Title(self, X, Y):
-    self.screen.DisplayCustomColorBold(self.TextLine.ColumnText(), self.color, X, Y)
+  def Display_Title(self, X, Y, restore=True):
+    if restore==True:
+      self.screen.Restore()
+      self.screen.DisplayCustomColorBold(self.TextLine.ColumnText(), self.color, X, Y)
+      self.screen.SaveState()
+    else:
+      self.screen.DisplayCustomColorBold(self.TextLine.ColumnText(), self.color, X, Y)
+      
 
   def Highlight_Title(self, X, Y, show=True):
     if show==True:
@@ -61,6 +70,25 @@ class Habit:
       self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
       self.Init()
     else:
+      self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
+
+  def Mark(self, X, Y):
+    MyText = self.TextLine.ColumnText()
+    if self.marked==False:
+      MyText=(u'\u25CF').encode("utf-8")+" "+MyText[:-1]
+      self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
+
+      self.marked=True
+      self.mark='up'
+
+      if self.enqueued==False:
+	self.enqueued=True
+	MANAGER.MarkEnqueue(self)
+
+    else:
+      self.marked=False
+      MyText+=" "
+      self.mark='down'
       self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
 
 class Daily:
@@ -78,6 +106,13 @@ class Daily:
     self.value         = json_dict['value']
     self.completed     = json_dict['completed']
     self.color         = 0
+    self.marked        = False
+    self.enqueued      = False
+    self.mark          = ''
+    if(self.completed==True):
+      self.TextLine.string = u'\u2714'.encode("utf-8")+" "+self.TextLine.string
+      self.TextLine.Redefine()
+      #self.TextLine.string = str(json_dict['text'])
     if(self.value < -1):
       self.color=curses.COLOR_RED+1
     elif(self.value < 1):
@@ -85,8 +120,8 @@ class Daily:
     else:
       self.color=curses.COLOR_GREEN+1
 
-    self.x=TASK_WINDOW_X
-    self.y=TASK_WINDOW_Y
+    self.x=SETTINGS.TASK_WINDOW_X
+    self.y=SETTINGS.TASK_WINDOW_Y
 
   def Init(self):
 
@@ -113,8 +148,14 @@ class Daily:
     X+=2
     self.screen.Display("Date Created: "+self.dateCreated, X, Y)
     
-  def Display_Title(self, X, Y):
-    self.screen.DisplayCustomColorBold(self.TextLine.ColumnText(), self.color, X, Y)
+  def Display_Title(self, X, Y, restore=True):
+    if restore==True:
+      self.screen.Restore()
+      self.screen.DisplayCustomColorBold(self.TextLine.ColumnText(), self.color, X, Y)
+      self.screen.SaveState()
+    else:
+      self.screen.DisplayCustomColorBold(self.TextLine.ColumnText(), self.color, X, Y)
+
 
   def Highlight_Title(self, X, Y, show=True):
     if show==True:
@@ -124,6 +165,33 @@ class Daily:
       self.Init()
     else:
       self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
+
+  def Mark(self, X, Y):
+    #MyText = self.TextLine.ColumnText()
+    if self.marked==False:
+      store=self.TextLine.string
+      self.TextLine.string=(u'\u25CF').encode("utf-8")+" "+self.TextLine.string
+      self.TextLine.Redefine()
+      self.TextLine.string=store
+      self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
+      self.screen.screen.refresh()
+
+      self.marked=True
+      if self.completed==True:
+	self.mark='down'
+      else:
+	self.mark='up'
+
+      if self.enqueued==False:
+	self.enqueued=True
+	MANAGER.MarkEnqueue(self)
+
+    else:
+      self.marked=False
+      self.TextLine.Redefine()
+      self.mark=''
+      self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
+      self.screen.screen.refresh()
 
 class TODO:
   def __init__(self, json_dict, screen):
@@ -139,6 +207,9 @@ class TODO:
     self.dateCreated   = str(json_dict['dateCreated']).split('T')[0]
     self.value         = json_dict['value']
     self.color         = 0
+    self.mark          = 'up'
+    self.marked        = False
+    self.enqueued      = False
     if(self.value < -1):
       self.color=curses.COLOR_RED+1
     elif(self.value < 1):
@@ -146,8 +217,8 @@ class TODO:
     else:
       self.color=curses.COLOR_GREEN+1
 
-    self.x=TASK_WINDOW_X
-    self.y=TASK_WINDOW_Y
+    self.x=SETTINGS.TASK_WINDOW_X
+    self.y=SETTINGS.TASK_WINDOW_Y
 
   def Init(self):
     X=self.x; Y=self.y
@@ -169,8 +240,13 @@ class TODO:
     X+=2
     self.screen.Display("Date Created: "+self.dateCreated, X, Y)
 
-  def Display_Title(self, X, Y):
-    self.screen.DisplayCustomColorBold(self.TextLine.ColumnText(), self.color, X, Y)
+  def Display_Title(self, X, Y, restore=True):
+    if restore==True:
+      self.screen.Restore()
+      self.screen.DisplayCustomColorBold(self.TextLine.ColumnText(), self.color, X, Y)
+      self.screen.SaveState()
+    else:
+      self.screen.DisplayCustomColorBold(self.TextLine.ColumnText(), self.color, X, Y)
 
   def Highlight_Title(self, X, Y, show=True):
     if show==True:
@@ -180,3 +256,30 @@ class TODO:
       self.Init()
     else:
       self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
+
+  def Mark(self, X, Y):
+    #MyText = self.TextLine.ColumnText()
+    if self.marked==False:
+      store=self.TextLine.string
+      self.TextLine.string=(u'\u25CF').encode("utf-8")+" "+self.TextLine.string
+      self.TextLine.Redefine()
+      self.TextLine.string=store
+      self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
+      self.screen.screen.refresh()
+
+      self.marked=True
+      self.mark='up'
+
+      if self.enqueued==False:
+	self.enqueued=True
+	MANAGER.MarkEnqueue(self)
+
+    else:
+      self.marked=False
+      #self.TextLine.string=self.TextLine.string[1:]
+      self.TextLine.Redefine()
+      self.mark=''
+      self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
+      self.screen.screen.refresh()
+
+	

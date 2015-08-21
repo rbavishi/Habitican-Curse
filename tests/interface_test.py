@@ -33,6 +33,10 @@ def main(screen):
   scr=Screen(screen)
   scr.Display("Connecting...")
 
+  ### Disable if you want fixed column size
+  (y,x)=scr.screen.getmaxyx()
+  SETTINGS.COLUMN_TEXT_WIDTH = (x-6)/3
+
   f=open('keys.txt', 'r')
   user_id=f.readline().split('\n')[0]
   api_token=f.readline().split('\n')[0]
@@ -62,8 +66,9 @@ def main(screen):
 	tasks+=[MenuItem(TODO(i, scr), scr)]
 
 
-  intf = Interface(tasks, scr)
+  intf = Interface(tasks, scr, MANAGER)
   intf.Init()
+  MANAGER.Init(intf, scr, headers)
   intf.Input()
 
   scr.Display("Press q to exit...")
