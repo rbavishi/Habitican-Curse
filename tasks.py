@@ -193,6 +193,16 @@ class Daily:
       self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
       self.screen.screen.refresh()
 
+  def ReloadText(self):
+    if self.completed==False:
+      self.TextLine.string=self.TextLine.string.split(u'\u2714'.encode("utf-8"))[-1][1:]
+      self.TextLine.Redefine()
+
+    else:
+      self.TextLine.string=(u'\u2714').encode("utf-8")+ " " + self.TextLine.string
+      self.TextLine.Redefine()
+
+
 class TODO:
   def __init__(self, json_dict, screen):
     self.json=json_dict

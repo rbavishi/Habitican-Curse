@@ -119,8 +119,8 @@ class Interface:
 	continue
 
   def Command(self):
-    global MANAGER
     y,x=self.screen.screen.getmaxyx()
+    self.screen.Display(" "*(x-1), y-1, 0)
     self.screen.Display(":", y-1, 0)
     curses.echo()
     s=self.screen.screen.getstr(y-1, 1)

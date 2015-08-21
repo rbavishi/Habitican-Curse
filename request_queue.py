@@ -31,16 +31,26 @@ class Manager:
     for i in self.mark_queue:
       if i.marked==False:
 	continue
+
+      i.marked=False
       if i.task_type=="todo":
 	for j in xrange(len(self.intf.todos)):
 	  if self.intf.todos[j].item.taskID==i.taskID:
 	    break
 	self.intf.todos.remove(self.intf.todos[j])
 	self.intf.TODOMenu.Reload()
+
+      elif i.task_type=="daily":
+	i.completed^=True
+	i.ReloadText()
+
+      i.enqueued=False;
+
       url='https://habitica.com:443/api/v2/user/tasks/'+i.taskID+"/"+i.mark
       requests.post(url, headers=self.headers)
       self.scr.screen.erase()
       self.intf.Init()
+      self.mark_queue=[]
 
 MANAGER = Manager()
 
