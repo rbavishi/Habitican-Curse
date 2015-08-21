@@ -27,6 +27,8 @@ class Habit:
       self.color=curses.COLOR_RED+1
     elif(self.value < 1):
       self.color=curses.COLOR_YELLOW+1
+    elif(self.value > 5):
+      self.color=curses.COLOR_BLUE+2
     else:
       self.color=curses.COLOR_GREEN+1
 
@@ -117,6 +119,8 @@ class Daily:
       self.color=curses.COLOR_RED+1
     elif(self.value < 1):
       self.color=curses.COLOR_YELLOW+1
+    elif(self.value > 5):
+      self.color=curses.COLOR_BLUE+2
     else:
       self.color=curses.COLOR_GREEN+1
 
@@ -224,6 +228,8 @@ class TODO:
       self.color=curses.COLOR_RED+1
     elif(self.value < 1):
       self.color=curses.COLOR_YELLOW+1
+    elif(self.value > 5):
+      self.color=curses.COLOR_BLUE+2
     else:
       self.color=curses.COLOR_GREEN+1
 

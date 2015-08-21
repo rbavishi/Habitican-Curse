@@ -31,6 +31,7 @@ def main(screen):
   curses.init_pair(3, curses.COLOR_GREEN, -1)
   curses.init_pair(4, curses.COLOR_YELLOW, -1)
   curses.init_pair(5, curses.COLOR_MAGENTA, -1)
+  curses.init_pair(6, curses.COLOR_BLUE, -1)
 
   scr=Screen(screen)
   scr.Display("Connecting...")
