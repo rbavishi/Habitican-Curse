@@ -17,12 +17,11 @@ class Manager:
     self.queue=[]
     self.mark_queue=[]
 
-  def Init(self, intf, scr, headers):
+  def Init(self, intf, scr, headers, user_prof):
     self.intf=intf
     self.scr=scr
     self.headers=headers
-    self.queue=[]
-    self.mark_queue=[]
+    self.user_prof=user_prof
 
   def MarkEnqueue(self, item):
     self.mark_queue+=[item]
@@ -47,8 +46,17 @@ class Manager:
       i.enqueued=False;
 
       url='https://habitica.com:443/api/v2/user/tasks/'+i.taskID+"/"+i.mark
-      requests.post(url, headers=self.headers)
+      resp=requests.post(url, headers=self.headers)
+      rjson=resp.json()
       self.scr.screen.erase()
+
+      self.user_prof.gp=int(rjson['gp'])
+      self.user_prof.hp=rjson['hp']
+      self.user_prof.exp=rjson['exp']
+      self.user_prof.level=rjson['lvl']
+
+      self.user_prof.PrintData()
+
       self.intf.Init()
       self.mark_queue=[]
 

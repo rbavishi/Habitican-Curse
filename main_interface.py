@@ -131,7 +131,66 @@ class Interface:
       self.screen.Display(" "*(x-1), y-1, 0)
       self.screen.Display("Done", y-1, 0)
 
+class UserClass:
+  def __init__(self):
+    self.a=0
+    
+  def Init(self, intf, scr, headers, j):
+    self.intf=intf
+    self.headers=headers
+    self.scr=scr
 
+    self.hp=0
+    self.gp=0
+    self.exp=0
+    self.req_exp=0
+    self.maxHP=0
+    self.level=0
+
+    self.hp        = j['hp']
+    self.gp        = int(j['gp'])
+    self.maxHP     = j['maxHealth']
+    self.exp       = j['exp']
+    self.req_exp   = j['toNextLevel']
+    self.level     = j['lvl']
+    self.PrintData()
+
+  def GetStats(self):
+    y,x=self.scr.screen.getmaxyx()
+    self.scr.Display("Fetching User Data...", y-1, 0)
+    resp=requests.get('https://habitica.com:443/api/v2/user/', headers=self.headers)
+    j=resp.json()['stats']
+    self.scr.Display(" "*(x-1), y-1, 0)
+
+    self.hp        = j['hp']
+    self.gp        = int(j['gp'])
+    self.maxHP     = j['maxHealth']
+    self.exp       = j['exp']
+    self.req_exp   = j['toNextLevel']
+    self.level     = j['lvl']
+
+
+    self.PrintData()
+
+  def PrintData(self):
+    y,x=self.scr.screen.getmaxyx()
+    #Level
+    string =u'\u2949'.encode("utf-8")+" "+str(self.level)+" "
+    self.scr.DisplayCustomColor(string, 0, y-2, 0)
+    
+    #Health
+    string =u'\u2665'.encode("utf-8")+" "+str(self.hp)+"/"+str(self.maxHP)+" "
+    self.scr.DisplayCustomColor(string, 2, y-2, 7) 
+
+    #Experience
+    string =u'\u2605'.encode("utf-8")+" "+str(self.exp)+"/"+str(self.req_exp)+" "
+    self.scr.DisplayCustomColor(string, 3, y-2, 17)
+
+    #Gold
+    string =u'\u25CF'.encode("utf-8")+" "+str(self.gp)
+    self.scr.DisplayCustomColor(string, 4, y-2, 27)
+
+user_prof = UserClass()
       
 
 

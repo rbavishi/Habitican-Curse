@@ -13,6 +13,7 @@ from menus import *
 from global_settings import *
 from tasks import *
 from main_interface import *
+#from user import *
 
 user_id=''
 api_token=''
@@ -20,6 +21,7 @@ api_token=''
 locale.setlocale(locale.LC_ALL, '') 
 
 def main(screen):
+  global user_prof
   #Colors - Placeholders for now
   curses.start_color()
   curses.use_default_colors()
@@ -42,7 +44,7 @@ def main(screen):
   api_token=f.readline().split('\n')[0]
   headers={'x-api-key':api_token, 'x-api-user':user_id}
 
-  response=requests.get('https://habitica.com:443/api/v2/user/tasks', headers=headers)
+  response=requests.get('https://habitica.com:443/api/v2/user/', headers=headers)
   if(response.status_code!=200):
     return 
 
@@ -50,11 +52,17 @@ def main(screen):
   scr.Display("Connected")
   time.sleep(1)
   scr.screen.clear()
-  j=response.json()
-  if type(j)!=list:
-    j=[j]
+  resp=response.json()
+  h,d,t = resp['habits'], resp['dailys'], resp['todos']
+  if type(h)!=list:
+    h=[h]
+  if type(d)!=list:
+    d=[d]
+  if type(t)!=list:
+    t=[t]
 
   tasks=[]
+  j=h+d+t
 
   if(type(j)==list):
     for i in j:
@@ -67,8 +75,10 @@ def main(screen):
 
 
   intf = Interface(tasks, scr, MANAGER)
+  user_prof.Init(intf, scr, headers, resp['stats'])
+  #user_prof.GetStats()
   intf.Init()
-  MANAGER.Init(intf, scr, headers)
+  MANAGER.Init(intf, scr, headers, user_prof)
   intf.Input()
 
   scr.Display("Press q to exit...")
