@@ -23,6 +23,7 @@ class Habit:
     self.color         = 0
     self.mark          = 'up'
     self.marked        = False
+    self.enqueued      = False
     if(self.value < -1):
       self.color=curses.COLOR_RED+1
     elif(self.value < 1):
@@ -74,14 +75,20 @@ class Habit:
     else:
       self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
 
-  def Mark(self, X, Y):
-    MyText = self.TextLine.ColumnText()
+  def MarkUp(self, X, Y):
+    if self.up==False:
+      return 
+
     if self.marked==False:
-      MyText=(u'\u25CF').encode("utf-8")+" "+MyText[:-1]
+      store=self.TextLine.string
+      self.TextLine.string="+"+" "+self.TextLine.string
+      self.TextLine.Redefine()
+      self.TextLine.string=store
       self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
+      self.screen.screen.refresh()
 
       self.marked=True
-      self.mark='up'
+      self.mark="up"
 
       if self.enqueued==False:
 	self.enqueued=True
@@ -89,9 +96,40 @@ class Habit:
 
     else:
       self.marked=False
-      MyText+=" "
-      self.mark='down'
+      self.TextLine.Redefine()
+      self.mark=''
       self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
+      self.screen.screen.refresh()
+
+  def MarkDown(self, X, Y):
+    if self.down==False:
+      return 
+
+    if self.marked==False:
+      store=self.TextLine.string
+      self.TextLine.string="-"+" "+self.TextLine.string
+      self.TextLine.Redefine()
+      self.TextLine.string=store
+      self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
+      self.screen.screen.refresh()
+
+      self.marked=True
+      self.mark="down"
+
+      if self.enqueued==False:
+	self.enqueued=True
+	MANAGER.MarkEnqueue(self)
+
+    else:
+      self.marked=False
+      self.TextLine.Redefine()
+      self.mark=''
+      self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
+      self.screen.screen.refresh()
+
+  def ReloadText(self):
+    #self.TextLine.string = self.TextLine.string[2:]
+    self.TextLine.Redefine()
 
 class Daily:
   def __init__(self, json_dict, screen):

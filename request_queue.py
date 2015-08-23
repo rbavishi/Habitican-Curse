@@ -42,6 +42,9 @@ class Manager:
       elif i.task_type=="daily":
 	i.completed^=True
 	i.ReloadText()
+     
+      elif i.task_type=="habit":
+	i.ReloadText()
 
       i.enqueued=False;
 

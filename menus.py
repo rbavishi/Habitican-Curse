@@ -30,6 +30,16 @@ class MenuItem:
     else:
       self.item.Mark(self.x, self.y)
 
+  def MarkUp(self):
+    if self.item.task_type!='habit':
+      return
+    self.item.MarkUp(self.x, self.y)
+
+  def MarkDown(self):
+    if self.item.task_type!='habit':
+      return
+    self.item.MarkDown(self.x, self.y)
+
 
 class Menu:
   def __init__(self, item_list, title, screen, x=0, y=0):
@@ -114,6 +124,12 @@ class Menu:
 
   def Mark(self):
     self.items[self.counter].Mark()
+
+  def MarkUp(self):
+    self.items[self.counter].MarkUp()
+
+  def MarkDown(self):
+    self.items[self.counter].MarkDown()
 
   def Reload(self):
     if(len(self.items)==0):

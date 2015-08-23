@@ -98,6 +98,19 @@ class Interface:
     else:
       self.TODOMenu.Mark()
 
+  def HabitPlus(self):
+    if self.current!=0:
+      return
+
+    self.HabitMenu.MarkUp()
+
+  def HabitMinus(self):
+    if self.current!=0:
+      return
+
+    self.HabitMenu.MarkDown()
+
+
   def Input(self):
     while(1):
       c=self.screen.screen.getch()
@@ -111,6 +124,10 @@ class Interface:
 	self.IntfScrollRight()
       elif(c==ord('m')):
 	self.Mark()
+      elif(c==ord('+')):
+	self.HabitPlus()
+      elif(c==ord('-')):
+	self.HabitMinus()
       elif(c==ord(':')):
 	self.Command()
       elif(c==ord('q')):
