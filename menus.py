@@ -76,6 +76,8 @@ class Menu:
       return
 
     elif self.counter==self.start:
+      self.screen.Restore()
+      self.screen.SaveState()
       self.start-=1
       self.end-=1
       self.counter-=1
@@ -93,6 +95,8 @@ class Menu:
       return
 
     elif self.counter==self.end:
+      self.screen.Restore()
+      self.screen.SaveState()
       self.end+=1
       self.start+=1
       self.counter+=1

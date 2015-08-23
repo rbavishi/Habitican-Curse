@@ -180,7 +180,7 @@ class UserClass:
     
     #Health
     string =u'\u2665'.encode("utf-8")+" "+str(self.hp)+"/"+str(self.maxHP)+" "
-    self.scr.DisplayCustomColor(string, 2, y-2, 7) 
+    self.scr.DisplayCustomColor(string, 2, y-2, 6) 
 
     #Experience
     string =u'\u2605'.encode("utf-8")+" "+str(self.exp)+"/"+str(self.req_exp)+" "
@@ -188,7 +188,7 @@ class UserClass:
 
     #Gold
     string =u'\u25CF'.encode("utf-8")+" "+str(self.gp)
-    self.scr.DisplayCustomColor(string, 4, y-2, 27)
+    self.scr.DisplayCustomColor(string, 4, y-2, 29)
 
 user_prof = UserClass()
       
