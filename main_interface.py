@@ -156,7 +156,6 @@ class Interface:
 
     else:
       self.screen.Display(" "*(x-1), y-1, 0)
-      self.screen.Display("Done", y-1, 0)
 
 
 
