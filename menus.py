@@ -2,6 +2,9 @@ import curses
 from lines_and_text import *
 from global_settings import *
 from screen_class import *
+import datetime
+from dateutil import relativedelta
+import time
 
 class MenuItem:
   def __init__(self, item, screen):
@@ -137,15 +140,34 @@ class Menu:
     self.start=0
     self.end=min(SETTINGS.MAX_MENU_ROWS-1, len(self.items)-1)
 
+def GetDiffTime(cur_time):
+  given=time.gmtime(cur_time)
+  cur=time.gmtime(time.time())
+  given_date=datetime.datetime(given.tm_year, given.tm_mon, given.tm_mday, given.tm_hour, given.tm_min)
+  cur_date=datetime.datetime(cur.tm_year, cur.tm_mon, cur.tm_mday, cur.tm_hour, cur.tm_min)
+  difference=relativedelta.relativedelta(cur_date, given_date)
+  if difference.years!=0:
+    return str(difference.years)+'y ago'
+  if difference.months!=0:
+    return str(difference.months)+'months ago'
+  if difference.days!=0:
+    return str(difference.days)+'d ago'
+  if difference.hours!=0:
+    return str(difference.hours)+'h ago'
+  return str(difference.minutes)+'m ago'
+  
+  
+
 class ChatItem:
   def __init__(self, text, width):
-    self.text=text
+    self.text=text['text']
+    self.timestamp=(text['timestamp'])*(0.001)
+    self.timestampdiff=GetDiffTime(self.timestamp)
     self.width=width-5
 
-    self.text_strings=['  '+text[i:i+self.width] for i in xrange(0, len(text), self.width)]
+    self.text_strings=['  '+self.text[i:i+self.width] for i in xrange(0, len(self.text), self.width)]
     #self.text_strings[0]=u'\u25CF'.encode("utf-8")+self.text_strings[0][1:]
     self.text_strings[0]="*"+self.text_strings[0][1:]
-
 
 
 class ChatMenu:
@@ -154,16 +176,18 @@ class ChatMenu:
     self.y=y
 
     self.screen=screen
-    self.item_list=[i['text'] for i in item_list]
+    self.item_list=item_list
 
     Y,X=screen.screen.getmaxyx()
     self.text_strs=[]
+    self.text_stamps=[]
     for i in self.item_list:
       j=ChatItem(i, X)
-      self.text_strs+=j.text_strings+['-'*(X-15)]
+      self.text_strs+= j.text_strings
+      self.text_stamps+=[j.timestampdiff]
 
     self.start=0
-    self.end=min(Y-20, len(self.text_strs))
+    self.end=min((Y-20)/2, len(self.text_strs))
 
   def Init(self):
     if self.end<=0:
@@ -172,6 +196,8 @@ class ChatMenu:
     Y=self.y
 
     for i in xrange(self.start, self.end):
+      self.screen.Display(self.text_stamps[i], X, Y)
+      X+=1
       self.screen.DisplayBold(self.text_strs[i], X, Y)
       X+=1
 
