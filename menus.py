@@ -181,13 +181,14 @@ class ChatMenu:
     Y,X=screen.screen.getmaxyx()
     self.text_strs=[]
     self.text_stamps=[]
+    self.width=X
     for i in self.item_list:
       j=ChatItem(i, X)
       self.text_strs+= j.text_strings
       self.text_stamps+=[j.timestampdiff]
 
     self.start=0
-    self.end=min((Y-20)/2, len(self.text_strs))
+    self.end=min((Y-20)/3, len(self.text_strs))
 
   def Init(self):
     if self.end<=0:
@@ -196,6 +197,8 @@ class ChatMenu:
     Y=self.y
 
     for i in xrange(self.start, self.end):
+      self.screen.Display('-'*(self.width-15), X, Y)
+      X+=1
       self.screen.Display(self.text_stamps[i], X, Y)
       X+=1
       self.screen.DisplayBold(self.text_strs[i], X, Y)
