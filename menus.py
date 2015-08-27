@@ -163,7 +163,7 @@ class ChatItem:
     self.text=text['text']
     self.timestamp=(text['timestamp'])*(0.001)
     self.timestampdiff=GetDiffTime(self.timestamp)
-    self.width=width-5
+    self.width=width-13
 
     self.text_strings=['  '+self.text[i:i+self.width] for i in xrange(0, len(self.text), self.width)]
     #self.text_strings[0]=u'\u25CF'.encode("utf-8")+self.text_strings[0][1:]
@@ -184,25 +184,36 @@ class ChatMenu:
     self.width=X
     for i in self.item_list:
       j=ChatItem(i, X)
-      self.text_strs+= j.text_strings
-      self.text_stamps+=[j.timestampdiff]
+      self.text_strs+= ['-'*(self.width-15)] + ['# '+j.timestampdiff] + j.text_strings
+      #self.text_stamps+=[j.timestampdiff]
 
     self.start=0
-    self.end=min((Y-20)/3, len(self.text_strs))
+    self.end=min((Y-20), len(self.text_strs))
 
   def Init(self):
     if self.end<=0:
       return
     X=self.x
     Y=self.y
+    status=False
 
     for i in xrange(self.start, self.end):
-      self.screen.DisplayCustomColorBold('-'*(self.width-15), 2, X, Y)
-      X+=1
-      self.screen.Display(self.text_stamps[i], X, Y)
-      X+=1
-      self.screen.DisplayBold(self.text_strs[i], X, Y)
-      X+=1
+      if self.text_strs[i][0]=='*':
+	status=False
+      if self.text_strs[i][0:2]=='--':
+	status=True
+	self.screen.DisplayCustomColorBold(self.text_strs[i], 2, X, Y)
+	X+=1
+	continue
+      if self.text_strs[i][0]=='#':
+	status=True
+
+      if status==False:
+	self.screen.DisplayBold(self.text_strs[i], X, Y)
+	X+=1
+      else:
+	self.screen.Display(self.text_strs[i], X, Y)
+	X+=1
 
   def ScrollUp(self):
     if self.start!=0:
