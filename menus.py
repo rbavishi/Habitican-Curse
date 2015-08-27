@@ -197,7 +197,7 @@ class ChatMenu:
     Y=self.y
 
     for i in xrange(self.start, self.end):
-      self.screen.Display('-'*(self.width-15), X, Y)
+      self.screen.DisplayCustomColorBold('-'*(self.width-15), 2, X, Y)
       X+=1
       self.screen.Display(self.text_stamps[i], X, Y)
       X+=1
