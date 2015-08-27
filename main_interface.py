@@ -148,6 +148,18 @@ class Interface:
       self.screen.Display(" "*(x-1), y-1, 0)
       self.screen.Display("Done", y-1, 0)
 
+    elif(s=="boss"):
+      self.screen.Restore()
+      self.screen.SaveState()
+      self.screen.Display("Connecting...", y-1, 0)
+      self.manager.GetPartyData()
+
+    else:
+      self.screen.Display(" "*(x-1), y-1, 0)
+      self.screen.Display("Done", y-1, 0)
+
+
+
 class UserClass:
   def __init__(self):
     self.a=0
@@ -193,19 +205,22 @@ class UserClass:
     y,x=self.scr.screen.getmaxyx()
     #Level
     string =u'\u2949'.encode("utf-8")+" "+str(self.level)+" "
-    self.scr.DisplayCustomColor(string, 0, y-2, 0)
+    self.scr.DisplayCustomColorBold(string, 0, y-2, 0)
     
     #Health
     string =u'\u2665'.encode("utf-8")+" "+str(self.hp)+"/"+str(self.maxHP)+" "
-    self.scr.DisplayCustomColor(string, 2, y-2, 6) 
+    self.scr.DisplayCustomColorBold(string, 2, y-2, 6) 
 
     #Experience
     string =u'\u2605'.encode("utf-8")+" "+str(self.exp)+"/"+str(self.req_exp)+" "
-    self.scr.DisplayCustomColor(string, 3, y-2, 17)
+    self.scr.DisplayCustomColorBold(string, 3, y-2, 17)
 
     #Gold
     string =u'\u25CF'.encode("utf-8")+" "+str(self.gp)
-    self.scr.DisplayCustomColor(string, 4, y-2, 29)
+    self.scr.DisplayCustomColorBold(string, 4, y-2, 29)
+
+
+
 
 user_prof = UserClass()
       

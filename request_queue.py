@@ -63,6 +63,29 @@ class Manager:
       self.intf.Init()
       self.mark_queue=[]
 
+  def GetPartyData(self):
+    resp=requests.get('https://habitica.com/api/v2/groups/party', headers=self.headers)
+    y,x=self.scr.screen.getmaxyx()
+    if resp.status_code==200:
+      rjson=resp.json()
+      quest=rjson['quest']
+      self.scr.Display(" "*(x-1), y-1, 0)
+      self.scr.Display("Done", y-1, 0)
+      if quest!={}:
+	string ="Boss "+u'\u2665'.encode("utf-8")+" : "+str(int(quest['progress']['hp']))
+	self.scr.DisplayCustomColorBold(string, 2, y-3, 0)
+	self.scr.SaveState()
+  
+      chatmenu=ChatMenu(rjson['chat'][:50], self.scr, SETTINGS.TASK_WINDOW_X, SETTINGS.TASK_WINDOW_Y) 
+      chatmenu.Init()
+      chatmenu.Input()
+      if quest!={}:
+	self.scr.Restore()
+
+    else:
+      self.scr.Display(" "*(x-1), y-1, 0)
+      self.scr.Display("Failed", y-1, 0)
+
 MANAGER = Manager()
 
 
