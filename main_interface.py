@@ -98,6 +98,14 @@ class Interface:
     else:
       self.TODOMenu.Mark()
 
+  def Delete(self):
+    if self.current==0:
+      self.HabitMenu.Delete()
+    elif self.current==1:
+      self.DailyMenu.Delete()
+    else:
+      self.TODOMenu.Delete()
+
   def HabitPlus(self):
     if self.current!=0:
       return
@@ -124,6 +132,8 @@ class Interface:
 	self.IntfScrollRight()
       elif(c==ord('m')):
 	self.Mark()
+      elif(c==ord('d')):
+	self.Delete()
       elif(c==ord('+')):
 	self.HabitPlus()
       elif(c==ord('-')):

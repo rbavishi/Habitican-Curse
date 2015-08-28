@@ -43,6 +43,9 @@ class MenuItem:
       return
     self.item.MarkDown(self.x, self.y)
 
+  def Delete(self):
+    self.item.Delete(self.x, self.y)
+
 
 class Menu:
   def __init__(self, item_list, title, screen, x=0, y=0):
@@ -133,6 +136,9 @@ class Menu:
 
   def MarkDown(self):
     self.items[self.counter].MarkDown()
+
+  def Delete(self):
+    self.items[self.counter].Delete()
 
   def Reload(self):
     if(len(self.items)==0):

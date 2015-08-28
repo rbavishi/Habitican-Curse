@@ -16,6 +16,7 @@ class Manager:
   def __init__(self):
     self.queue=[]
     self.mark_queue=[]
+    self.delete_queue=[]
 
   def Init(self, intf, scr, headers, user_prof):
     self.intf=intf
@@ -26,7 +27,10 @@ class Manager:
   def MarkEnqueue(self, item):
     self.mark_queue+=[item]
 
-  def Flush(self):
+  def DeleteEnqueue(self, item):
+    self.delete_queue+=[item]
+
+  def FlushMarks(self):
     for i in self.mark_queue:
       if i.marked==False:
 	continue
@@ -50,18 +54,59 @@ class Manager:
 
       url='https://habitica.com:443/api/v2/user/tasks/'+i.taskID+"/"+i.mark
       resp=requests.post(url, headers=self.headers)
-      rjson=resp.json()
-      self.scr.screen.erase()
+      if resp.status_code==200:
+	rjson=resp.json()
+	self.scr.screen.erase()
 
-      self.user_prof.gp=int(rjson['gp'])
-      self.user_prof.hp=rjson['hp']
-      self.user_prof.exp=rjson['exp']
-      self.user_prof.level=rjson['lvl']
+	self.user_prof.gp=int(rjson['gp'])
+	self.user_prof.hp=rjson['hp']
+	self.user_prof.exp=rjson['exp']
+	self.user_prof.level=rjson['lvl']
 
-      self.user_prof.PrintData()
+	self.user_prof.PrintData()
+	self.intf.Init()
+    self.mark_queue=[]
 
-      self.intf.Init()
-      self.mark_queue=[]
+  def FlushDelete(self):
+    for i in self.delete_queue:
+      if i.delete==False:
+	continue
+
+      if i.task_type=="todo":
+	for j in xrange(len(self.intf.todos)):
+	  if self.intf.todos[j].item.taskID==i.taskID:
+	    break
+	self.intf.todos.remove(self.intf.todos[j])
+	self.intf.TODOMenu.Reload()
+	
+      elif i.task_type=="daily":
+	for j in xrange(len(self.intf.dailies)):
+	  if self.intf.dailies[j].item.taskID==i.taskID:
+	    break
+	self.intf.dailies.remove(self.intf.dailies[j])
+	self.intf.DailyMenu.Reload()
+
+      elif i.task_type=="habit":
+	for j in xrange(len(self.intf.habits)):
+	  if self.intf.habits[j].item.taskID==i.taskID:
+	    break
+	self.intf.habits.remove(self.intf.habits[j])
+	self.intf.HabitMenu.Reload()
+
+      url='https://habitica.com:443/api/v2/user/tasks/'+i.taskID
+      resp=requests.delete(url, headers=self.headers)
+      if resp.status_code==200:
+	self.scr.screen.erase()
+	self.user_prof.PrintData()
+	self.intf.Init()
+
+    
+    self.delete_queue=[]
+
+  def Flush(self):
+    self.FlushMarks()
+    self.FlushDelete()
+    
 
   def GetPartyData(self):
     resp=requests.get('https://habitica.com/api/v2/groups/party', headers=self.headers)

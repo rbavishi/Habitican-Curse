@@ -35,6 +35,8 @@ class Habit:
 
     self.x=SETTINGS.TASK_WINDOW_X
     self.y=SETTINGS.TASK_WINDOW_Y
+    self.delete        = False
+    self.enqDelete     = False
 
   def Init(self):
 
@@ -127,6 +129,27 @@ class Habit:
       self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
       self.screen.screen.refresh()
 
+  def Delete(self, X, Y):
+    if self.delete==False:
+      store=self.TextLine.string
+      self.TextLine.string="x"+" "+self.TextLine.string
+      self.TextLine.Redefine()
+      self.TextLine.string=store
+      self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
+      self.screen.screen.refresh()
+
+      self.delete=True
+
+      if self.enqDelete==False:
+	self.enqDelete=True
+	MANAGER.DeleteEnqueue(self)
+
+    else:
+      self.delete=False
+      self.TextLine.Redefine()
+      self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
+      self.screen.screen.refresh()
+
   def ReloadText(self):
     #self.TextLine.string = self.TextLine.string[2:]
     self.TextLine.Redefine()
@@ -149,6 +172,8 @@ class Daily:
     self.marked        = False
     self.enqueued      = False
     self.mark          = ''
+    self.delete        = False
+    self.enqDelete     = False
     if(self.completed==True):
       self.TextLine.string = u'\u2714'.encode("utf-8")+" "+self.TextLine.string
       self.TextLine.Redefine()
@@ -244,6 +269,26 @@ class Daily:
       self.TextLine.string=(u'\u2714').encode("utf-8")+ " " + self.TextLine.string
       self.TextLine.Redefine()
 
+  def Delete(self, X, Y):
+    if self.delete==False:
+      store=self.TextLine.string
+      self.TextLine.string="x"+" "+self.TextLine.string
+      self.TextLine.Redefine()
+      self.TextLine.string=store
+      self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
+      self.screen.screen.refresh()
+
+      self.delete=True
+
+      if self.enqDelete==False:
+	self.enqDelete=True
+	MANAGER.DeleteEnqueue(self)
+
+    else:
+      self.delete=False
+      self.TextLine.Redefine()
+      self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
+      self.screen.screen.refresh()
 
 class TODO:
   def __init__(self, json_dict, screen):
@@ -262,6 +307,8 @@ class TODO:
     self.mark          = 'up'
     self.marked        = False
     self.enqueued      = False
+    self.delete        = False
+    self.enqDelete     = False
     if(self.value < -1):
       self.color=curses.COLOR_RED+1
     elif(self.value < 1):
@@ -336,4 +383,26 @@ class TODO:
       self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
       self.screen.screen.refresh()
 
+  def Delete(self, X, Y):
+    #MyText = self.TextLine.ColumnText()
+    if self.delete==False:
+      store=self.TextLine.string
+      self.TextLine.string="x"+" "+self.TextLine.string
+      self.TextLine.Redefine()
+      self.TextLine.string=store
+      self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
+      self.screen.screen.refresh()
+
+      self.delete=True
+
+      if self.enqDelete==False:
+	self.enqDelete=True
+	MANAGER.DeleteEnqueue(self)
+
+    else:
+      self.delete=False
+      #self.TextLine.string=self.TextLine.string[1:]
+      self.TextLine.Redefine()
+      self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
+      self.screen.screen.refresh()
 	
