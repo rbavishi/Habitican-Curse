@@ -94,6 +94,12 @@ def main(screen):
     c = screen.getch()
     if(c==ord('q')):
       break
+    elif(c==27):
+      scr.Display("                    ")
+      scr.screen.refresh()
+      intf.Input()
+      scr.Display("Press q to exit...")
+      scr.screen.refresh()
     else:
       continue
 

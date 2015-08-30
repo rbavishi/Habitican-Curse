@@ -46,6 +46,9 @@ class MenuItem:
   def Delete(self):
     self.item.Delete(self.x, self.y)
 
+  def ShowChecklist(self):
+    self.item.ShowChecklist()
+
 
 class Menu:
   def __init__(self, item_list, title, screen, x=0, y=0):
@@ -139,6 +142,9 @@ class Menu:
 
   def Delete(self):
     self.items[self.counter].Delete()
+
+  def ShowChecklist(self):
+    self.items[self.counter].ShowChecklist()
 
   def Reload(self):
     if(len(self.items)==0):

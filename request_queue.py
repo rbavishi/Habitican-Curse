@@ -17,6 +17,7 @@ class Manager:
     self.queue=[]
     self.mark_queue=[]
     self.delete_queue=[]
+    self.put_queue=[]
 
   def Init(self, intf, scr, headers, user_prof):
     self.intf=intf
@@ -29,6 +30,9 @@ class Manager:
 
   def DeleteEnqueue(self, item):
     self.delete_queue+=[item]
+
+  def PutEnqueue(self, item):
+    self.put_queue+=[item]
 
   def FlushMarks(self):
     for i in self.mark_queue:
@@ -59,7 +63,7 @@ class Manager:
 	self.scr.screen.erase()
 
 	self.user_prof.gp=int(rjson['gp'])
-	self.user_prof.hp=rjson['hp']
+	self.user_prof.hp=int(round(rjson['hp'], 0))
 	self.user_prof.exp=rjson['exp']
 	self.user_prof.level=rjson['lvl']
 
@@ -103,7 +107,26 @@ class Manager:
     
     self.delete_queue=[]
 
+  def FlushPuts(self):
+    for i in self.put_queue:
+      if i.changePut==False:
+	continue
+
+      url='https://habitica.com:443/api/v2/user/tasks/'+i.taskID
+      resp=requests.put(url, headers=self.headers, json=i.json)
+      y,x=self.scr.screen.getmaxyx()
+      if resp.status_code==200:
+	self.scr.Display(" "*(x-1), y-1, 0)
+	self.scr.Display("Successful", y-1, 0)
+      else:
+	self.scr.Display(" "*(x-1), y-1, 0)
+	self.scr.Display("Failed", y-1, 0)
+
+    self.put_queue=[]
+
+
   def Flush(self):
+    self.FlushPuts()
     self.FlushMarks()
     self.FlushDelete()
     

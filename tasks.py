@@ -4,6 +4,7 @@ from global_settings import *
 from screen_class import *
 from request_queue import *
 import locale
+import uuid
 
 class Habit:
   def __init__(self, json_dict, screen):
@@ -174,6 +175,10 @@ class Daily:
     self.mark          = ''
     self.delete        = False
     self.enqDelete     = False
+    self.checklist=json_dict['checklist']
+    if(self.checklist!=[]):
+      self.TextLine.string = u'\u25BC'.encode("utf-8")+" "+self.TextLine.string
+      self.TextLine.Redefine()
     if(self.completed==True):
       self.TextLine.string = u'\u2714'.encode("utf-8")+" "+self.TextLine.string
       self.TextLine.Redefine()
@@ -309,6 +314,8 @@ class TODO:
     self.enqueued      = False
     self.delete        = False
     self.enqDelete     = False
+    self.enqPut        = False
+    self.changePut     = False
     if(self.value < -1):
       self.color=curses.COLOR_RED+1
     elif(self.value < 1):
@@ -320,6 +327,15 @@ class TODO:
 
     self.x=SETTINGS.TASK_WINDOW_X
     self.y=SETTINGS.TASK_WINDOW_Y
+
+    self.checklist=json_dict['checklist']
+    self.orig_checklist=[]
+    for i in self.checklist:
+      self.orig_checklist+=[i.copy()]
+    self.ChecklistObj=Checklist(self.checklist, self.screen, self.TextLine.ColumnText())
+    if(self.checklist!=[]):
+      self.TextLine.string = u'\u25BC'.encode("utf-8")+" "+self.TextLine.string
+      self.TextLine.Redefine()
 
   def Init(self):
     X=self.x; Y=self.y
@@ -405,4 +421,177 @@ class TODO:
       self.TextLine.Redefine()
       self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
       self.screen.screen.refresh()
+
+  def ShowChecklist(self):
+    self.ChecklistObj.Init()
+    self.ChecklistObj.Input()
+    if self.orig_checklist!=self.ChecklistObj.checklist:
+      self.changePut=True
+      if self.enqPut==False:
+	self.enqPut=True
+	MANAGER.PutEnqueue(self)
+
+
+class ChecklistItem:
+  def __init__(self, item, screen, dummy=False, x=0, y=0):
+    self.item=item
+    self.completed=self.item['completed']
+    self.screen=screen
+    self.x=x
+    self.y=y
+    self.dummy=dummy
+
+    self.base_string=str(self.item['text'])
+    y,x = self.screen.screen.getmaxyx()
+    if len(self.base_string)>(x-17):
+      self.base_string=self.base_string[:(x-20)]+"..."
+
+    self.base_string="    "+self.base_string
+
+    self.marked=False
+
+  def Toggle(self):
+    self.item['completed']=self.item['completed']^True
+    self.completed=self.item['completed']
+
+  def ToggleMark(self):
+    self.marked=self.marked^True
+    self.Highlight()
+
+  def Display(self):
+    if self.completed:
+      string = "  "+u'\u2714'.encode("utf-8")+" "+self.base_string[4:]
+      if self.marked and self.dummy==False:
+	string = u'\u25CF'.encode("utf-8")+" "+string[2:]
+      self.screen.Display(string, self.x, self.y)
+    else:
+      string = self.base_string
+      if self.marked and self.dummy==False:
+	string = "  "+u'\u25CF'.encode("utf-8")+" "+string[4:]
+      self.screen.Display(string, self.x, self.y)
+
+  def Highlight(self):
+    if self.completed:
+      #string = u'\u2714'.encode("utf-8")+" "+self.base_string
+      string = "  "+u'\u2714'.encode("utf-8")+" "+self.base_string[4:]
+      if self.marked and self.dummy==False:
+	#string = u'\u25CF'.encode("utf-8")+" "+string
+	string = u'\u25CF'.encode("utf-8")+" "+string[2:]
+      self.screen.Highlight(string, self.x, self.y)
+    else:
+      string = self.base_string
+      if self.marked and self.dummy==False:
+	#string = u'\u25CF'.encode("utf-8")+" "+string
+	string = "  "+u'\u25CF'.encode("utf-8")+" "+string[4:]
+      self.screen.Highlight(string, self.x, self.y)
+
+  def SetXY(self, X, Y):
+    self.x=X
+    self.y=Y
+
+
+class Checklist:
+  def __init__(self, checklist, screen, taskname=''):
+    self.checklist=checklist
+    self.screen=screen
+
+    self.x=SETTINGS.TASK_WINDOW_X
+    self.y=SETTINGS.TASK_WINDOW_Y
+    self.taskname=taskname
+
+    self.items=[]
+    for i in self.checklist:
+      self.items+=[ChecklistItem(i, self.screen)]
+
+    self.AddDummyItem()
+    self.counter=0
+    self.start=0
+    self.end=min(4, len(checklist)+1)
+
+
+  def Init(self):
+    X=self.x
+    Y=self.y
+
+    self.screen.Restore()
+    self.screen.SaveState()
+    self.screen.DisplayCustomColorBold("Checklist - " +self.taskname, 2, X, Y)
+    X+=2
+
+    for i in xrange(self.start, self.end):
+      self.items[i].SetXY(X, Y)
+      X+=1
+      self.items[i].Display()
+
+    self.items[self.counter].Highlight()
+
+  def ScrollUp(self):
+    if self.counter!=self.start:
+      self.items[self.counter].Display()
+      self.counter-=1
+      self.items[self.counter].Highlight()
+
+    elif self.start!=0:
+      self.start-=1
+      self.counter-=1
+      self.end-=1
+      self.Init()
+
+  def ScrollDown(self):
+    if self.counter!=(self.end-1):
+      self.items[self.counter].Display()
+      self.counter+=1
+      self.items[self.counter].Highlight()
+
+    elif self.end!=len(self.items):
+      self.start+=1
+      self.counter+=1
+      self.end+=1
+      self.Init()
+
+  def AddDummyItem(self):
+    new_item={}
+    new_item[u'text']=u'Add New Item'
+    new_item[u'completed']=False
+    new_item[u'id']=str(uuid.uuid4())
+    self.items+=[ChecklistItem(new_item, self.screen, True)]
+
+  def Mark(self):
+    if self.counter!=(len(self.items)-1):
+      self.items[self.counter].ToggleMark()
+
+
+  def Input(self):
+    while(1):
+      c=self.screen.screen.getch()
+      if (c==ord('q')):
+	for i in self.items:
+	  if i.marked==True:
+	    i.marked=False
+	self.screen.Restore()
+	self.screen.SaveState()
+	break
+      elif (c==ord('m')):
+	self.Mark()
+      elif (c==ord('c')):
+	for i in self.items:
+	  if i.marked==True:
+	    i.Toggle()
+	    i.marked=False
+	self.screen.Restore()
+	self.screen.SaveState()
+	break
+      elif (c==curses.KEY_UP):
+	self.ScrollUp()
+      elif (c==curses.KEY_DOWN):
+	self.ScrollDown()
+      else:
+	continue
+
+    
+
+
+
+
+    
 	

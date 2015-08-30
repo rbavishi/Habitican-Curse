@@ -32,6 +32,8 @@ class Interface:
     self.current=0
 
   def Init(self):
+    y,x=self.screen.screen.getmaxyx()
+    self.screen.DisplayCustomColorBold('='*(x-1), 7, 13, 0)
     self.DailyMenu.Init(False)
     self.TODOMenu.Init(False)
     self.HabitMenu.Init()
@@ -106,6 +108,15 @@ class Interface:
     else:
       self.TODOMenu.Delete()
 
+  def ShowChecklist(self):
+    #if self.current==0:
+      #self.HabitMenu.Delete()
+    #elif self.current==1:
+      #self.DailyMenu.Delete()
+    if self.current==2:
+      self.TODOMenu.ShowChecklist()
+      self.TODOMenu.Highlight()
+
   def HabitPlus(self):
     if self.current!=0:
       return
@@ -132,6 +143,8 @@ class Interface:
 	self.IntfScrollRight()
       elif(c==ord('m')):
 	self.Mark()
+      elif(c==ord('c')):
+	self.ShowChecklist()
       elif(c==ord('d')):
 	self.Delete()
       elif(c==ord('+')):
@@ -185,7 +198,7 @@ class UserClass:
     self.maxHP=0
     self.level=0
 
-    self.hp        = j['hp']
+    self.hp        = int(round(j['hp'], 0))
     self.gp        = int(j['gp'])
     self.maxHP     = j['maxHealth']
     self.exp       = j['exp']
@@ -200,7 +213,7 @@ class UserClass:
     j=resp.json()['stats']
     self.scr.Display(" "*(x-1), y-1, 0)
 
-    self.hp        = j['hp']
+    self.hp        = int(round(j['hp'], 0))
     self.gp        = int(j['gp'])
     self.maxHP     = j['maxHealth']
     self.exp       = j['exp']
