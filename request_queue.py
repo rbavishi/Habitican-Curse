@@ -9,7 +9,7 @@ from lines_and_text import *
 from screen_class import *
 from menus import *
 from global_settings import *
-from tasks import *
+import tasks as Tasks
 from main_interface import *
 
 class Manager:
@@ -112,6 +112,8 @@ class Manager:
       if i.changePut==False:
 	continue
 
+      i.enqPut=False
+
       url='https://habitica.com:443/api/v2/user/tasks/'+i.taskID
       resp=requests.put(url, headers=self.headers, json=i.json)
       y,x=self.scr.screen.getmaxyx()
@@ -153,6 +155,47 @@ class Manager:
     else:
       self.scr.Display(" "*(x-1), y-1, 0)
       self.scr.Display("Failed", y-1, 0)
+
+  def Refresh(self):
+    self.scr.Display("Connecting...")
+    f=open('keys.txt', 'r')
+    user_id=f.readline().split('\n')[0]
+    api_token=f.readline().split('\n')[0]
+    headers={'x-api-key':api_token, 'x-api-user':user_id}
+
+    response=requests.get('https://habitica.com:443/api/v2/user/', headers=headers)
+    if(response.status_code!=200):
+      return 
+
+    #self.scr.screen.clear()
+    self.scr.Display("               ")
+    self.scr.Display("Connected")
+    time.sleep(1)
+    self.scr.screen.clear()
+    resp=response.json()
+    h,d,t = resp['habits'], resp['dailys'], resp['todos']
+    if type(h)!=list:
+      h=[h]
+    if type(d)!=list:
+      d=[d]
+    if type(t)!=list:
+      t=[t]
+
+    tasks=[]
+    j=h+d+t
+
+    if(type(j)==list):
+      for i in j:
+	if i['type']=='habit':
+	  tasks+=[MenuItem(Tasks.Habit(i, self.scr), self.scr)]
+	elif i['type']=='daily':
+	  tasks+=[MenuItem(Tasks.Daily(i, self.scr), self.scr)]
+	elif i['type']=='todo' and i['completed']==False:
+	  tasks+=[MenuItem(Tasks.TODO(i, self.scr), self.scr)]
+    
+    self.intf.Reload(tasks)
+    user_prof.Init(self.intf, self.scr, self.headers, resp['stats'])
+    self.intf.Init()
 
 MANAGER = Manager()
 

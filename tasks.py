@@ -449,6 +449,7 @@ class ChecklistItem:
     self.base_string="    "+self.base_string
 
     self.marked=False
+    self.delete=False
 
   def Toggle(self):
     self.item['completed']=self.item['completed']^True
@@ -458,15 +459,24 @@ class ChecklistItem:
     self.marked=self.marked^True
     self.Highlight()
 
+  def ToggleDelete(self):
+    self.delete=self.delete^True
+    self.marked=False
+    self.Highlight()
+
   def Display(self):
     if self.completed:
       string = "  "+u'\u2714'.encode("utf-8")+" "+self.base_string[4:]
-      if self.marked and self.dummy==False:
+      if self.delete==True and self.dummy==False:
+	string = 'x'+" "+string[2:]
+      elif self.marked and self.dummy==False:
 	string = u'\u25CF'.encode("utf-8")+" "+string[2:]
       self.screen.Display(string, self.x, self.y)
     else:
       string = self.base_string
-      if self.marked and self.dummy==False:
+      if self.delete==True and self.dummy==False:
+	string = 'x'+" "+string[2:]
+      elif self.marked and self.dummy==False:
 	string = "  "+u'\u25CF'.encode("utf-8")+" "+string[4:]
       self.screen.Display(string, self.x, self.y)
 
@@ -474,13 +484,17 @@ class ChecklistItem:
     if self.completed:
       #string = u'\u2714'.encode("utf-8")+" "+self.base_string
       string = "  "+u'\u2714'.encode("utf-8")+" "+self.base_string[4:]
-      if self.marked and self.dummy==False:
+      if self.delete==True and self.dummy==False:
+	string = 'x'+" "+string[2:]
+      elif self.marked and self.dummy==False:
 	#string = u'\u25CF'.encode("utf-8")+" "+string
 	string = u'\u25CF'.encode("utf-8")+" "+string[2:]
       self.screen.Highlight(string, self.x, self.y)
     else:
       string = self.base_string
-      if self.marked and self.dummy==False:
+      if self.delete==True and self.dummy==False:
+	string = 'x'+" "+string[2:]
+      elif self.marked and self.dummy==False:
 	#string = u'\u25CF'.encode("utf-8")+" "+string
 	string = "  "+u'\u25CF'.encode("utf-8")+" "+string[4:]
       self.screen.Highlight(string, self.x, self.y)
@@ -488,6 +502,23 @@ class ChecklistItem:
   def SetXY(self, X, Y):
     self.x=X
     self.y=Y
+
+  def EnterName(self):
+    y,x = self.screen.screen.getmaxyx()
+    self.screen.Display(" "*(x-1), self.x, self.y)
+    curses.echo()
+    curses.curs_set(1)
+    s=self.screen.screen.getstr(self.x, self.y+4, 50)
+    curses.noecho()
+    curses.curs_set(0)
+    self.item['text']=s
+    self.base_string=str(self.item['text'])
+    y,x = self.screen.screen.getmaxyx()
+    if len(self.base_string)>(x-17):
+      self.base_string=self.base_string[:(x-20)]+"..."
+
+    self.base_string="    "+self.base_string
+    self.Highlight()
 
 
 class Checklist:
@@ -560,6 +591,16 @@ class Checklist:
     if self.counter!=(len(self.items)-1):
       self.items[self.counter].ToggleMark()
 
+  def Delete(self):
+    if self.counter!=(len(self.items)-1):
+      self.items[self.counter].ToggleDelete()
+
+  def EnterName(self):
+    self.items[self.counter].EnterName()
+    if self.counter == (self.end - 1):
+      self.items[self.counter].dummy=False
+      self.checklist+=[self.items[self.counter].item]
+      self.AddDummyItem()
 
   def Input(self):
     while(1):
@@ -568,16 +609,26 @@ class Checklist:
 	for i in self.items:
 	  if i.marked==True:
 	    i.marked=False
+	  if i.delete==True:
+	    i.delete=False
 	self.screen.Restore()
 	self.screen.SaveState()
 	break
       elif (c==ord('m')):
 	self.Mark()
+      elif (c==ord('d')):
+	self.Delete()
+      elif (c==10):
+	self.EnterName()
       elif (c==ord('c')):
 	for i in self.items:
 	  if i.marked==True:
 	    i.Toggle()
 	    i.marked=False
+	  if i.delete==True:
+	    self.checklist.remove(i.item)
+	    i.delete=False
+	    self.items.remove(i)
 	self.screen.Restore()
 	self.screen.SaveState()
 	break
