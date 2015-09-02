@@ -4,13 +4,19 @@
 
 ### Common Commands
 
-* `:w` to write any changes to server. `:r` to reload the tasks from the server - basically rebooting the interface.
+* Press `m` to mark an item for toggling its completion status. Press `+` and `-` for habits. Press the key again to unmark it
+
+* `:w` to write any changes to server. The `completed` status for the marked items changes. Health, Gold, XP are automatically updated. 
+
+* `:r` to reload the tasks from the server - basically rebooting the interface.
 
 ### Checklist Feature
 
 * The tasks marked with a downward triangle have checklists associated with them. Press `c` to display them. You can navigate using arrow keys
 
-* Press `m` to mark an item. It will toggle the done status (It won't write it though)
+* Press `m` to mark an item. It will toggle the done status (It won't write it though). Press `m` again to toggle mark status.
+
+* Press `d` to mark an item for deletion. You cannot mark this item as long as it is marked for deletion. Press `d` again to toggle deletion status.
 
 * When you've made your changes, you can quit either by pressing `q` or `c`. Pressing `q` will undo all changes. Pressing `c` will keep the changes
 
