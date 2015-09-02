@@ -537,7 +537,7 @@ class Checklist:
     self.AddDummyItem()
     self.counter=0
     self.start=0
-    self.end=min(4, len(checklist)+1)
+    self.end=min(6, len(checklist)+1)
 
 
   def Init(self):
@@ -601,6 +601,10 @@ class Checklist:
       self.items[self.counter].dummy=False
       self.checklist+=[self.items[self.counter].item]
       self.AddDummyItem()
+      self.counter=0
+      self.start=0
+      self.end=min(6, len(self.checklist)+1)
+      self.Init()
 
   def Input(self):
     while(1):
