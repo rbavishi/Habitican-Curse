@@ -20,6 +20,8 @@
 
 * When you've made your changes, you can quit either by pressing `q` or `c`. Pressing `q` will undo all changes. Pressing `c` will keep the changes
 
+* You can also add a checklist item by navigating down to the dummy checklist item titled `Add Item`. Press ENTER to enable string input. After inputting the name, press Enter again to save it.
+
 * However you still have to do `:w` to write changes to the server
 
 ### Modifying Items (Current Features)
