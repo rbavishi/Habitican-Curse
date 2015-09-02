@@ -37,3 +37,7 @@
 * Type `:set d 2` or `:set d hard` to change difficulty to hard
 
 * As always, you have to `:w` to push changes to the server.
+
+### Quests
+
+* If you are involved in a quest, you can type `:boss` to display the boss's health as well as the chat messages from the party.
