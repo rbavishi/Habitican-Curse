@@ -132,9 +132,10 @@ class Interface:
   def ShowChecklist(self):
     #if self.current==0:
       #self.HabitMenu.Delete()
-    #elif self.current==1:
-      #self.DailyMenu.Delete()
-    if self.current==2:
+    if self.current==1:
+      self.DailyMenu.ShowChecklist()
+      self.DailyMenu.Highlight()
+    elif self.current==2:
       self.TODOMenu.ShowChecklist()
       self.TODOMenu.Highlight()
 
@@ -184,7 +185,9 @@ class Interface:
     self.screen.Display(" "*(x-1), y-1, 0)
     self.screen.Display(":", y-1, 0)
     curses.echo()
+    curses.curs_set(1)
     s=self.screen.screen.getstr(y-1, 1)
+    curses.curs_set(0)
     curses.noecho()
     if(s=="w"):
       self.screen.Display("Connecting...", y-1, 0)
@@ -203,6 +206,13 @@ class Interface:
 
     else:
       self.screen.Display(" "*(x-1), y-1, 0)
+      if self.current==0:
+	self.HabitMenu.CustomCommand(s)
+      elif self.current==1:
+	self.DailyMenu.CustomCommand(s)
+      else:
+	self.TODOMenu.CustomCommand(s)
+
 
 
 

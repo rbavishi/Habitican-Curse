@@ -49,6 +49,9 @@ class MenuItem:
   def ShowChecklist(self):
     self.item.ShowChecklist()
 
+  def CustomCommand(self, cmd):
+    self.item.CustomCommand(cmd, self.x, self.y)
+
 
 class Menu:
   def __init__(self, item_list, title, screen, x=0, y=0):
@@ -145,6 +148,9 @@ class Menu:
 
   def ShowChecklist(self):
     self.items[self.counter].ShowChecklist()
+
+  def CustomCommand(self, cmd):
+    self.items[self.counter].CustomCommand(cmd)
 
   def Reload(self):
     if(len(self.items)==0):

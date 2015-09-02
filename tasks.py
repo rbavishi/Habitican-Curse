@@ -25,6 +25,8 @@ class Habit:
     self.mark          = 'up'
     self.marked        = False
     self.enqueued      = False
+    self.enqPut        = False
+    self.changePut     = False
     if(self.value < -1):
       self.color=curses.COLOR_RED+1
     elif(self.value < 1):
@@ -155,6 +157,65 @@ class Habit:
     #self.TextLine.string = self.TextLine.string[2:]
     self.TextLine.Redefine()
 
+  def CustomCommand(self, cmd, X, Y):
+    if cmd=="set d 0.1" or cmd=="set d trivial":
+      if self.difficulty!="trivial":
+	self.changePut=True
+	self.difficulty="trivial"
+	self.json['priority']=0.1
+	self.Highlight_Title(X, Y)
+	if self.enqPut==False:
+	  self.enqPut=True
+	  MANAGER.PutEnqueue(self)
+
+    elif cmd=="set d 1" or cmd=="set d easy" or cmd=="set d 1.0":
+      if self.difficulty!="easy":
+	self.changePut=True
+	self.difficulty="easy"
+	self.json['priority']=1
+	self.Highlight_Title(X, Y)
+	if self.enqPut==False:
+	  self.enqPut=True
+	  MANAGER.PutEnqueue(self)
+
+    elif cmd=="set d 1.5" or cmd=="set d medium":
+      if self.difficulty!="medium":
+	self.changePut=True
+	self.difficulty="medium"
+	self.json['priority']=1.5
+	self.Highlight_Title(X, Y)
+	if self.enqPut==False:
+	  self.enqPut=True
+	  MANAGER.PutEnqueue(self)
+
+    elif cmd=="set d 2" or cmd=="set d hard" or cmd=="set d 2.0":
+      if self.difficulty!="hard":
+	self.changePut=True
+	self.difficulty="hard"
+	self.json['priority']=2
+	self.Highlight_Title(X, Y)
+	if self.enqPut==False:
+	  self.enqPut=True
+	  MANAGER.PutEnqueue(self)
+
+def WeekToString(wdict):
+  s=""
+  if wdict['m']==True:
+    s+="Mon "
+  if wdict['t']==True:
+    s+="Tue "
+  if wdict['w']==True:
+    s+="Wed "
+  if wdict['th']==True:
+    s+="Thurs "
+  if wdict['f']==True:
+    s+="Fri "
+  if wdict['s']==True:
+    s+="Sat "
+  if wdict['s']==True:
+    s+="Sun "
+
+  return s
 class Daily:
   def __init__(self, json_dict, screen):
     self.json=json_dict
@@ -169,16 +230,22 @@ class Daily:
     self.dateCreated   = str(json_dict['dateCreated']).split('T')[0]
     self.value         = json_dict['value']
     self.completed     = json_dict['completed']
+    self.type_daily    = -1
+    if json_dict['frequency']=='daily':
+      self.type_daily=json_dict['everyX']
+    else:
+      self.type_daily=-1
+
+    self.repeat        = json_dict['repeat']
+    self.repeat_string = WeekToString(self.repeat)
     self.color         = 0
     self.marked        = False
     self.enqueued      = False
     self.mark          = ''
     self.delete        = False
     self.enqDelete     = False
-    self.checklist=json_dict['checklist']
-    if(self.checklist!=[]):
-      self.TextLine.string = u'\u25BC'.encode("utf-8")+" "+self.TextLine.string
-      self.TextLine.Redefine()
+    self.enqPut        = False
+    self.changePut     = False
     if(self.completed==True):
       self.TextLine.string = u'\u2714'.encode("utf-8")+" "+self.TextLine.string
       self.TextLine.Redefine()
@@ -194,6 +261,15 @@ class Daily:
 
     self.x=SETTINGS.TASK_WINDOW_X
     self.y=SETTINGS.TASK_WINDOW_Y
+
+    self.checklist=json_dict['checklist']
+    self.orig_checklist=[]
+    for i in self.checklist:
+      self.orig_checklist+=[i.copy()]
+    self.ChecklistObj=Checklist(self.checklist, self.screen, self.TextLine.ColumnText())
+    if(self.checklist!=[]):
+      self.TextLine.string = u'\u25BC'.encode("utf-8")+" "+self.TextLine.string
+      self.TextLine.Redefine()
 
   def Init(self):
 
@@ -217,6 +293,13 @@ class Daily:
     else:
       self.screen.DisplayCustomColorBold("trivial", 5, X, Y)
 
+    X+=2
+    if self.type_daily==-1:
+      self.screen.DisplayCustomColorBold("Active Days: ", curses.COLOR_BLUE+2, X, Y)
+      self.screen.DisplayCustomColorBold(self.repeat_string, 5, X, Y+15)
+    else:
+      self.screen.DisplayCustomColorBold("Every ", curses.COLOR_BLUE+2, X, Y)
+      self.screen.DisplayCustomColorBold(str(self.type_daily)+" days", 5, X, Y+6)
     X+=2
     self.screen.Display("Date Created: "+self.dateCreated, X, Y)
     
@@ -294,6 +377,56 @@ class Daily:
       self.TextLine.Redefine()
       self.screen.Highlight(self.TextLine.ColumnText(), X, Y)
       self.screen.screen.refresh()
+
+  def ShowChecklist(self):
+    self.ChecklistObj.Init()
+    self.ChecklistObj.Input()
+    if self.orig_checklist!=self.ChecklistObj.checklist:
+      self.changePut=True
+      if self.enqPut==False:
+	self.enqPut=True
+	MANAGER.PutEnqueue(self)
+
+  def CustomCommand(self, cmd, X, Y):
+    if cmd=="set d 0.1" or cmd=="set d trivial":
+      if self.difficulty!="trivial":
+	self.changePut=True
+	self.difficulty="trivial"
+	self.json['priority']=0.1
+	self.Highlight_Title(X, Y)
+	if self.enqPut==False:
+	  self.enqPut=True
+	  MANAGER.PutEnqueue(self)
+
+    elif cmd=="set d 1" or cmd=="set d easy" or cmd=="set d 1.0":
+      if self.difficulty!="easy":
+	self.changePut=True
+	self.difficulty="easy"
+	self.json['priority']=1
+	self.Highlight_Title(X, Y)
+	if self.enqPut==False:
+	  self.enqPut=True
+	  MANAGER.PutEnqueue(self)
+
+    elif cmd=="set d 1.5" or cmd=="set d medium":
+      if self.difficulty!="medium":
+	self.changePut=True
+	self.difficulty="medium"
+	self.json['priority']=1.5
+	self.Highlight_Title(X, Y)
+	if self.enqPut==False:
+	  self.enqPut=True
+	  MANAGER.PutEnqueue(self)
+
+    elif cmd=="set d 2" or cmd=="set d hard" or cmd=="set d 2.0":
+      if self.difficulty!="hard":
+	self.changePut=True
+	self.difficulty="hard"
+	self.json['priority']=2
+	self.Highlight_Title(X, Y)
+	if self.enqPut==False:
+	  self.enqPut=True
+	  MANAGER.PutEnqueue(self)
 
 class TODO:
   def __init__(self, json_dict, screen):
@@ -431,6 +564,46 @@ class TODO:
 	self.enqPut=True
 	MANAGER.PutEnqueue(self)
 
+  def CustomCommand(self, cmd, X, Y):
+    if cmd=="set d 0.1" or cmd=="set d trivial":
+      if self.difficulty!="trivial":
+	self.changePut=True
+	self.difficulty="trivial"
+	self.json['priority']=0.1
+	self.Highlight_Title(X, Y)
+	if self.enqPut==False:
+	  self.enqPut=True
+	  MANAGER.PutEnqueue(self)
+
+    elif cmd=="set d 1" or cmd=="set d easy" or cmd=="set d 1.0":
+      if self.difficulty!="easy":
+	self.changePut=True
+	self.difficulty="easy"
+	self.json['priority']=1
+	self.Highlight_Title(X, Y)
+	if self.enqPut==False:
+	  self.enqPut=True
+	  MANAGER.PutEnqueue(self)
+
+    elif cmd=="set d 1.5" or cmd=="set d medium":
+      if self.difficulty!="medium":
+	self.changePut=True
+	self.difficulty="medium"
+	self.json['priority']=1.5
+	self.Highlight_Title(X, Y)
+	if self.enqPut==False:
+	  self.enqPut=True
+	  MANAGER.PutEnqueue(self)
+
+    elif cmd=="set d 2" or cmd=="set d hard" or cmd=="set d 2.0":
+      if self.difficulty!="hard":
+	self.changePut=True
+	self.difficulty="hard"
+	self.json['priority']=2
+	self.Highlight_Title(X, Y)
+	if self.enqPut==False:
+	  self.enqPut=True
+	  MANAGER.PutEnqueue(self)
 
 class ChecklistItem:
   def __init__(self, item, screen, dummy=False, x=0, y=0):
