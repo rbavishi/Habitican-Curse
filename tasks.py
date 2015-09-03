@@ -27,8 +27,12 @@ class Habit:
     self.enqueued      = False
     self.enqPut        = False
     self.changePut     = False
-    if(self.value < -1):
+    if(self.value < -20):
       self.color=curses.COLOR_RED+1
+    elif(self.value < -10):
+      self.color=9
+    elif(self.value < -1):
+      self.color=8
     elif(self.value < 1):
       self.color=curses.COLOR_YELLOW+1
     elif(self.value > 5):
@@ -250,8 +254,12 @@ class Daily:
       self.TextLine.string = u'\u2714'.encode("utf-8")+" "+self.TextLine.string
       self.TextLine.Redefine()
       #self.TextLine.string = str(json_dict['text'])
-    if(self.value < -1):
+    if(self.value < -20):
       self.color=curses.COLOR_RED+1
+    elif(self.value < -10):
+      self.color=9
+    elif(self.value < -1):
+      self.color=8
     elif(self.value < 1):
       self.color=curses.COLOR_YELLOW+1
     elif(self.value > 5):
@@ -449,8 +457,12 @@ class TODO:
     self.enqDelete     = False
     self.enqPut        = False
     self.changePut     = False
-    if(self.value < -1):
+    if(self.value < -20):
       self.color=curses.COLOR_RED+1
+    elif(self.value < -10):
+      self.color=9
+    elif(self.value < -1):
+      self.color=8
     elif(self.value < 1):
       self.color=curses.COLOR_YELLOW+1
     elif(self.value > 5):
