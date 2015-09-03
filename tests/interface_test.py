@@ -38,6 +38,8 @@ def main(screen):
   curses.init_pair(5, curses.COLOR_MAGENTA, curses.COLOR_BLACK)
   curses.init_pair(6, curses.COLOR_BLUE, curses.COLOR_BLACK)
   curses.init_pair(7, curses.COLOR_WHITE, curses.COLOR_BLACK)
+  curses.init_pair(8, 209, curses.COLOR_BLACK)
+  curses.init_pair(9, 208, curses.COLOR_BLACK)
   screen.bkgd(' ', curses.color_pair(7))
 
   scr=Screen(screen)
