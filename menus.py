@@ -260,6 +260,84 @@ class ChatMenu:
 	break
 
 
+class DropItem:
+  def __init__(self, text, width):
+    self.text=text
+    self.width=width-13
+
+    self.text_strings=['  '+self.text[i:i+self.width] for i in xrange(0, len(self.text), self.width)]
+    self.text_strings[0]="*"+self.text_strings[0][1:]
+
+
+class DropMenu:
+  def __init__(self, item_list, screen, x=0, y=0):
+    self.x=x
+    self.y=y
+
+    self.screen=screen
+    self.item_list=item_list
+
+    Y,X=screen.screen.getmaxyx()
+    self.text_strs=[]
+    self.text_stamps=[]
+    self.width=X
+    for i in self.item_list:
+      j=DropItem(i, X)
+      self.text_strs+= ['-'*(self.width-15)] + j.text_strings
+
+    self.text_strs+=['-'*(self.width-15)]
+
+    self.start=0
+    self.end=min((Y-20), len(self.text_strs))
+
+  def Init(self):
+    if self.end<=0:
+      return
+    X=self.x
+    Y=self.y
+    status=False
+
+    for i in xrange(self.start, self.end):
+      if self.text_strs[i][0]=='*':
+	status=False
+      if self.text_strs[i][0:2]=='--':
+	status=True
+	self.screen.DisplayCustomColorBold(self.text_strs[i], 2, X, Y)
+	X+=1
+	continue
+
+      if status==False:
+	self.screen.DisplayBold(self.text_strs[i], X, Y)
+	X+=1
+      else:
+	self.screen.Display(self.text_strs[i], X, Y)
+	X+=1
+
+  def ScrollUp(self):
+    if self.start!=0:
+      self.screen.Restore()
+      self.screen.SaveState()
+      self.start-=1
+      self.end-=1
+      self.Init()
+
+  def ScrollDown(self):
+    if self.end!=len(self.text_strs):
+      self.screen.Restore()
+      self.screen.SaveState()
+      self.end+=1
+      self.start+=1
+      self.Init()
+
+  def Input(self):
+    while(1):
+      c=self.screen.screen.getch()
+      if(c==curses.KEY_UP or c==ord('k') ):
+	self.ScrollUp()
+      elif(c==curses.KEY_DOWN or c==ord('j')):
+	self.ScrollDown()
+      elif(c==ord('q')):
+	break
 
 
 

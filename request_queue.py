@@ -74,16 +74,20 @@ class Manager:
 	tmp_var=rjson['_tmp']
 	if tmp_var.has_key('drop'):
 	  if tmp_var['drop'].has_key('dialog'):
-	    drops+=str(tmp_var['drop']['dialog'])
+	    drops+=[str(tmp_var['drop']['dialog'])]
 	  elif tmp_var['drop'].has_key('text'):
-	    drops+=str(tmp_var['drop']['text'])
+	    drops+=[str(tmp_var['drop']['text'])]
 	  elif tmp_var['drop'].has_key('notes'):
-	    drops+=str(tmp_var['drop']['notes'])
+	    drops+=[str(tmp_var['drop']['notes'])]
     self.mark_queue=[]
     if drops!=[]:
-      chatmenu=ChatMenu(drops, self.scr, SETTINGS.TASK_WINDOW_X, SETTINGS.TASK_WINDOW_Y) 
+      self.scr.Restore()
+      self.scr.SaveState()
+      chatmenu=DropMenu(drops, self.scr, SETTINGS.TASK_WINDOW_X, SETTINGS.TASK_WINDOW_Y) 
       chatmenu.Init()
       chatmenu.Input()
+      self.scr.Restore()
+      self.scr.SaveState()
 
   def FlushDelete(self):
     for i in self.delete_queue:
