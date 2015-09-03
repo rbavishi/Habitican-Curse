@@ -216,10 +216,11 @@ def WeekToString(wdict):
     s+="Fri "
   if wdict['s']==True:
     s+="Sat "
-  if wdict['s']==True:
+  if wdict['su']==True:
     s+="Sun "
 
   return s
+
 class Daily:
   def __init__(self, json_dict, screen):
     self.json=json_dict
@@ -242,6 +243,7 @@ class Daily:
 
     self.repeat        = json_dict['repeat']
     self.repeat_string = WeekToString(self.repeat)
+    self.repeat_dict   ={'m':'Mon', 't':'Tue', 'th':'Thurs', 'w':'Wed', 's':'Sat', 'su':'Sun', 'f':'Fri'}
     self.color         = 0
     self.marked        = False
     self.enqueued      = False
@@ -435,6 +437,56 @@ class Daily:
 	if self.enqPut==False:
 	  self.enqPut=True
 	  MANAGER.PutEnqueue(self)
+ 
+    elif cmd[:11]=="set weekly ":
+      original=self.repeat.copy()
+      days=cmd.split(' ')[2:]
+      for i in self.repeat:
+	if self.repeat_dict[i] in days:
+	  self.repeat[i]=True
+	else:
+	  self.repeat[i]=False
+
+      if self.repeat.values().count(False)==7:
+	for i in original:
+	  self.repeat[i]=original[i]
+
+      elif self.repeat!=original or self.type_daily!=-1:
+	self.changePut=True
+	if self.type_daily!=-1:
+	  self.type_daily=-1
+	  self.json['frequency']='weekly'
+	  self.json['everyX']=1
+	self.repeat_string = WeekToString(self.repeat)
+	self.Highlight_Title(X, Y)
+	if self.enqPut==False:
+	  self.enqPut=True
+	  MANAGER.PutEnqueue(self)
+
+    elif cmd[:10]=="set every ":
+      original=self.repeat.copy()
+      number = cmd.split(' ')[2]
+      if number.isdigit()==False:
+	return
+      if self.type_daily==-1:
+	self.type_daily=int(number)
+	self.changePut=True
+	self.json['everyX']=int(number)
+	self.json['frequency']='daily'
+	self.Highlight_Title(X, Y)
+	if self.enqPut==False:
+	  self.enqPut=True
+	  MANAGER.PutEnqueue(self)
+
+      elif int(number)!=self.json['everyX']:
+	self.changePut=True
+	self.json['everyX']=int(number)
+	self.type_daily=int(number)
+	self.Highlight_Title(X, Y)
+	if self.enqPut==False:
+	  self.enqPut=True
+	  MANAGER.PutEnqueue(self)
+
 
 class TODO:
   def __init__(self, json_dict, screen):

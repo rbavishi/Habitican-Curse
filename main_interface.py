@@ -235,6 +235,8 @@ class UserClass:
     self.hp        = int(round(j['hp'], 0))
     self.gp        = int(j['gp'])
     self.maxHP     = j['maxHealth']
+    self.mp        = int(j['mp'])
+    self.maxMP     = int(j['maxMP'])
     self.exp       = j['exp']
     self.req_exp   = j['toNextLevel']
     self.level     = j['lvl']
@@ -249,6 +251,8 @@ class UserClass:
 
     self.hp        = int(round(j['hp'], 0))
     self.gp        = int(j['gp'])
+    self.mp        = int(j['mp'])
+    self.maxMP     = int(j['maxMP'])
     self.maxHP     = j['maxHealth']
     self.exp       = j['exp']
     self.req_exp   = j['toNextLevel']
@@ -265,15 +269,19 @@ class UserClass:
     
     #Health
     string =u'\u2665'.encode("utf-8")+" "+str(self.hp)+"/"+str(self.maxHP)+" "
-    self.scr.DisplayCustomColorBold(string, 2, y-2, 6) 
+    self.scr.DisplayCustomColorBold(string, 2, y-2, 7) 
 
     #Experience
     string =u'\u2605'.encode("utf-8")+" "+str(self.exp)+"/"+str(self.req_exp)+" "
     self.scr.DisplayCustomColorBold(string, 3, y-2, 17)
 
     #Gold
-    string =u'\u25CF'.encode("utf-8")+" "+str(self.gp)
-    self.scr.DisplayCustomColorBold(string, 4, y-2, 29)
+    string =u'\u25CF'.encode("utf-8")+" "+str(self.gp)+" "
+    self.scr.DisplayCustomColorBold(string, 4, y-2, 28)
+
+    #MP
+    string =u'\u2600'.encode("utf-8")+" "+str(self.mp)+"/"+str(self.maxMP)+" "
+    self.scr.DisplayCustomColorBold(string, 6, y-2, 35) 
 
 
 

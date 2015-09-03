@@ -35,6 +35,7 @@ class Manager:
     self.put_queue+=[item]
 
   def FlushMarks(self):
+    drops=[]
     for i in self.mark_queue:
       if i.marked==False:
 	continue
@@ -63,13 +64,26 @@ class Manager:
 	self.scr.screen.erase()
 
 	self.user_prof.gp=int(rjson['gp'])
+	self.user_prof.mp=int(rjson['mp'])
 	self.user_prof.hp=int(round(rjson['hp'], 0))
 	self.user_prof.exp=rjson['exp']
 	self.user_prof.level=rjson['lvl']
 
 	self.user_prof.PrintData()
 	self.intf.Init()
+	tmp_var=rjson['_tmp']
+	if tmp_var.has_key('drop'):
+	  if tmp_var['drop'].has_key('dialog'):
+	    drops+=str(tmp_var['drop']['dialog'])
+	  elif tmp_var['drop'].has_key('text'):
+	    drops+=str(tmp_var['drop']['text'])
+	  elif tmp_var['drop'].has_key('notes'):
+	    drops+=str(tmp_var['drop']['notes'])
     self.mark_queue=[]
+    if drops!=[]:
+      chatmenu=ChatMenu(drops, self.scr, SETTINGS.TASK_WINDOW_X, SETTINGS.TASK_WINDOW_Y) 
+      chatmenu.Init()
+      chatmenu.Input()
 
   def FlushDelete(self):
     for i in self.delete_queue:
