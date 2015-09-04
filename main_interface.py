@@ -237,8 +237,8 @@ class UserClass:
     self.maxHP     = j['maxHealth']
     self.mp        = int(j['mp'])
     self.maxMP     = int(j['maxMP'])
-    self.exp       = j['exp']
-    self.req_exp   = j['toNextLevel']
+    self.exp       = int(j['exp'])
+    self.req_exp   = int(j['toNextLevel'])
     self.level     = j['lvl']
     self.PrintData()
 
@@ -254,8 +254,8 @@ class UserClass:
     self.mp        = int(j['mp'])
     self.maxMP     = int(j['maxMP'])
     self.maxHP     = j['maxHealth']
-    self.exp       = j['exp']
-    self.req_exp   = j['toNextLevel']
+    self.exp       = int(j['exp'])
+    self.req_exp   = int(j['toNextLevel'])
     self.level     = j['lvl']
 
 

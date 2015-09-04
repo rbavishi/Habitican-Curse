@@ -65,7 +65,7 @@ class Manager:
 	rjson=resp.json()
 	self.scr.screen.erase()
 
-        new_gp = int(rjson['gp']); new_mp = int(rjson['mp']); new_hp = int(round(rjson['hp'], 0)); new_xp = rjson['exp']; new_level=rjson['lvl']
+        new_gp = int(rjson['gp']); new_mp = int(rjson['mp']); new_hp = int(round(rjson['hp'], 0)); new_xp = int(rjson['exp']); new_level=rjson['lvl']
 	diffdict['gp']+=new_gp - self.user_prof.gp
 	diffdict['hp']+=new_hp - self.user_prof.hp
 	diffdict['mp']+=new_mp - self.user_prof.mp
@@ -74,7 +74,7 @@ class Manager:
 	self.user_prof.gp=int(rjson['gp'])
 	self.user_prof.mp=int(rjson['mp'])
 	self.user_prof.hp=int(round(rjson['hp'], 0))
-	self.user_prof.exp=rjson['exp']
+	self.user_prof.exp=int(rjson['exp'])
 	self.user_prof.level=rjson['lvl']
 
 	self.user_prof.PrintData()
