@@ -36,6 +36,8 @@ class Manager:
 
   def FlushMarks(self):
     drops=[]
+    diffdict={}
+    diffdict['level']=0; diffdict['hp']=0; diffdict['gp']=0; diffdict['xp']=0; diffdict['mp']=0
     for i in self.mark_queue:
       if i.marked==False:
 	continue
@@ -63,6 +65,12 @@ class Manager:
 	rjson=resp.json()
 	self.scr.screen.erase()
 
+        new_gp = int(rjson['gp']); new_mp = int(rjson['mp']); new_hp = int(round(rjson['hp'], 0)); new_xp = rjson['exp']; new_level=rjson['lvl']
+	diffdict['gp']+=new_gp - self.user_prof.gp
+	diffdict['hp']+=new_hp - self.user_prof.hp
+	diffdict['mp']+=new_mp - self.user_prof.mp
+	diffdict['xp']+=new_xp - self.user_prof.exp
+	diffdict['level']+=new_level - self.user_prof.level
 	self.user_prof.gp=int(rjson['gp'])
 	self.user_prof.mp=int(rjson['mp'])
 	self.user_prof.hp=int(round(rjson['hp'], 0))
@@ -88,6 +96,10 @@ class Manager:
       chatmenu.Input()
       self.scr.Restore()
       self.scr.SaveState()
+
+    self.scr.Restore()
+    self.scr.SaveState()
+    self.user_prof.PrintGain(diffdict)
 
   def FlushDelete(self):
     for i in self.delete_queue:

@@ -283,6 +283,38 @@ class UserClass:
     string =u'\u2600'.encode("utf-8")+" "+str(self.mp)+"/"+str(self.maxMP)+" "
     self.scr.DisplayCustomColorBold(string, 6, y-2, 35) 
 
+  def PrintGain(self, diffdict):
+    y,x=self.scr.screen.getmaxyx()
+    Y=1
+    #Level
+    if diffdict['level']!=0:
+      string =u'\u2949'.encode("utf-8")+" "+('{0:+d}'.format(diffdict['level']))+" "
+      self.scr.DisplayCustomColorBold(string, 0, y-3, 0)
+      Y+=7
+    
+    #Health
+    if diffdict['hp']!=0:
+      string =u'\u2665'.encode("utf-8")+" "+('{0:+d}'.format(diffdict['hp']))+" "
+      self.scr.DisplayCustomColorBold(string, 2, y-3, 7) 
+      Y+=7
+
+    #Experience
+    if diffdict['xp']!=0:
+      string =u'\u2605'.encode("utf-8")+" "+('{0:+d}'.format(diffdict['xp']))+" "
+      self.scr.DisplayCustomColorBold(string, 3, y-3, 17)
+      Y+=7
+
+    #Gold
+    if diffdict['gp']!=0:
+      string =u'\u25CF'.encode("utf-8")+" "+('{0:+d}'.format(diffdict['gp']))+" "
+      self.scr.DisplayCustomColorBold(string, 4, y-3, 28)
+      Y+=7
+
+    #MP
+    if diffdict['mp']!=0:
+      string =u'\u2600'.encode("utf-8")+" "+('{0:+d}'.format(diffdict['mp']))+" "
+      self.scr.DisplayCustomColorBold(string, 6, y-3, 35)
+      Y+=7
 
 
 
