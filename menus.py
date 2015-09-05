@@ -61,10 +61,28 @@ class Menu:
     self.x=x
     self.y=y
     self.counter=0
-    if(len(item_list)==0):
+    if(len(self.items)==0):
       self.counter=-1
     self.start=0
     self.end=min(SETTINGS.MAX_MENU_ROWS-1, len(item_list)-1)
+
+  def ResetCounter(self):
+    if(len(self.items)==0):
+      self.counter=-1
+    else:
+      self.counter=0
+    self.start=0
+    self.end=min(SETTINGS.MAX_MENU_ROWS-1, len(self.items)-1)
+
+  def InsertItemBeginning(self, item):
+    self.items=[item]+self.items
+    if(len(self.items)==0):
+      self.counter=-1
+    else:
+      self.counter=0
+    self.start=0
+    self.end=min(SETTINGS.MAX_MENU_ROWS-1, len(self.items)-1)
+
 
   def Init(self, highlight=True):
     self.title.DisplayBold()

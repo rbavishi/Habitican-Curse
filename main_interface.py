@@ -186,7 +186,7 @@ class Interface:
     self.screen.Display(":", y-1, 0)
     curses.echo()
     curses.curs_set(1)
-    s=self.screen.screen.getstr(y-1, 1)
+    s=self.screen.screen.getstr(y-1, 1).strip()
     curses.curs_set(0)
     curses.noecho()
     if(s=="w"):
@@ -203,6 +203,12 @@ class Interface:
 
     elif(s=="r"):
       self.manager.Refresh()
+
+    elif(s=="et"):
+      self.manager.CreateTask('todo')
+
+    elif(s=="ed"):
+      self.manager.CreateTask('daily')
 
     else:
       self.screen.Display(" "*(x-1), y-1, 0)

@@ -186,6 +186,58 @@ class Manager:
       self.scr.Display(" "*(x-1), y-1, 0)
       self.scr.Display("Failed", y-1, 0)
 
+  def CreateTask(self, task_type):
+    string="New "
+    if task_type=="todo":
+      string+="TODO"
+    elif task_type=="daily":
+      string+="Daily"
+    self.scr.Restore()
+    self.scr.SaveState()
+    curses.echo()
+    curses.curs_set(1)
+    self.scr.DisplayBold(string, SETTINGS.TASK_WINDOW_X, SETTINGS.TASK_WINDOW_Y)
+    self.scr.Display("Title: ", SETTINGS.TASK_WINDOW_X+2, SETTINGS.TASK_WINDOW_Y)
+    s=self.scr.screen.getstr(SETTINGS.TASK_WINDOW_X+2, SETTINGS.TASK_WINDOW_Y + 8, 50)
+    curses.noecho()
+    curses.curs_set(0)
+    if s=="":
+      y,x=self.scr.screen.getmaxyx()
+      self.scr.Restore()
+      self.scr.SaveState()
+      self.scr.Display(" "*(x-1), y-1, 0)
+      self.scr.Display("Empty Title. Cancelling...", y-1, 0)
+      return
+
+    y,x=self.scr.screen.getmaxyx()
+    url='https://habitica.com:443/api/v2/user/tasks'
+    task={}
+    task['text']=s; task['type']=task_type; task['priority']=1
+    if task_type=='todo' or task_type=='daily':
+      task['checklist']=[]
+    self.scr.Display("Creating Task...", y-1, 0)
+    resp=requests.post(url, headers=self.headers, json=task)
+    if resp.status_code!=200:
+      self.scr.Display(" "*(x-1), y-1, 0)
+      self.scr.Display("Failed", y-1, 0)
+    else:
+      self.scr.Restore()
+      self.scr.SaveState()
+      self.scr.Display(" "*(x-1), y-1, 0)
+      self.scr.Display("Successful", y-1, 0)
+      json_resp=resp.json()
+      if task_type=='todo':
+	new_item=MenuItem(Tasks.TODO(json_resp, self.scr), self.scr)
+	self.intf.tasks=[new_item]+self.intf.tasks
+	self.intf.Reload(self.intf.tasks)
+	self.intf.Init()
+      elif task_type=='daily':
+	new_item=MenuItem(Tasks.Daily(json_resp, self.scr), self.scr)
+	self.intf.tasks=[new_item]+self.intf.tasks
+	self.intf.Reload(self.intf.tasks)
+	self.intf.Init()
+      
+
   def Refresh(self):
     self.scr.Display("Connecting...")
     f=open('keys.txt', 'r')
