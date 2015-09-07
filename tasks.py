@@ -870,6 +870,9 @@ class Checklist:
 	    self.checklist.remove(i.item)
 	    i.delete=False
 	    self.items.remove(i)
+	    self.counter=0
+	    self.start=0
+	    self.end=min(6, len(self.checklist)+1)
 	self.screen.Restore()
 	self.screen.SaveState()
 	break
