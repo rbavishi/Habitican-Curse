@@ -172,9 +172,18 @@ class Manager:
       self.scr.Display(" "*(x-1), y-1, 0)
       self.scr.Display("Done", y-1, 0)
       if quest!={}:
-	string ="Boss "+u'\u2665'.encode("utf-8")+" : "+str(int(quest['progress']['hp']))
-	self.scr.DisplayCustomColorBold(string, 2, y-3, 0)
-	self.scr.SaveState()
+	if quest.has_key('progress') and quest['progress'].has_key('hp'):
+	  string ="Boss "+u'\u2665'.encode("utf-8")+" : "+str(int(quest['progress']['hp']))
+	  self.scr.DisplayCustomColorBold(string, 2, y-3, 0)
+	  self.scr.SaveState()
+	elif quest.has_key('progress') and quest['progress'].has_key('collect'):
+	  collect_string=""
+	  for key, value in quest['progress']['collect'].iteritems():
+	    collect_string+=str(key)+" : "+str(value)
+	  string ="Collect "+collect_string
+	  self.scr.DisplayCustomColorBold(string, 2, y-3, 0)
+	  self.scr.SaveState()
+
   
       chatmenu=ChatMenu(rjson['chat'][:50], self.scr, SETTINGS.TASK_WINDOW_X, SETTINGS.TASK_WINDOW_Y) 
       chatmenu.Init()
