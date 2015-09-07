@@ -195,7 +195,7 @@ class Interface:
       self.screen.Display(" "*(x-1), y-1, 0)
       self.screen.Display("Done", y-1, 0)
 
-    elif(s=="boss"):
+    elif(s=="quest"):
       self.screen.Restore()
       self.screen.SaveState()
       self.screen.Display("Connecting...", y-1, 0)
