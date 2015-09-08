@@ -25,20 +25,20 @@ class Interface:
       else:
 	self.todos+=[i]
 
-    self.HabitMenu=Menu(self.habits, "Habits", screen, 2, 1)
-    self.DailyMenu=Menu(self.dailies, "Dailies", screen, 2, 3+SETTINGS.COLUMN_TEXT_WIDTH)
-    self.TODOMenu =Menu(self.todos,  "TODOs", screen, 2, 5+2*SETTINGS.COLUMN_TEXT_WIDTH)
+    self.HabitMenu=Menu(self.habits, "Habits", screen, 2, 2)
+    self.DailyMenu=Menu(self.dailies, "Dailies", screen, 2, 5+SETTINGS.COLUMN_TEXT_WIDTH)
+    self.TODOMenu =Menu(self.todos,  "TODOs", screen, 2, 8+2*SETTINGS.COLUMN_TEXT_WIDTH)
 
     self.current=0
 
-  def Reload(self, tasks):
-    self.tasks=tasks
+  def Reload(self):
+    self.tasks=self.habits+self.dailies+self.todos
 
     self.habits=[]
     self.dailies=[]
     self.todos=[]
 
-    for i in tasks:
+    for i in self.tasks:
       if i.task_type=="habit":
 	self.habits+=[i]
 
@@ -48,9 +48,9 @@ class Interface:
       else:
 	self.todos+=[i]
 
-    self.HabitMenu=Menu(self.habits, "Habits", self.screen, 2, 1)
-    self.DailyMenu=Menu(self.dailies, "Dailies", self.screen, 2, 3+SETTINGS.COLUMN_TEXT_WIDTH)
-    self.TODOMenu =Menu(self.todos,  "TODOs", self.screen, 2, 5+2*SETTINGS.COLUMN_TEXT_WIDTH)
+    self.HabitMenu=Menu(self.habits, "Habits", self.screen, 2, 2)
+    self.DailyMenu=Menu(self.dailies, "Dailies", self.screen, 2, 5+SETTINGS.COLUMN_TEXT_WIDTH)
+    self.TODOMenu =Menu(self.todos,  "TODOs", self.screen, 2, 8+2*SETTINGS.COLUMN_TEXT_WIDTH)
 
   def Init(self):
     y,x=self.screen.screen.getmaxyx()

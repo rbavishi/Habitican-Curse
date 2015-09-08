@@ -87,6 +87,7 @@ class Menu:
   def Init(self, highlight=True):
     self.title.DisplayBold()
     new_x=self.x + 2
+    self.screen.MenuScrollBar(new_x, self.y-2, self.start, self.end, len(self.items)-1)
 
     for i in xrange(self.start, self.end+1):
       item=self.items[i]
@@ -174,6 +175,7 @@ class Menu:
     if(len(self.items)==0):
       self.counter=-1
     self.start=0
+    self.counter=0
     self.end=min(SETTINGS.MAX_MENU_ROWS-1, len(self.items)-1)
 
 def GetDiffTime(cur_time):

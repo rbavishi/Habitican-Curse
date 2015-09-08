@@ -237,13 +237,15 @@ class Manager:
       json_resp=resp.json()
       if task_type=='todo':
 	new_item=MenuItem(Tasks.TODO(json_resp, self.scr), self.scr)
-	self.intf.tasks=[new_item]+self.intf.tasks
-	self.intf.Reload(self.intf.tasks)
+	self.intf.todos=[new_item]+self.intf.todos
+	#self.intf.Reload(self.intf.tasks)
+	self.intf.Reload()
 	self.intf.Init()
       elif task_type=='daily':
 	new_item=MenuItem(Tasks.Daily(json_resp, self.scr), self.scr)
-	self.intf.tasks=[new_item]+self.intf.tasks
-	self.intf.Reload(self.intf.tasks)
+	self.intf.dailies=[new_item]+self.intf.dailies
+	#self.intf.Reload(self.intf.tasks)
+	self.intf.Reload()
 	self.intf.Init()
       
 

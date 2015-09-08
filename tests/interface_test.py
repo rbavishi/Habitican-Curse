@@ -26,6 +26,7 @@ def main(screen):
   curses.start_color()
   curses.use_default_colors()
   curses.init_pair(1, 19, 244)
+  curses.init_pair(10, 244, 19)
   curses.curs_set(0)
   #curses.init_pair(2, curses.COLOR_RED, -1)
   #curses.init_pair(3, curses.COLOR_GREEN, -1)
@@ -47,7 +48,7 @@ def main(screen):
 
   ### Disable if you want fixed column size
   (y,x)=scr.screen.getmaxyx()
-  SETTINGS.COLUMN_TEXT_WIDTH = (x-6)/3
+  SETTINGS.COLUMN_TEXT_WIDTH = (x-9)/3
 
   f=open('keys.txt', 'r')
   user_id=f.readline().split('\n')[0]
