@@ -233,7 +233,9 @@ class ChatMenu:
       return
     X=self.x
     Y=self.y
+    yp, xp=self.screen.screen.getmaxyx()
     status=False
+    self.screen.MenuScrollBar(X, self.width - 10, self.start, self.end, len(self.text_strs), yp-20)
 
     for i in xrange(self.start, self.end):
       if self.text_strs[i][0]=='*':
