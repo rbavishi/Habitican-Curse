@@ -52,6 +52,26 @@ class Interface:
     self.DailyMenu=Menu(self.dailies, "Dailies", self.screen, 2, 5+SETTINGS.COLUMN_TEXT_WIDTH)
     self.TODOMenu =Menu(self.todos,  "TODOs", self.screen, 2, 8+2*SETTINGS.COLUMN_TEXT_WIDTH)
 
+  def ReloadFromTasks(self, tasks):
+    self.tasks=tasks
+
+    self.habits=[]
+    self.dailies=[]
+    self.todos=[]
+
+    for i in self.tasks:
+      if i.task_type=="habit":
+	self.habits+=[i]
+
+      elif i.task_type=="daily":
+	self.dailies+=[i]
+
+      else:
+	self.todos+=[i]
+
+    self.HabitMenu=Menu(self.habits, "Habits", self.screen, 2, 2)
+    self.DailyMenu=Menu(self.dailies, "Dailies", self.screen, 2, 5+SETTINGS.COLUMN_TEXT_WIDTH)
+    self.TODOMenu =Menu(self.todos,  "TODOs", self.screen, 2, 8+2*SETTINGS.COLUMN_TEXT_WIDTH)
   def Init(self):
     y,x=self.screen.screen.getmaxyx()
     self.screen.DisplayCustomColorBold('='*(x-1), 7, 13, 0)

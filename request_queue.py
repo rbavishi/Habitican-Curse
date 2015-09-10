@@ -171,7 +171,7 @@ class Manager:
       quest=rjson['quest']
       self.scr.Display(" "*(x-1), y-1, 0)
       self.scr.Display("Done", y-1, 0)
-      if quest!={}:
+      if rjson.has_key('quest') and quest!=None:
 	if quest.has_key('progress') and quest['progress'].has_key('hp'):
 	  string ="Boss "+u'\u2665'.encode("utf-8")+" : "+str(int(quest['progress']['hp']))
 	  self.scr.DisplayCustomColorBold(string, 2, y-3, 0)
@@ -286,7 +286,7 @@ class Manager:
 	elif i['type']=='todo' and i['completed']==False:
 	  tasks+=[MenuItem(Tasks.TODO(i, self.scr), self.scr)]
     
-    self.intf.Reload(tasks)
+    self.intf.ReloadFromTasks(tasks)
     user_prof.Init(self.intf, self.scr, self.headers, resp['stats'])
     self.intf.Init()
 
