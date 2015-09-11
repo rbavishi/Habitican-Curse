@@ -786,6 +786,7 @@ class Checklist:
     self.screen.DisplayCustomColorBold("Checklist - " +self.taskname, 2, X, Y)
     X+=2
 
+    self.screen.MenuScrollBar(X, 0, self.start, self.end, len(self.checklist)+1, 6)
     for i in xrange(self.start, self.end):
       self.items[i].SetXY(X, Y)
       X+=1
