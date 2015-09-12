@@ -393,6 +393,15 @@ class Daily:
     self.ChecklistObj.Input()
     if self.orig_checklist!=self.ChecklistObj.checklist:
       self.changePut=True
+      if(self.orig_checklist==[]):
+	self.TextLine.string = u'\u25BC'.encode("utf-8")+" "+self.TextLine.string
+	self.TextLine.Redefine()
+      self.orig_checklist=[]
+      for i in self.ChecklistObj.checklist:
+	self.orig_checklist+=[i.copy()]
+      if(self.orig_checklist==[]):
+	self.TextLine.string = self.TextLine.string.replace(u'\u25BC'.encode("utf-8")+" ", "")
+	self.TextLine.Redefine()
       if self.enqPut==False:
 	self.enqPut=True
 	MANAGER.PutEnqueue(self)
@@ -527,11 +536,12 @@ class TODO:
 
     self.checklist=json_dict['checklist']
     self.orig_checklist=[]
+    self.checklists_done="("+str(sum([1 for i in self.checklist if i['completed']==True]))+"/"+str(len(self.checklist))+")"
     for i in self.checklist:
       self.orig_checklist+=[i.copy()]
     self.ChecklistObj=Checklist(self.checklist, self.screen, self.TextLine.ColumnText())
     if(self.checklist!=[]):
-      self.TextLine.string = u'\u25BC'.encode("utf-8")+" "+self.TextLine.string
+      self.TextLine.string = u'\u25BC'.encode("utf-8")+" "+self.checklists_done+" "+self.TextLine.string
       self.TextLine.Redefine()
 
   def Init(self):
@@ -624,6 +634,19 @@ class TODO:
     self.ChecklistObj.Input()
     if self.orig_checklist!=self.ChecklistObj.checklist:
       self.changePut=True
+      new_checklists_done="("+str(sum([1 for i in self.checklist if i['completed']==True]))+"/"+str(len(self.checklist))+")"
+      if(self.orig_checklist==[]):
+	self.TextLine.string = u'\u25BC'.encode("utf-8")+" "+new_checklists_done+" "+self.TextLine.string
+	self.checklists_done=new_checklists_done
+	self.TextLine.Redefine()
+      self.orig_checklist=[]
+      for i in self.ChecklistObj.checklist:
+	self.orig_checklist+=[i.copy()]
+      if(self.orig_checklist==[]):
+	self.TextLine.string = self.TextLine.string.replace(u'\u25BC'.encode("utf-8")+" ", "")
+	self.TextLine.string = self.TextLine.string.replace(self.checklists_done+" ", "")
+	self.checklists_done=""
+	self.TextLine.Redefine()
       if self.enqPut==False:
 	self.enqPut=True
 	MANAGER.PutEnqueue(self)
