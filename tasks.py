@@ -639,9 +639,16 @@ class TODO:
 	self.TextLine.string = u'\u25BC'.encode("utf-8")+" "+new_checklists_done+" "+self.TextLine.string
 	self.checklists_done=new_checklists_done
 	self.TextLine.Redefine()
+      else:
+	self.TextLine.string = self.TextLine.string.replace(self.checklists_done+" ", new_checklists_done+" ")
+	#self.TextLine.string = u'\u25BC'.encode("utf-8")+" "+new_checklists_done+" "+self.TextLine.string
+	self.checklists_done=new_checklists_done
+	self.TextLine.Redefine()
+
       self.orig_checklist=[]
       for i in self.ChecklistObj.checklist:
 	self.orig_checklist+=[i.copy()]
+
       if(self.orig_checklist==[]):
 	self.TextLine.string = self.TextLine.string.replace(u'\u25BC'.encode("utf-8")+" ", "")
 	self.TextLine.string = self.TextLine.string.replace(self.checklists_done+" ", "")
