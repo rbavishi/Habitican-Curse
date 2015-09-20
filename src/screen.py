@@ -14,7 +14,7 @@ import tempfile
 from config import *
 
 
-class Screen:
+class Screen(object):
 
     def __init__(self, screen):
         self.screen = screen
@@ -31,8 +31,12 @@ class Screen:
         # Use these to get a proper order of backtrack points
         self.stackFile = tempfile.TemporaryFile()
         self.stack = []
+        self.SCR_X=0
+        self.SCR_Y=0
+        self.SCR_MENU_ITEM_WIDTH=0
 
     def Initialize(self):
+        #global SCR_X, SCR_Y, SCR_MENU_ITEM_WIDTH
         # Cursor not visible
         curses.curs_set(0)
 
@@ -40,6 +44,7 @@ class Screen:
         curses.start_color()
         curses.use_default_colors()
         curses.init_pair(SCR_COLOR_RED, curses.COLOR_RED, SCR_COLOR_BGRD)
+        curses.init_pair(SCR_COLOR_CYAN, curses.COLOR_CYAN, SCR_COLOR_BGRD)
         curses.init_pair(SCR_COLOR_GREEN, curses.COLOR_GREEN, SCR_COLOR_BGRD)
         curses.init_pair(SCR_COLOR_YELLOW, curses.COLOR_YELLOW, SCR_COLOR_BGRD)
         curses.init_pair(SCR_COLOR_MAGENTA, curses.COLOR_MAGENTA, SCR_COLOR_BGRD)
@@ -48,12 +53,21 @@ class Screen:
 
         curses.init_pair(SCR_COLOR_LIGHT_ORANGE, 209, SCR_COLOR_BGRD)
         curses.init_pair(SCR_COLOR_DARK_ORANGE, 208, SCR_COLOR_BGRD)
+        curses.init_pair(SCR_COLOR_DARK_GRAY, 237, SCR_COLOR_BGRD)
+        curses.init_pair(SCR_COLOR_LIGHT_GRAY, 244, SCR_COLOR_BGRD)
 
         curses.init_pair(SCR_COLOR_BLUE_GRAY_BGRD, 19, 244)
         curses.init_pair(SCR_COLOR_GRAY_BLUE_BGRD, 244, 19)
 
+        curses.init_pair(SCR_COLOR_WHITE_GRAY_BGRD, curses.COLOR_WHITE, 234)
+        curses.init_pair(SCR_COLOR_GRAY_WHITE_BGRD, 236, curses.COLOR_WHITE)
+
         # Same as writing " " in white on a black background
         self.screen.bkgd(' ', curses.color_pair(SCR_COLOR_WHITE))
+
+        # Screen Specifications
+        self.SCR_Y, self.SCR_X = self.screen.getmaxyx()
+        self.SCR_MENU_ITEM_WIDTH = (self.SCR_X - 10)/3
 
     def Refresh(self):
         self.screen.refresh()
@@ -108,7 +122,7 @@ class Screen:
 
     def Highlight(self, string, x=0, y=0):
         self.screen.addstr(x, y, string, curses.A_BOLD |
-                                         curses.color_pair(SCR_COLOR_BLUE_GRAY_BGRD))
+                                         curses.color_pair(SCR_COLOR_WHITE_GRAY_BGRD))
         self.Refresh()
 
     def DisplayCustomColor(self, string, color=0, x=0, y=0):
@@ -119,3 +133,6 @@ class Screen:
         self.screen.addstr(x, y, string, curses.A_BOLD |
                                          curses.color_pair(color))
         self.Refresh()
+
+    def GetCharacter(self):
+        return self.screen.getch()
