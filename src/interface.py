@@ -37,6 +37,9 @@ class Interface(object):
         # Borders
         G.screen.DisplayCustomColorBold("="*C.SCR_Y, C.SCR_COLOR_WHITE, 14, 0)
 
+        # User Stats
+        G.user.PrintData()
+
         # Save this context for future use in a register
         G.screen.SaveInRegister(0)
 

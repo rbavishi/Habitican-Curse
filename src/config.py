@@ -28,10 +28,14 @@ SCR_COLOR_DARK_GRAY    = 15
 SCR_COLOR_LIGHT_GRAY    = 16
 
 # Display Colors with Background
-SCR_COLOR_BLUE_GRAY_BGRD = 10
-SCR_COLOR_GRAY_BLUE_BGRD = 11
 SCR_COLOR_WHITE_GRAY_BGRD = 12
 SCR_COLOR_GRAY_WHITE_BGRD = 13
+
+SCR_COLOR_RED_GRAY_BGRD    = 17
+SCR_COLOR_GREEN_GRAY_BGRD  = 18
+SCR_COLOR_YELLOW_GRAY_BGRD = 19
+SCR_COLOR_BLUE_GRAY_BGRD   = 20
+SCR_COLOR_WHITE_GRAY_BGRD  = 21
 
 # Background Color (Default black)
 SCR_COLOR_BGRD = curses.COLOR_BLACK
@@ -47,6 +51,7 @@ SYMBOL_EXPERIENCE = u'\u2605'.encode("utf-8")
 SYMBOL_GOLD = u'\u25CF'.encode("utf-8")
 SYMBOL_MANA = u'\u2600'.encode("utf-8")
 SYMBOL_EDIT = u'\u270E'.encode("utf-8")
+SYMBOL_LEVEL = u'\u2949'.encode("utf-8")
 
 # Status Attributes
 HabitStatus = {'+': False, '-': False, SYMBOL_DELETE: False, SYMBOL_EDIT: False}

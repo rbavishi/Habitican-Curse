@@ -16,6 +16,7 @@ import helper as H
 import menu as M
 import task as T
 import debug as DEBUG
+import user as U
 
 # URL Definitions
 GET_TASKS_URL = "https://habitica.com:443/api/v2/user/tasks"
@@ -56,6 +57,9 @@ class RequestManager(object):
         json = response.json()
         habits, dailies, todos = json['habits'], json['dailys'], json['todos']
 
+        # Initialize User Stats
+        G.user = U.User(json['stats']) 
+
         # Convert everything to list form. In case of a single task, the
         # response won't be a list
         habits = ([habits]) if type(habits)!=list else habits
@@ -89,6 +93,11 @@ class RequestManager(object):
     def Flush(self):
         DEBUG.Display("Please Wait...")
 
+        # Difference obtained in user stats due to these operations
+        diffDict = {'hp': 0, 'gp': 0, 'mp': 0, 'exp': 0, 'lvl': 0}
+        origDict = {'hp': G.user.hp, 'gp': G.user.gp, 'mp': G.user.mp,
+                    'exp': G.user.exp, 'lvl': G.user.lvl}
+
         # Habits marked as +
         for i in self.MarkUpQueue:
             URL = GET_TASKS_URL + "/" + i.task.taskID + "/" + "up"
@@ -98,6 +107,10 @@ class RequestManager(object):
             if response.status_code!=200:
                 return
 
+            json = response.json()
+            for i in diffDict:
+                diffDict[i] = json[i] - origDict[i]
+
         # Habits marked as -
         for i in self.MarkDownQueue:
             URL = GET_TASKS_URL + "/" + i.task.taskID + "/" + "down"
@@ -106,6 +119,10 @@ class RequestManager(object):
             # Need some error handling here
             if response.status_code!=200:
                 return
+
+            json = response.json()
+            for i in diffDict:
+                diffDict[i] = json[i] - origDict[i]
 
         # Dailies and TODOS marked as completed
         for i in self.MarkQueue:
@@ -124,6 +141,10 @@ class RequestManager(object):
             elif i.task.task_type == "daily":
                 i.task.completed ^= True
 
+            json = response.json()
+            for i in diffDict:
+                diffDict[i] = json[i] - origDict[i]
+
         for i in self.DeleteQueue:
             URL = GET_TASKS_URL + "/" + i.task.taskID
             response = requests.delete(URL, headers=self.headers)
@@ -140,6 +161,7 @@ class RequestManager(object):
                 G.TODOMenu.Remove(i.task.taskID)
 
         G.screen.Erase()
+        G.user.PrintDiff(diffDict)
         G.intf.Init()
 
 

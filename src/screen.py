@@ -55,8 +55,11 @@ class Screen(object):
         curses.init_pair(C.SCR_COLOR_DARK_GRAY, 237, C.SCR_COLOR_BGRD)
         curses.init_pair(C.SCR_COLOR_LIGHT_GRAY, 244, C.SCR_COLOR_BGRD)
 
-        curses.init_pair(C.SCR_COLOR_BLUE_GRAY_BGRD, 19, 244)
-        curses.init_pair(C.SCR_COLOR_GRAY_BLUE_BGRD, 244, 19)
+        curses.init_pair(C.SCR_COLOR_RED_GRAY_BGRD, curses.COLOR_RED, 234)
+        curses.init_pair(C.SCR_COLOR_WHITE_GRAY_BGRD, curses.COLOR_WHITE, 234)
+        curses.init_pair(C.SCR_COLOR_GREEN_GRAY_BGRD, curses.COLOR_GREEN, 234)
+        curses.init_pair(C.SCR_COLOR_YELLOW_GRAY_BGRD, curses.COLOR_YELLOW, 234)
+        curses.init_pair(C.SCR_COLOR_BLUE_GRAY_BGRD, curses.COLOR_BLUE, 234)
 
         curses.init_pair(C.SCR_COLOR_WHITE_GRAY_BGRD, curses.COLOR_WHITE, 234)
         curses.init_pair(C.SCR_COLOR_GRAY_WHITE_BGRD, 236, curses.COLOR_WHITE)
