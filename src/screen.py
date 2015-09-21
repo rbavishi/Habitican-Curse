@@ -6,13 +6,12 @@
 # Standard Library Imports
 import curses
 import tempfile
+import math
 
 # Custom Module Imports
 
-# from import * is bad practice, but we use it just for convenience in case of
-# constants
-from config import *
-
+import config as C
+import debug as DEBUG
 
 class Screen(object):
 
@@ -22,10 +21,10 @@ class Screen(object):
         # These are special context registers.
         # Use these to store some important backtrack points.
         self.ctxts = []
-        for i in xrange(NUM_CONTEXT_REGISTERS):
+        for i in xrange(C.NUM_CONTEXT_REGISTERS):
             self.ctxts += [tempfile.TemporaryFile()]
 
-        self.active_registers = [False]*NUM_CONTEXT_REGISTERS
+        self.active_registers = [False]*C.NUM_CONTEXT_REGISTERS
 
         # This is the stack for saving contexts.
         # Use these to get a proper order of backtrack points
@@ -43,27 +42,27 @@ class Screen(object):
         # Color and Background
         curses.start_color()
         curses.use_default_colors()
-        curses.init_pair(SCR_COLOR_RED, curses.COLOR_RED, SCR_COLOR_BGRD)
-        curses.init_pair(SCR_COLOR_CYAN, curses.COLOR_CYAN, SCR_COLOR_BGRD)
-        curses.init_pair(SCR_COLOR_GREEN, curses.COLOR_GREEN, SCR_COLOR_BGRD)
-        curses.init_pair(SCR_COLOR_YELLOW, curses.COLOR_YELLOW, SCR_COLOR_BGRD)
-        curses.init_pair(SCR_COLOR_MAGENTA, curses.COLOR_MAGENTA, SCR_COLOR_BGRD)
-        curses.init_pair(SCR_COLOR_BLUE, curses.COLOR_BLUE, SCR_COLOR_BGRD)
-        curses.init_pair(SCR_COLOR_WHITE, curses.COLOR_WHITE, SCR_COLOR_BGRD)
+        curses.init_pair(C.SCR_COLOR_RED, curses.COLOR_RED, C.SCR_COLOR_BGRD)
+        curses.init_pair(C.SCR_COLOR_CYAN, curses.COLOR_CYAN, C.SCR_COLOR_BGRD)
+        curses.init_pair(C.SCR_COLOR_GREEN, curses.COLOR_GREEN, C.SCR_COLOR_BGRD)
+        curses.init_pair(C.SCR_COLOR_YELLOW, curses.COLOR_YELLOW, C.SCR_COLOR_BGRD)
+        curses.init_pair(C.SCR_COLOR_MAGENTA, curses.COLOR_MAGENTA, C.SCR_COLOR_BGRD)
+        curses.init_pair(C.SCR_COLOR_BLUE, curses.COLOR_BLUE, C.SCR_COLOR_BGRD)
+        curses.init_pair(C.SCR_COLOR_WHITE, curses.COLOR_WHITE, C.SCR_COLOR_BGRD)
 
-        curses.init_pair(SCR_COLOR_LIGHT_ORANGE, 209, SCR_COLOR_BGRD)
-        curses.init_pair(SCR_COLOR_DARK_ORANGE, 208, SCR_COLOR_BGRD)
-        curses.init_pair(SCR_COLOR_DARK_GRAY, 237, SCR_COLOR_BGRD)
-        curses.init_pair(SCR_COLOR_LIGHT_GRAY, 244, SCR_COLOR_BGRD)
+        curses.init_pair(C.SCR_COLOR_LIGHT_ORANGE, 209, C.SCR_COLOR_BGRD)
+        curses.init_pair(C.SCR_COLOR_DARK_ORANGE, 208, C.SCR_COLOR_BGRD)
+        curses.init_pair(C.SCR_COLOR_DARK_GRAY, 237, C.SCR_COLOR_BGRD)
+        curses.init_pair(C.SCR_COLOR_LIGHT_GRAY, 244, C.SCR_COLOR_BGRD)
 
-        curses.init_pair(SCR_COLOR_BLUE_GRAY_BGRD, 19, 244)
-        curses.init_pair(SCR_COLOR_GRAY_BLUE_BGRD, 244, 19)
+        curses.init_pair(C.SCR_COLOR_BLUE_GRAY_BGRD, 19, 244)
+        curses.init_pair(C.SCR_COLOR_GRAY_BLUE_BGRD, 244, 19)
 
-        curses.init_pair(SCR_COLOR_WHITE_GRAY_BGRD, curses.COLOR_WHITE, 234)
-        curses.init_pair(SCR_COLOR_GRAY_WHITE_BGRD, 236, curses.COLOR_WHITE)
+        curses.init_pair(C.SCR_COLOR_WHITE_GRAY_BGRD, curses.COLOR_WHITE, 234)
+        curses.init_pair(C.SCR_COLOR_GRAY_WHITE_BGRD, 236, curses.COLOR_WHITE)
 
         # Same as writing " " in white on a black background
-        self.screen.bkgd(' ', curses.color_pair(SCR_COLOR_WHITE))
+        self.screen.bkgd(' ', curses.color_pair(C.SCR_COLOR_WHITE))
 
         # Screen Specifications
         self.SCR_Y, self.SCR_X = self.screen.getmaxyx()
@@ -79,8 +78,8 @@ class Screen(object):
         self.screen.clear()
 
     def SaveInRegister(self, register):
-        # Should be between 0 and NUM_CONTEXT_REGISTERS-1
-        if register >= NUM_CONTEXT_REGISTERS:
+        # Should be between 0 and C.NUM_CONTEXT_REGISTERS-1
+        if register >= C.NUM_CONTEXT_REGISTERS:
             return
 
         self.ctxts[register].seek(0)
@@ -88,8 +87,8 @@ class Screen(object):
         self.active_registers[register] = True
 
     def RestoreRegister(self, register):
-        # Should be between 0 and NUM_CONTEXT_REGISTERS-1
-        if register >= NUM_CONTEXT_REGISTERS:
+        # Should be between 0 and C.NUM_CONTEXT_REGISTERS-1
+        if register >= C.NUM_CONTEXT_REGISTERS:
             return
 
         # Register is empty
@@ -122,7 +121,7 @@ class Screen(object):
 
     def Highlight(self, string, x=0, y=0):
         self.screen.addstr(x, y, string, curses.A_BOLD |
-                                         curses.color_pair(SCR_COLOR_WHITE_GRAY_BGRD))
+                                         curses.color_pair(C.SCR_COLOR_WHITE_GRAY_BGRD))
         self.Refresh()
 
     def DisplayCustomColor(self, string, color=0, x=0, y=0):
@@ -136,3 +135,30 @@ class Screen(object):
 
     def GetCharacter(self):
         return self.screen.getch()
+
+    def ScrollBar(self, X, Y, start, end, length, rows = -1):
+        if rows == -1:
+            rows = C.SCR_MAX_MENU_ROWS
+
+        start_space = int(math.ceil((start * 1.0)/(length) * rows))
+        end_space   = int(math.floor(((length - end) * 1.0)/(length) * rows))
+
+        self.DisplayCustomColor(C.SYMBOL_UP_TRIANGLE, C.SCR_COLOR_DARK_GRAY,
+                                    X-1, Y)
+        self.DisplayCustomColorBold(C.SYMBOL_DOWN_TRIANGLE, C.SCR_COLOR_DARK_GRAY,
+                                    X+rows, Y)
+
+        starting = X
+        ending   = X + rows
+        for i in xrange(start_space):
+            self.DisplayCustomColorBold(" ", C.SCR_COLOR_WHITE_GRAY_BGRD, X+i, Y)
+            starting = X + i
+        
+        for i in xrange(end_space):
+            self.DisplayCustomColorBold(" ", C.SCR_COLOR_WHITE_GRAY_BGRD, 
+                                        X+rows-1-i, Y)
+            ending = X + rows - 1 - i
+
+        for i in xrange(starting, ending):
+            self.DisplayCustomColorBold(" ", C.SCR_COLOR_GRAY_WHITE_BGRD, i, Y)
+

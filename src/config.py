@@ -10,6 +10,9 @@ NUM_CONTEXT_REGISTERS = 4
 
 # Screen Specifications - Will be adjusted during runtime
 SCR_MAX_MENU_ROWS   = 10
+SCR_X = 0
+SCR_Y = 0
+SCR_MENU_ITEM_WIDTH = 0
 
 # Colors
 SCR_COLOR_RED          = 2
@@ -37,6 +40,7 @@ SCR_COLOR_BGRD = curses.COLOR_BLACK
 SYMBOL_TICK = u'\u2714'.encode("utf-8")
 SYMBOL_DISC = u'\u25CF'.encode("utf-8")
 SYMBOL_DOWN_TRIANGLE = u'\u25BC'.encode("utf-8")
+SYMBOL_UP_TRIANGLE = u'\u25B2'.encode("utf-8")
 SYMBOL_DELETE = 'x'
 SYMBOL_HEART = u'\u2665'.encode("utf-8")
 SYMBOL_EXPERIENCE = u'\u2605'.encode("utf-8")
@@ -49,3 +53,13 @@ HabitStatus = {'+': False, '-': False, SYMBOL_DELETE: False, SYMBOL_EDIT: False}
 HabitPosStatus = {'+': False, SYMBOL_DELETE: False, SYMBOL_EDIT: False}
 HabitNegStatus = {'-': False, SYMBOL_DELETE: False, SYMBOL_EDIT: False}
 TODODailyStatus = {SYMBOL_TICK: False, SYMBOL_DELETE: False, SYMBOL_EDIT: False}
+ChecklistStatus = {SYMBOL_TICK: False, SYMBOL_DELETE: False, SYMBOL_EDIT: False}
+
+# Function for setting values at runtime
+
+def ConfigureRuntime(screen):
+    global SCR_Y, SCR_X, SCR_MENU_ITEM_WIDTH
+    SCR_Y, SCR_X = screen.getmaxyx()
+    SCR_MENU_ITEM_WIDTH = (SCR_X - 10)/3
+
+
