@@ -71,6 +71,9 @@ class MenuItem(object):
                                         self.y+status_length+1)
         G.screen.DisplayCustomColorBold(" "*self.width, color, self.x+1,
                                         self.y)
+        if hasattr(self.task, 'completed') and self.task.completed:
+            G.screen.DisplayCustomColorBold(C.SYMBOL_TICK, color, self.x,
+                                            self.y + status_length)
         if len(self.taskname) < first_row_size: # No need to truncate
             if self.front:
                 G.screen.DisplayCustomColorBold(self.taskname, color, self.x, self.y +
@@ -110,6 +113,9 @@ class MenuItem(object):
                            self.y+status_length+1)
         G.screen.Highlight(" "*self.width, self.x+1,
                                         self.y)
+        if hasattr(self.task, 'completed') and self.task.completed:
+            G.screen.Highlight(C.SYMBOL_TICK, self.x,
+                                            self.y + status_length)
         if len(self.taskname) < first_row_size:
             if self.front:
                 G.screen.Highlight(self.taskname, self.x, self.y +
@@ -246,18 +252,34 @@ class Menu(object):
         G.prevTask = G.currentTask
         G.currentTask = self.items[self.current]
 
+    def Reload(self):
+        self.start = 0
+        self.end = min(self.rows/2, len(self.items)) 
+        self.current = 0 # Current task number
+
+    def Remove(self, ID):
+        for i in self.items:
+            if i.task.taskID == ID:
+                self.items.remove(i)
+                break
+
     def WriteChanges(self):
         for i in self.items:
             if i.status.attributes.get("+", False):
                 G.reqManager.MarkUpQueue.append(i)
+                i.status.Reset()
             elif i.status.attributes.get("-", False):
                 G.reqManager.MarkDownQueue.append(i)
+                i.status.Reset()
             elif i.status.attributes.get(C.SYMBOL_TICK, False):
                 G.reqManager.MarkQueue.append(i)
+                i.status.Reset()
             elif i.status.attributes.get(C.SYMBOL_DELETE, False):
                 G.reqManager.DeleteQueue.append(i)
+                i.status.Reset()
             elif i.status.attributes.get(C.SYMBOL_EDIT, False):
                 G.reqManager.EditQueue.append(i)
+                i.status.Reset()
 
 
 

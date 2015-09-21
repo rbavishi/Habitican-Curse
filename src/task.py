@@ -81,6 +81,7 @@ class Daily(Task):
     def __init__(self, data):
         self.task_type = "daily"
         super(Daily, self).__init__(data)
+        self.completed = data['completed']
 
 
 class TODO(Task):

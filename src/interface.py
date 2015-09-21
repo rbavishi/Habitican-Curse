@@ -26,12 +26,16 @@ class Interface(object):
         G.DailyMenu.SetXY(1, 6 + C.SCR_MENU_ITEM_WIDTH)
         G.TODOMenu.SetXY(1, 10 + 2*C.SCR_MENU_ITEM_WIDTH)
 
+        G.HabitMenu.Reload()
+        G.DailyMenu.Reload()
+        G.TODOMenu.Reload()
+
         G.HabitMenu.Init()
         G.DailyMenu.Init()
         G.TODOMenu.Init()
 
         # Borders
-        G.screen.DisplayCustomColorBold("="*C.SCR_X, C.SCR_COLOR_WHITE, 14, 0)
+        G.screen.DisplayCustomColorBold("="*C.SCR_Y, C.SCR_COLOR_WHITE, 14, 0)
 
         # Save this context for future use in a register
         G.screen.SaveInRegister(0)
@@ -108,6 +112,17 @@ class Interface(object):
         G.currentTask.ToggleDelete()
         G.currentTask.HighlightName()
 
+    def Command(self, command):
+        if command == "w":
+            G.prevTask = None
+            G.currentTask = None
+
+            G.HabitMenu.WriteChanges()
+            G.DailyMenu.WriteChanges()
+            G.TODOMenu.WriteChanges()
+            G.reqManager.Flush()
+
+
     def Input(self):
         while(1):
             c = G.screen.GetCharacter()
@@ -127,5 +142,9 @@ class Interface(object):
                 self.ToggleMarkUp()
             elif c == ord('-'):
                 self.ToggleMarkDown()
+            elif c == ord(':'):
+                command = G.screen.Command()
+                G.screen.Display(" "*(C.SCR_Y-1), C.SCR_X-1, 0)
+                self.Command(command)
             elif c == ord('q'):
                 break

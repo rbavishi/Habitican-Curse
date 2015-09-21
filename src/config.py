@@ -59,7 +59,7 @@ ChecklistStatus = {SYMBOL_TICK: False, SYMBOL_DELETE: False, SYMBOL_EDIT: False}
 
 def ConfigureRuntime(screen):
     global SCR_Y, SCR_X, SCR_MENU_ITEM_WIDTH
-    SCR_Y, SCR_X = screen.getmaxyx()
-    SCR_MENU_ITEM_WIDTH = (SCR_X - 10)/3
+    SCR_X, SCR_Y = screen.getmaxyx()
+    SCR_MENU_ITEM_WIDTH = (SCR_Y - 10)/3
 
 

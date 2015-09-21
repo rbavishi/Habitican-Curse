@@ -136,7 +136,56 @@ class Screen(object):
     def GetCharacter(self):
         return self.screen.getch()
 
+    def Echo(self):
+        curses.echo()
+
+    def Noecho(Self):
+        curses.noecho()
+
+    def CursorBlink(self):
+        curses.curs_set(1)
+
+    def CursorHide(self):
+        curses.curs_set(0)
+
+    def Command(self):
+        self.Display(" "*(C.SCR_Y-1), C.SCR_X-1, 0)
+        self.Display(":", C.SCR_X-1, 0)
+
+        self.Echo()
+        self.CursorBlink()
+        read_string = ""
+
+        cursor = 1
+        while(cursor < C.SCR_Y):
+            c = self.screen.getch(C.SCR_X-1, cursor)
+            if c == ord('\n'): # Enter Key
+                break
+            elif c == 27:        # Escape Key
+                self.Noecho()
+                self.CursorHide()
+                return ""
+            elif c == curses.KEY_BACKSPACE:
+                cursor -= 1
+                if cursor == 0:
+                    self.Noecho()
+                    self.CursorHide()
+                    return ""
+
+                self.Display(" ", C.SCR_X-1, cursor)
+
+            else:
+                if c < 256:
+                    read_string += chr(c)
+                    cursor+=1
+                continue
+        self.Noecho()
+        self.CursorHide()
+        return read_string
+
     def ScrollBar(self, X, Y, start, end, length, rows = -1):
+        if length == 0:       # Empty Menu
+            return
         if rows == -1:
             rows = C.SCR_MAX_MENU_ROWS
 

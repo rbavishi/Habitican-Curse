@@ -109,12 +109,37 @@ class RequestManager(object):
 
         # Dailies and TODOS marked as completed
         for i in self.MarkQueue:
-            URL = GET_TASKS_URL + "/" + i.task.taskID + "/" + "up"
+            if i.task.task_type != "daily" or (not i.task.completed):
+                URL = GET_TASKS_URL + "/" + i.task.taskID + "/" + "up"
+            else:
+                URL = GET_TASKS_URL + "/" + i.task.taskID + "/" + "down"
             response = requests.post(URL, headers=self.headers)
 
             # Need some error handling here
             if response.status_code!=200:
                 return
 
+            if i.task.task_type == "todo":
+                G.TODOMenu.Remove(i.task.taskID)
+            elif i.task.task_type == "daily":
+                i.task.completed ^= True
+
+        for i in self.DeleteQueue:
+            URL = GET_TASKS_URL + "/" + i.task.taskID
+            response = requests.delete(URL, headers=self.headers)
+
+            # Need some error handling here
+            if response.status_code!=200:
+                return
+
+            if i.task.task_type == "habit":
+                G.HabitMenu.Remove(i.task.taskID)
+            elif i.task.task_type == "daily":
+                G.DailyMenu.Remove(i.task.taskID)
+            elif i.task.task_type == "todo":
+                G.TODOMenu.Remove(i.task.taskID)
+
+        G.screen.Erase()
+        G.intf.Init()
 
 
