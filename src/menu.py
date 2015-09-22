@@ -37,10 +37,18 @@ class MenuItem(object):
                 self.status = H.Status("habitpos")
             elif self.task.down:
                 self.status = H.Status("habitneg")
+
+            # Set Coordinates for a task
+            self.task.SetXY(C.SCR_MAX_MENU_ROWS+7, 5)
+
         elif self.task_type == "todo" or self.task_type == "daily":
             checklist_tuple = self.task.ChecklistTuple()
             dueDate = getattr(self.task, "dueDate", "")
             self.status = H.Status(self.task_type, checklist_tuple, dueDate)
+
+            # Set Coordinates for a task
+            self.task.SetXY(C.SCR_MAX_MENU_ROWS+7, 5)
+
         else:     
             self.status = H.Status(self.task_type)
 
@@ -116,6 +124,9 @@ class MenuItem(object):
         self.status.Display()
         status_length = self.status.ReturnLenString()
         first_row_size = self.width - status_length - 1
+
+        # Display Task Details
+        self.task.Display()
 
         G.screen.Highlight(" "*first_row_size, self.x,
                            self.y+status_length+1)

@@ -3,6 +3,8 @@
     The python class version of the model described on the github page of
     Habitica.
 """
+# Standard Library Imports
+import textwrap
 
 # Custom Module Imports
 
@@ -37,10 +39,23 @@ def PriorityToDifficulty(priority):
     else:
         return "hard"
 
+def RepeatToString(repeat):
+    Translate = {'m': 'Mon', 't': 'Tue', 'th': 'Thurs', 'w': 'Wed', 's':'Sat', 'su': 'Sun', 'f': 'Fri'}
+    TranslateOrder = ['m', 't', 'w', 'th', 'f', 's', 'su']
+    retString = ""
+    for i in TranslateOrder:
+        if repeat[i]:
+            retString += Translate[i] + " "
+
+    return retString
+
 
 class Task(object):
     """ Basic template for a task. There will be separate derived classes for
-    Habits, TODOs and Dailies """
+    Habits, TODOs and Dailies. Basic display facilities are described in the 
+    display function of this class. Other details are displayed by the 
+    function in the derived classes
+    """
 
     def __init__(self, data):
         self.data = data          # JSON response received from request
@@ -64,6 +79,30 @@ class Task(object):
         self.x = x
         self.y = y
 
+    def Display(self):
+        G.screen.RestoreRegister(0)
+        X, Y = self.x, self.y
+
+        # Title Display
+        title_wrap = textwrap.wrap(self.text, C.SCR_Y-20)
+        for i in title_wrap:
+            G.screen.DisplayCustomColorBold(i, self.color, X, Y)
+            X += 1
+        X += 1
+
+        # Difficulty
+        G.screen.DisplayBold("Difficulty: ", X, Y)
+        G.screen.DisplayCustomColorBold(self.difficulty, C.SCR_COLOR_MAGENTA, X, Y+12)
+        X += 2
+
+        # Date Created
+        G.screen.DisplayBold("Date Created: ", X, Y)
+        G.screen.DisplayCustomColorBold(self.dateCreated.DateCreatedFormat(),
+                                        C.SCR_COLOR_MAGENTA, X, Y+14)
+        X += 2
+
+        return X
+
 
 class Habit(Task):
     """ Class for holding a habit """
@@ -75,6 +114,13 @@ class Habit(Task):
         # Special Attributes
         self.up   = data['up']
         self.down = data['down']
+
+    def Display(self):
+        X = super(Habit, self).Display()
+        Y = self.y
+
+        # Something can be added here
+        # Maybe use the data-display tool
 
 
 class Daily(Task):
@@ -88,11 +134,31 @@ class Daily(Task):
         self.completed = data['completed']
         self.checklist = data['checklist']
 
+        self.frequency = data['frequency']
+        self.repeat    = data['repeat']
+        self.everyX    = data['everyX']
+
     def ChecklistTuple(self):  # Return (done/total)
         done = len([i for i in self.checklist if i['completed']])
         total = len(self.checklist)
         return [done, total]
-        
+
+    def Display(self):
+        X = super(Daily, self).Display()
+        Y = self.y
+
+        if self.frequency == "daily": # Every X days
+            G.screen.DisplayCustomColorBold("Every " + str(self.everyX) + " days", C.SCR_COLOR_MAGENTA, X, Y)
+        else:                         # Active on some days of the week
+            G.screen.DisplayCustomColorBold("Active: " + RepeatToString(self.repeat), C.SCR_COLOR_MAGENTA, X, Y)
+        X += 2
+
+        # Checklist
+        if self.checklist:
+            done, total = self.ChecklistTuple()
+            G.screen.DisplayCustomColorBold("Checklist: " + "("+str(done)+"/"+str(total)+")" + " completed", 
+                                             C.SCR_COLOR_MAGENTA, X, Y)
+            X += 2
 
 
 class TODO(Task):
@@ -108,10 +174,29 @@ class TODO(Task):
 
         if data.has_key('date'): # Due Date Stuff
             self.dueDate = H.DateTime(str(data['date'])).DueDateFormat()
+            self.date    = str(data['date'])
         else:
             self.dueDate = ""
+            self.date    = ""
 
     def ChecklistTuple(self):  # Return (done/total)
         done = len([i for i in self.checklist if i['completed']])
         total = len(self.checklist)
         return [done, total]
+
+    def Display(self):
+        X = super(TODO, self).Display()
+        Y = self.y
+
+        # Due Date
+        if self.date != "":
+            G.screen.DisplayCustomColorBold("Due: " + H.DateTime(self.date).DateCreatedFormat(),
+                                            C.SCR_COLOR_MAGENTA, X, Y)
+            X += 2
+
+        # Checklist
+        if self.checklist:
+            done, total = self.ChecklistTuple()
+            G.screen.DisplayCustomColorBold("Checklist: " + "("+str(done)+"/"+str(total)+")" + " completed", 
+                                             C.SCR_COLOR_MAGENTA, X, Y)
+            X += 2

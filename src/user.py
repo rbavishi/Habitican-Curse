@@ -140,8 +140,8 @@ class User(object):
             detailString = i.get('user', '') + " " + timeElapsed
             chat_items += [M.SimpleTextItem(str(i['text']), additional=str(detailString))]
 
-        chatMenu = M.SimpleTextMenu(chat_items, C.SCR_X-21)
-        chatMenu.SetXY(17, 5) 
+        chatMenu = M.SimpleTextMenu(chat_items, C.SCR_X-(C.SCR_MAX_MENU_ROWS+7+4))
+        chatMenu.SetXY(C.SCR_MAX_MENU_ROWS+7, 5) 
         chatMenu.Display()
         chatMenu.Input()
 

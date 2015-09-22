@@ -193,8 +193,8 @@ class RequestManager(object):
             for i in Drops:
                 drop_items += [M.SimpleTextItem(i)]
 
-            dropMenu = M.SimpleTextMenu(drop_items, C.SCR_X-21)
-            dropMenu.SetXY(17, 5) 
+            dropMenu = M.SimpleTextMenu(drop_items, C.SCR_X-(C.SCR_MAX_MENU_ROWS+7+4))
+            dropMenu.SetXY(C.SCR_MAX_MENU_ROWS+7, 5) 
             dropMenu.Display()
             dropMenu.Input()
             G.screen.RestoreRegister(1)
