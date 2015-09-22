@@ -25,8 +25,8 @@ def main(screen):
   #Colors - Placeholders for now
   curses.start_color()
   curses.use_default_colors()
-  curses.init_pair(1, 19, 244)
-  curses.init_pair(10, 244, 19)
+  curses.init_pair(1, curses.COLOR_WHITE, 236)
+  curses.init_pair(10, 236, curses.COLOR_WHITE)
   curses.curs_set(0)
   #curses.init_pair(2, curses.COLOR_RED, -1)
   #curses.init_pair(3, curses.COLOR_GREEN, -1)

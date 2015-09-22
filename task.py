@@ -87,7 +87,7 @@ class Task(object):
         # Title Display
         title_wrap = textwrap.wrap(self.text, C.SCR_Y-20)
         for i in title_wrap:
-            G.screen.DisplayCustomColorBold(i, self.color, X, Y)
+            G.screen.DisplayCustomColorBold(i+'\n', self.color, X, Y)
             X += 1
         X += 1
 

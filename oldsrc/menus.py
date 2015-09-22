@@ -87,7 +87,7 @@ class Menu:
   def Init(self, highlight=True):
     self.title.DisplayBold()
     new_x=self.x + 2
-    self.screen.MenuScrollBar(new_x, self.y-2, self.start, self.end, len(self.items)-1)
+    self.screen.MenuScrollBar(new_x, self.y-2, self.start, self.end, max(len(self.items)-1, 1))
 
     for i in xrange(self.start, self.end+1):
       item=self.items[i]

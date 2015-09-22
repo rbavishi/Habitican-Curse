@@ -1,40 +1,54 @@
+""" Module "Habitica" : Main Driver Program
+
+    The main program is launched from this module
+"""
+# Standard Library Imports
 import curses
-from lines_and_text import *
-from global_settings import *
-from screen_class import *
-from menus import *
+import tempfile
+import time
+import locale
+import thread
 
-#Preliminary Testing of the above code - Press 'q' to quit. Press TAB to toggle.
+# Custom Module Imports
 
-def main(screen):
+import config as C
+from screen import Screen
+import global_objects as G
+import helper as H
+import menu as M
+import request_manager as RM
+import interface as I
 
-  #Colors - Placeholders for now
-  curses.start_color()
-  curses.use_default_colors()
-  curses.init_pair(1, 19, 244)
-  curses.init_pair(2, curses.COLOR_RED, -1)
-  curses.init_pair(3, curses.COLOR_GREEN, -1)
-  curses.init_pair(4, curses.COLOR_YELLOW, -1)
-  curses.init_pair(5, curses.COLOR_MAGENTA, -1)
-  curses.curs_set(0)
+user_id = ''
+api_token = ''
 
-  scr=Screen(screen)
+# Ability to display symbols
+locale.setlocale(locale.LC_ALL, '') 
 
-  line=Line(10, 0, "Hello World! I am the stupidest person ever", scr)
-  line1=Line(12, 0, "Hello World! I am the stupid", scr)
-  scr.Display("Press TAB to toggle 'Hello World!'. Press 'q' to exit")
 
-  while 1:
-    c = screen.getch()
-    if(c==ord('\t')):
-      line.Toggle()
-      line1.Toggle()
-    elif(c==ord('q')):
-      break
-    else:
-      continue
+def BookKeepingThread():
+    while(G.screen == None):
+        i = 2
+    i = 2
+    while(1):
+        G.screen.Display(str(i))
+        i += 1
+        time.sleep(2)
+
+
+
+def main(curses_screen):
+    G.screen = Screen(curses_screen)
+    G.screen.Initialize()
+    C.ConfigureRuntime(curses_screen)
+    G.reqManager = RM.RequestManager() 
+    G.reqManager.FetchData()
+    G.intf = I.Interface()
+    G.intf.Init()
+    G.intf.Input()
+
+    #thread.start_new_thread(BookKeepingThread, ())
+    #G.screen.GetCharacter()
+
 
 curses.wrapper(main)
-
-
-
