@@ -152,6 +152,14 @@ class Screen(object):
     def CursorHide(self):
         curses.curs_set(0)
 
+    def ClearRegion(self, x1, x2, y1, y2):
+	for i in xrange(x1, x2):
+	    self.Display(" "*(y2 - y1), i, y1)
+
+    def ClearTextArea(self):
+	# Clear the area where tasks are displayed
+	self.ClearRegion(C.SCR_MAX_MENU_ROWS+7, C.SCR_X-2, 0, C.SCR_Y)
+
     def Command(self):
         self.Display(" "*(C.SCR_Y-1), C.SCR_X-1, 0)
         self.Display(":", C.SCR_X-1, 0)

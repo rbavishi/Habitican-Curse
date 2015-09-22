@@ -121,12 +121,13 @@ class MenuItem(object):
                                               self.x+1, self.y)
 
     def HighlightName(self):
+        self.task.Display()
+
         self.status.Display()
         status_length = self.status.ReturnLenString()
         first_row_size = self.width - status_length - 1
 
         # Display Task Details
-        self.task.Display()
 
         G.screen.Highlight(" "*first_row_size, self.x,
                            self.y+status_length+1)

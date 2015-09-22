@@ -42,6 +42,7 @@ class Interface(object):
 
         # Save this context for future use in a register
         G.screen.SaveInRegister(0)
+        G.screen.SaveInRegister(3) # For storing marks and deletes
 
         # Used for scrolling
         self.trinity = [G.HabitMenu, G.DailyMenu, G.TODOMenu]

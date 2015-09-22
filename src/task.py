@@ -80,7 +80,8 @@ class Task(object):
         self.y = y
 
     def Display(self):
-        G.screen.RestoreRegister(0)
+        #G.screen.RestoreRegister(0)
+        G.screen.ClearTextArea()
         X, Y = self.x, self.y
 
         # Title Display
