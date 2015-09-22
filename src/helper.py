@@ -1,14 +1,20 @@
 """ Module "Helper" : Helper functions and classes
 
     Contains classes and functions for wrapping text, task modification status,
-    text menus etc.
+    text menus, date-time etc.
 """
+
+# Standard Library Imports
+import time
+from datetime import datetime
+from dateutil import tz, relativedelta
 
 # Custom Module Imports
 
 import config as C
 from screen import Screen
 import global_objects as G
+import debug as DEBUG
 
 
 class Status(object):
@@ -33,10 +39,10 @@ class Status(object):
         length = 2*len([i for i in self.attributes if self.attributes[i]!=None])
         if self.checklist[1] != 0:
             # (Done/Total) - 4 extra symbols - '(', ')', '/' and a space
-            length += 4 + len(str(self.checklist[0])) + len(str(self.checklist[1]))
+            length += 5 + len(str(self.checklist[0])) + len(str(self.checklist[1]))
 
         if self.due!='':
-            length += len(self.due) + 1 # To account for a space
+            length += len(self.due) + 3 # To account for a space
 
         return length
 
@@ -46,6 +52,20 @@ class Status(object):
 
     def Display(self):
         X, Y = self.x, self.y
+
+        if self.checklist[1] != 0:
+            display_string = '('+str(self.checklist[0])+'/'+str(self.checklist[1])+')'
+            Y -= (len(display_string))
+            display_string = C.SYMBOL_DOWN_TRIANGLE + display_string
+            G.screen.DisplayCustomColorBold(display_string,
+                                            C.SCR_COLOR_LIGHT_GRAY, X, Y)
+            Y -= 2
+
+        if self.due != '':
+            Y -= (len(self.due) + 1)
+            G.screen.DisplayCustomColorBold(C.SYMBOL_DUE + " " + self.due, C.SCR_COLOR_LIGHT_GRAY, X, Y)
+            Y -= 2
+
         for (key, value) in self.attributes.items():
             if value != None:
                 if value:
@@ -53,18 +73,6 @@ class Status(object):
                 else:
                     G.screen.DisplayCustomColorBold(key, C.SCR_COLOR_DARK_GRAY, X, Y)
                 Y -= 2
-
-        if self.checklist[1] != 0:
-            display_string = '('+str(self.checklist[0])+'/'+str(self.checklist[1])+')'
-            Y -= (len(display_string) - 1)
-            G.screen.DisplayCustomColorBold(display_string,
-                                            C.SCR_COLOR_LIGHT_GRAY, X, Y)
-            Y -= 2
-
-        if self.due != '':
-            Y -= (len(self.due) - 1)
-            G.screen.DisplayCustomColorBold(self.due, C.SCR_COLOR_LIGHT_GRAY, X, Y)
-            Y -= 2
 
     def ToggleMarkUp(self):
         # Return if there is no up direction, or the delete option has already
@@ -124,4 +132,59 @@ class Status(object):
     def Reset(self):
         for key in self.attributes:
             self.attributes[key] = False
+
+
+
+class DateTime(object):
+    """ Class for handling various date-time formats used in Habitica """
+
+    def __init__(self, inpDate):
+        
+        self.date = self.ConvertDate(inpDate)
+
+    def ConvertDate(self, date):
+        if type(date) == int or type(date) == float:
+            # Milliseconds included in the timestamp
+            return datetime.fromtimestamp(date*1.0/1000) 
+        elif type(date) == str:
+            # UTC Format. We'll convert it to local time.
+            # We assume that local time zone can be computed by dateutil
+            retDate = datetime.strptime(date,"%Y-%m-%dT%H:%M:%S.%fZ")
+
+            retDate = retDate.replace(tzinfo=tz.tzutc()) # UTC Time zone convert
+            retDate = retDate.astimezone(tz.tzlocal())   # Local Time
+
+            return retDate
+
+    def DueDateFormat(self):
+        return self.date.strftime('[%d/%m]')
+
+    def DateCreatedFormat(self):
+        # dd-mm-YY format. I'm Indian :)
+        return self.date.strftime('%d/%m/%Y')
+
+
+def GetDifferenceTime(d2, d1=-1): # d1 - d2
+    if d1 == -1:
+        d1 = time.time() * 1000
+    Date1 = DateTime(d1)
+    Date2 = DateTime(d2)
+    #DEBUG.Display(Date1.DueDateFormat())
+    #time.sleep(20)
+
+
+    diffDate = relativedelta.relativedelta(Date1.date, Date2.date)
+    if diffDate.years!=0:
+        return str(diffDate.years)+'y ago'
+    if diffDate.months!=0:
+        return str(diffDate.months)+'months ago'
+    if diffDate.days!=0:
+        return str(diffDate.days)+'d ago'
+    if diffDate.hours!=0:
+        return str(diffDate.hours)+'h ago'
+
+    return str(diffDate.minutes)+'m ago'
+
+
+
 

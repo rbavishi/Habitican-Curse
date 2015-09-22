@@ -21,6 +21,7 @@ import user as U
 # URL Definitions
 GET_TASKS_URL = "https://habitica.com:443/api/v2/user/tasks"
 GET_USER_URL  = "https://habitica.com:443/api/v2/user/"
+GET_PARTY_URL  = "https://habitica.com:443/api/v2/groups/party"
 
 
 class RequestManager(object):
@@ -40,9 +41,9 @@ class RequestManager(object):
         self.EditQueue = []
 
     def FetchData(self):
-        del(G.HabitMenu)
-        del(G.TODOMenu)
-        del(G.DailyMenu)
+        #del(G.HabitMenu)
+        #del(G.TODOMenu)
+        #del(G.DailyMenu)
 
         DEBUG.Display("Connecting...")
         response = requests.get(GET_USER_URL, headers=self.headers)
@@ -92,6 +93,7 @@ class RequestManager(object):
 
     def Flush(self):
         DEBUG.Display("Please Wait...")
+        Drops = []
 
         # Difference obtained in user stats due to these operations
         diffDict = {'hp': 0, 'gp': 0, 'mp': 0, 'exp': 0, 'lvl': 0}
@@ -110,6 +112,16 @@ class RequestManager(object):
             json = response.json()
             for i in diffDict:
                 diffDict[i] = json[i] - origDict[i]
+
+            # Check for drops
+            tmp_var = json['_tmp']
+            if tmp_var.has_key('drop'):
+                if tmp_var['drop'].has_key('dialog'):
+                    Drops+=[str(tmp_var['drop']['dialog'])]
+                elif tmp_var['drop'].has_key('text'):
+                    Drops+=[str(tmp_var['drop']['text'])]
+                elif tmp_var['drop'].has_key('notes'):
+                    Drops+=[str(tmp_var['drop']['notes'])]
 
         # Habits marked as -
         for i in self.MarkDownQueue:
@@ -145,6 +157,16 @@ class RequestManager(object):
             for i in diffDict:
                 diffDict[i] = json[i] - origDict[i]
 
+            # Check for drops
+            tmp_var = json['_tmp']
+            if tmp_var.has_key('drop'):
+                if tmp_var['drop'].has_key('dialog'):
+                    Drops+=[str(tmp_var['drop']['dialog'])]
+                elif tmp_var['drop'].has_key('text'):
+                    Drops+=[str(tmp_var['drop']['text'])]
+                elif tmp_var['drop'].has_key('notes'):
+                    Drops+=[str(tmp_var['drop']['notes'])]
+
         for i in self.DeleteQueue:
             URL = GET_TASKS_URL + "/" + i.task.taskID
             response = requests.delete(URL, headers=self.headers)
@@ -163,5 +185,24 @@ class RequestManager(object):
         G.screen.Erase()
         G.user.PrintDiff(diffDict)
         G.intf.Init()
+
+        # Display Drop Messages
+        if Drops:
+            G.screen.SaveInRegister(1)
+            drop_items = []
+            for i in Drops:
+                drop_items += [M.SimpleTextItem(i)]
+
+            dropMenu = M.SimpleTextMenu(drop_items, C.SCR_X-21)
+            dropMenu.SetXY(17, 5) 
+            dropMenu.Display()
+            dropMenu.Input()
+            G.screen.RestoreRegister(1)
+
+    def PartyRequest(self):
+        DEBUG.Display("Please Wait...")
+        resp = requests.get(GET_PARTY_URL, headers=self.headers)
+        DEBUG.Display(" ")
+        return resp
 
 

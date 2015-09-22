@@ -48,7 +48,7 @@ def main(curses_screen):
     G.intf.Input()
 
     #thread.start_new_thread(BookKeepingThread, ())
-    G.screen.GetCharacter()
+    #G.screen.GetCharacter()
 
 
 curses.wrapper(main)

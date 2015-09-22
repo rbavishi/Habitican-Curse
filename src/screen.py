@@ -98,6 +98,7 @@ class Screen(object):
         if not self.active_registers[register]:
             return
 
+	self.ctxts[register].seek(0)
         self.screen = curses.getwin(self.ctxts[register])
         self.Refresh()
 

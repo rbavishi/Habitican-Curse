@@ -52,6 +52,7 @@ SYMBOL_GOLD = u'\u25CF'.encode("utf-8")
 SYMBOL_MANA = u'\u2600'.encode("utf-8")
 SYMBOL_EDIT = u'\u270E'.encode("utf-8")
 SYMBOL_LEVEL = u'\u2949'.encode("utf-8")
+SYMBOL_DUE = u'\u29D6'.encode("utf-8")
 
 # Status Attributes
 HabitStatus = {'+': False, '-': False, SYMBOL_DELETE: False, SYMBOL_EDIT: False}

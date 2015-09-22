@@ -9,6 +9,8 @@ import config as C
 import global_objects as G
 import debug as DEBUG
 import request_manager as RM
+import helper as H
+import menu as M
 
 
 def Round(num):
@@ -104,20 +106,44 @@ class User(object):
 
         self.Reload(self.data)
 
+        # Difficult to maintain the correct increase in experience when level changes
         if diffDict['lvl'] != "":
             diffDict['exp'] = ""
 
         # Level
-        G.screen.DisplayCustomColorBold(diffDict['lvl'], C.SCR_COLOR_WHITE, C.SCR_X-3, self.cursorPositions[0])
+        G.screen.DisplayCustomColorBold(diffDict['lvl'], C.SCR_COLOR_WHITE, C.SCR_X-3, self.cursorPositions[0]+2)
                      
         # Health
-        G.screen.DisplayCustomColorBold(diffDict['hp'], C.SCR_COLOR_RED, C.SCR_X-3, self.cursorPositions[1])
+        G.screen.DisplayCustomColorBold(diffDict['hp'], C.SCR_COLOR_RED, C.SCR_X-3, self.cursorPositions[1]+2)
 
         # Experience
-        G.screen.DisplayCustomColorBold(diffDict['exp'], C.SCR_COLOR_GREEN, C.SCR_X-3, self.cursorPositions[2])
+        G.screen.DisplayCustomColorBold(diffDict['exp'], C.SCR_COLOR_GREEN, C.SCR_X-3, self.cursorPositions[2]+2)
                      
         # Mana
-        G.screen.DisplayCustomColorBold(diffDict['mp'], C.SCR_COLOR_BLUE, C.SCR_X-3, self.cursorPositions[3])
+        G.screen.DisplayCustomColorBold(diffDict['mp'], C.SCR_COLOR_BLUE, C.SCR_X-3, self.cursorPositions[3]+2)
                      
         # Gold
-        G.screen.DisplayCustomColorBold(diffDict['gp'], C.SCR_COLOR_YELLOW, C.SCR_X-3, self.cursorPositions[4])
+        G.screen.DisplayCustomColorBold(diffDict['gp'], C.SCR_COLOR_YELLOW, C.SCR_X-3, self.cursorPositions[4]+2)
+
+    def GetPartyData(self):
+        resp = G.reqManager.PartyRequest()
+
+        # Need some error handling here
+        if resp.status_code != 200:
+            return 
+
+        data = resp.json()
+        chat_items = []
+        chat = data['chat'][:50]
+        for i in chat:
+            timeElapsed = H.GetDifferenceTime(i['timestamp'])
+            detailString = i.get('user', '') + " " + timeElapsed
+            chat_items += [M.SimpleTextItem(str(i['text']), additional=str(detailString))]
+
+        chatMenu = M.SimpleTextMenu(chat_items, C.SCR_X-21)
+        chatMenu.SetXY(17, 5) 
+        chatMenu.Display()
+        chatMenu.Input()
+
+
+

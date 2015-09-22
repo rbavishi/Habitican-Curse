@@ -48,7 +48,7 @@ class Task(object):
         # Basic Details
         self.text        = str(data['text'])
         self.taskID      = str(data['id'])
-        self.dateCreated = str(data['dateCreated']).split('T')[0]
+        self.dateCreated = H.DateTime(str(data['dateCreated']))
         self.priority    = data['priority']
         self.value       = data['value']
 
@@ -71,6 +71,8 @@ class Habit(Task):
     def __init__(self, data):
         super(Habit, self).__init__(data)
         self.task_type = "habit"
+
+        # Special Attributes
         self.up   = data['up']
         self.down = data['down']
 
@@ -81,7 +83,16 @@ class Daily(Task):
     def __init__(self, data):
         self.task_type = "daily"
         super(Daily, self).__init__(data)
+
+        # Special Attributes
         self.completed = data['completed']
+        self.checklist = data['checklist']
+
+    def ChecklistTuple(self):  # Return (done/total)
+        done = len([i for i in self.checklist if i['completed']])
+        total = len(self.checklist)
+        return [done, total]
+        
 
 
 class TODO(Task):
@@ -90,3 +101,17 @@ class TODO(Task):
     def __init__(self, data):
         self.task_type = "todo"
         super(TODO, self).__init__(data)
+
+        # Special Attributes
+        self.completed = data['completed']
+        self.checklist = data['checklist']
+
+        if data.has_key('date'): # Due Date Stuff
+            self.dueDate = H.DateTime(str(data['date'])).DueDateFormat()
+        else:
+            self.dueDate = ""
+
+    def ChecklistTuple(self):  # Return (done/total)
+        done = len([i for i in self.checklist if i['completed']])
+        total = len(self.checklist)
+        return [done, total]

@@ -68,6 +68,9 @@ class Interface(object):
         self.Highlight()
 
     def ScrollLeft(self):
+        if self.currentMenu == 0: # Very Annoying otherwise
+            return
+
         for i in [(self.currentMenu-1)%3, (self.currentMenu-2)%3,
                 self.currentMenu]:
             if not self.trinity[i].IsEmpty():
@@ -77,6 +80,8 @@ class Interface(object):
         self.Highlight()
 
     def ScrollRight(self):
+        if self.currentMenu == 2: # Very annoying otherwise
+            return 
         for i in [(self.currentMenu+1)%3, (self.currentMenu+2)%3,
                 self.currentMenu]:
             if not self.trinity[i].IsEmpty():
@@ -125,6 +130,18 @@ class Interface(object):
             G.TODOMenu.WriteChanges()
             G.reqManager.Flush()
 
+        elif command == "r":
+            G.prevTask = None
+            G.currentTask = None
+
+            G.reqManager.FetchData()
+            G.screen.Erase()
+            self.Init()
+        
+        elif command == "party":
+            G.screen.SaveInRegister(1)
+            G.user.GetPartyData()
+            G.screen.RestoreRegister(1)
 
     def Input(self):
         while(1):
@@ -147,7 +164,10 @@ class Interface(object):
                 self.ToggleMarkDown()
             elif c == ord(':'):
                 command = G.screen.Command()
+
+                # Vim style exit
+                if command == "q":
+                    break 
+
                 G.screen.Display(" "*(C.SCR_Y-1), C.SCR_X-1, 0)
                 self.Command(command)
-            elif c == ord('q'):
-                break

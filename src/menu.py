@@ -3,6 +3,9 @@
     All classes required to implement menus including task menus, chat menus
     etc.
 """
+# Standard Library Imports
+import textwrap
+import curses
 
 # Custom Module Imports
 
@@ -10,6 +13,7 @@ import config as C
 from screen import Screen
 import global_objects as G
 import helper as H
+import debug as DEBUG
 
 def truncate(string, size):
     return (string[:size-3]+"...") if len(string)>size else string
@@ -33,7 +37,11 @@ class MenuItem(object):
                 self.status = H.Status("habitpos")
             elif self.task.down:
                 self.status = H.Status("habitneg")
-        else:
+        elif self.task_type == "todo" or self.task_type == "daily":
+            checklist_tuple = self.task.ChecklistTuple()
+            dueDate = getattr(self.task, "dueDate", "")
+            self.status = H.Status(self.task_type, checklist_tuple, dueDate)
+        else:     
             self.status = H.Status(self.task_type)
 
         self.x = 0
@@ -283,5 +291,99 @@ class Menu(object):
 
 
 
+class SimpleTextItem(object):
+    """ Simple scrollable text menu. Used for displaying party chats,
+    drop messages etc. """
+
+    def __init__(self, string, width=-1, additional=''):
+        if width == -1:
+            width = C.SCR_Y - 20
+
+        self.width = width
+        self.string = string
+
+        self.wrap  = textwrap.wrap(string, self.width)
+
+        if additional != '':
+            self.additional_wrap = textwrap.wrap(additional, self.width)
+            self.additional_wrap = ['#'+i for i in self.additional_wrap]
+            self.wrap = self.additional_wrap + self.wrap
+
+    def ReturnNumLines(self):
+        return len(self.wrap) + 2   # Plus the number of border lines
 
 
+
+class SimpleTextMenu(object): 
+    """ Simple scrollable text menu. Used for displaying party chats,
+    drop messages etc. """
+
+    def __init__(self, items, num_rows=-1):
+
+        if num_rows == -1:
+            num_rows = C.SCR_MAX_MENU_ROWS
+
+        self.num_rows = num_rows
+
+        self.items = items
+        self.text = []
+
+        self.text += ["-"*(self.items[0].width)] # Border Line
+        for i in self.items:
+            self.text += i.wrap
+            self.text += ["-"*(i.width)] # Border Line
+
+        # Menu Window Specifications
+        self.start = 0
+        self.end = min(self.num_rows, len(self.text))
+
+        # Coordinates
+        self.x = 0
+        self.y = 0
+
+    def SetXY(self, x=0, y=0):
+        self.x = x
+        self.y = y
+
+    def Display(self):
+        G.screen.RestoreRegister(0)
+        X, Y = self.x, self.y
+
+        G.screen.ScrollBar(X, C.SCR_Y-5, self.start, self.end, len(self.text), self.num_rows)
+
+        for i in xrange(self.start, self.end):
+            if self.text[i][:3] == "---" or self.text[i][0] == "#":
+                G.screen.DisplayCustomColor(self.text[i], C.SCR_COLOR_LIGHT_GRAY, X, Y)
+                X += 1
+            else:
+                G.screen.DisplayCustomColor(self.text[i], C.SCR_COLOR_WHITE, X, Y)
+                X += 1
+
+    def ScrollUp(self):
+        if self.start == 0:
+            return
+        
+        self.start -= 1
+        self.end -= 1
+        self.Display()
+
+    def ScrollDown(self):
+        if self.end == len(self.text):
+            return
+        
+        self.start += 1
+        self.end += 1
+        self.Display()
+
+    def Input(self):
+        DEBUG.Display("Press q to exit...")
+        while(1):
+            c = G.screen.GetCharacter()
+            if c == curses.KEY_UP:
+                self.ScrollUp()
+            elif c == curses.KEY_DOWN:
+                self.ScrollDown()
+            elif c == 27 or c == ord('q'):
+                break
+
+            DEBUG.Display("Press q to exit...")
