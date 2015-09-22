@@ -121,6 +121,12 @@ class Interface(object):
         G.currentTask.ToggleDelete()
         G.currentTask.HighlightName()
 
+    # Display Checklist
+    def Checklist(self):
+	G.screen.SaveInRegister(1)
+	G.currentTask.ShowChecklist()
+	G.screen.RestoreRegister(1)
+
     def Command(self, command):
         if command == "w":
             G.prevTask = None
@@ -163,6 +169,8 @@ class Interface(object):
                 self.ToggleMarkUp()
             elif c == ord('-'):
                 self.ToggleMarkDown()
+	    elif c == ord('c'):
+		self.Checklist()
             elif c == ord(':'):
                 command = G.screen.Command()
 

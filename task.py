@@ -12,6 +12,7 @@ import config as C
 from screen import Screen
 import global_objects as G
 import helper as H
+import menu as M
 
 
 def ValueToColor(value):
@@ -48,6 +49,19 @@ def RepeatToString(repeat):
             retString += Translate[i] + " "
 
     return retString
+
+def ChecklistMenu(checklist):
+    if not checklist:
+	return None
+
+    checklist_items = []
+    for i in checklist:
+	task_item = ChecklistItem(i)
+	checklist_items += [M.MenuItem(task_item, 'checklist', task_item.text, width=(C.SCR_Y-20))]
+
+    menuObj = M.Menu(checklist_items, 'Checklist', (C.SCR_X - (C.SCR_MAX_MENU_ROWS+7+4+2)), 'checklist_menu')
+    menuObj.SetXY(C.SCR_MAX_MENU_ROWS+7, 5)
+    return menuObj
 
 
 class Task(object):
@@ -105,6 +119,20 @@ class Task(object):
         return X
 
 
+class ChecklistItem(object):
+    """ Class for holding a checklist item """
+    
+    def __init__(self, data):
+
+	# Checklist Item Specifications
+	self.text      = str(data['text'])
+	self.completed = data['completed']
+	self.ID        = str(data['id'])
+
+    def Display(self): # Dummy
+	return
+
+
 class Habit(Task):
     """ Class for holding a habit """
 
@@ -139,6 +167,9 @@ class Daily(Task):
         self.repeat    = data['repeat']
         self.everyX    = data['everyX']
 
+	# Checklist Menu. None if it is empty
+	self.checklistMenu = ChecklistMenu(self.checklist)
+
     def ChecklistTuple(self):  # Return (done/total)
         done = len([i for i in self.checklist if i['completed']])
         total = len(self.checklist)
@@ -161,6 +192,14 @@ class Daily(Task):
                                              C.SCR_COLOR_MAGENTA, X, Y)
             X += 2
 
+    def ShowChecklist(self):
+	if self.checklistMenu == None:
+	    return
+
+	G.screen.ClearTextArea()
+	self.checklistMenu.Init()
+	self.checklistMenu.Input()
+
 
 class TODO(Task):
     """ Class for holding a habit """
@@ -179,6 +218,9 @@ class TODO(Task):
         else:
             self.dueDate = ""
             self.date    = ""
+
+	# Checklist Menu. None if it is empty
+	self.checklistMenu = ChecklistMenu(self.checklist)
 
     def ChecklistTuple(self):  # Return (done/total)
         done = len([i for i in self.checklist if i['completed']])
@@ -201,3 +243,11 @@ class TODO(Task):
             G.screen.DisplayCustomColorBold("Checklist: " + "("+str(done)+"/"+str(total)+")" + " completed", 
                                              C.SCR_COLOR_MAGENTA, X, Y)
             X += 2
+
+    def ShowChecklist(self):
+	if self.checklistMenu == None:
+	    return
+
+	G.screen.ClearTextArea()
+	self.checklistMenu.Init()
+	self.checklistMenu.Input()

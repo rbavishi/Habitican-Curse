@@ -185,6 +185,9 @@ class MenuItem(object):
         self.status.ToggleEdit()
         self.HighlightName()
 
+    def ShowChecklist(self):
+	self.task.ShowChecklist()
+
 
 
 class Menu(object):
@@ -238,16 +241,25 @@ class Menu(object):
             G.prevTask = G.currentTask
 
         if self.current != self.start:
+	    if self.menu_type == "checklist_menu":
+		self.items[self.current].DisplayName()
             self.current -= 1
-            G.currentTask = self.items[self.current]
+            if self.menu_type == "task":
+		G.currentTask = self.items[self.current]
+	    elif self.menu_type == "checklist_menu":
+		self.items[self.current].HighlightName()
 
         else:
+	    if self.menu_type == "checklist_menu":
+		self.items[self.current].DisplayName()
             self.start -= 1
             self.current -= 1
             self.end -= 1
             if self.menu_type == "task":
                 G.currentTask = self.items[self.current]
             self.Init()       # Reload the menu
+	    if self.menu_type == "checklist_menu":
+		self.items[self.current].HighlightName()
 
     def ScrollDown(self):
         if self.end == len(self.items) and (self.current == self.end - 1):
@@ -257,8 +269,13 @@ class Menu(object):
             G.prevTask = G.currentTask
 
         if self.current != self.end - 1:
+	    if self.menu_type == "checklist_menu":
+		self.items[self.current].DisplayName()
             self.current += 1
-            G.currentTask = self.items[self.current]
+            if self.menu_type == "task":
+		G.currentTask = self.items[self.current]
+	    elif self.menu_type == "checklist_menu":
+		self.items[self.current].HighlightName()
 
         else:
             self.start += 1
@@ -267,6 +284,21 @@ class Menu(object):
             if self.menu_type == "task":
                 G.currentTask = self.items[self.current]
             self.Init()       # Reload the menu
+	    if self.menu_type == "checklist_menu":
+		self.items[self.current].HighlightName()
+
+    def Input(self): # This takes control away from Interface
+	# Implemented specially for checklists and similar menus
+	if self.menu_type == "checklist_menu":
+	    self.items[self.current].HighlightName()
+	while(1):
+	    c = G.screen.GetCharacter()
+	    if c == curses.KEY_UP:
+		self.ScrollUp()
+	    elif c == curses.KEY_DOWN:
+		self.ScrollDown()
+	    elif c == ord('q') or c == 27:
+		break
 
     def InitialCurrentTask(self):
         G.prevTask = G.currentTask
