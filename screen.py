@@ -185,6 +185,7 @@ class Screen(object):
                     return ""
 
                 self.Display(" ", C.SCR_X-1, cursor)
+		read_string = read_string[:-1]
 
             else:
                 if c < 256:

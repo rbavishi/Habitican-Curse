@@ -9,5 +9,5 @@ import config as C
 
 
 def Display(string):
-    G.screen.Display(" "*C.SCR_X)
+    G.screen.Display(" "*(C.SCR_Y-1))
     G.screen.Display(string)

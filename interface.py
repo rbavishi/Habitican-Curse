@@ -13,6 +13,7 @@ import global_objects as G
 import helper as H
 import menu as M
 import request_manager as RM
+import debug as DEBUG
 
 
 class Interface(object):
@@ -149,6 +150,12 @@ class Interface(object):
             G.screen.SaveInRegister(1)
             G.user.GetPartyData()
             G.screen.RestoreRegister(1)
+
+	elif command == "data-display":
+	    G.reqManager.DataDisplayTool()
+
+	else:
+	    DEBUG.Display("Invalid: " + command)
 
     def Input(self):
         while(1):

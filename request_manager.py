@@ -6,6 +6,8 @@
 import requests
 import os
 import time
+import imp
+import importlib
 
 # Custom Module Imports
 
@@ -205,4 +207,77 @@ class RequestManager(object):
         DEBUG.Display(" ")
         return resp
 
+    def DataDisplayTool(self):
+	# WARNING!!  Experimental support
 
+	DEBUG.Display("Connecting...")
+	from selenium import webdriver
+	import pyvirtualdisplay
+	import bs4
+
+	# Hide Browser
+	try:
+	    display = pyvirtualdisplay.Display(visible=0, size=(800, 600))
+	    trash = display.start()
+
+	    # Create Browser Instance
+	    driver = webdriver.Firefox()
+	    driver.get('https://oldgods.net/habitrpg/habitrpg_user_data_display.html')
+
+	    pageSource = driver.page_source.encode("utf-8")
+	    initialNum = pageSource.find("Enter your Habitica API details")
+
+	    DEBUG.Display("Logging In...")
+	    # Fill Form
+	    userElement = driver.find_element_by_id('userId')
+	    userElement.send_keys(self.userID)
+
+	    passElement = driver.find_element_by_id('apiToken')
+	    passElement.send_keys(self.key)
+
+	    # Submit Stuff
+	    driver.find_element_by_xpath('//input[@value = "Fetch My Data"]').click()
+	    DEBUG.Display("Login Successful.")
+
+	    DEBUG.Display("Loading... Please wait...")
+
+	    # Ugly Waiting Loop
+
+	    pageSource = driver.page_source.encode("utf-8")
+	    finalNum = pageSource.find("Enter your Habitica API details")
+
+	    while(finalNum <= 380000):
+		time.sleep(1)
+
+		pageSource = driver.page_source.encode("utf-8")
+		finalNum = pageSource.find("Enter your Habitica API details")
+
+	    html = driver.execute_script("return document.documentElement.outerHTML;")
+	    soup = bs4.BeautifulSoup(html)
+	    s = soup('div', {'id':'DASHBOARD'})[0]
+
+	    labels = [i.text + ":" for i in s.findAll('div', {'class':'label'})]
+	    values = [i.text for i in s.findAll('div', {'class':'value'})]
+
+	    DEBUG.Display(" ")
+
+            G.screen.SaveInRegister(1)
+            data_items = []
+	    for i in xrange(len(labels)):
+                data_items += [M.SimpleTextItem(labels[i] + " " + values[i])]
+
+            dataMenu = M.SimpleTextMenu(data_items, C.SCR_X-(C.SCR_MAX_MENU_ROWS+7+4))
+            dataMenu.SetXY(C.SCR_MAX_MENU_ROWS+7, 5) 
+            dataMenu.Display()
+            dataMenu.Input()
+            G.screen.RestoreRegister(1)
+
+	    driver.quit()
+	    trash=display.stop()
+
+	except:
+	    try:
+		driver.quit()
+		trash=display.stop()
+	    except:
+		pass
