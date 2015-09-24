@@ -60,6 +60,7 @@ class Screen(object):
         curses.init_pair(C.SCR_COLOR_GREEN_GRAY_BGRD, curses.COLOR_GREEN, 234)
         curses.init_pair(C.SCR_COLOR_YELLOW_GRAY_BGRD, curses.COLOR_YELLOW, 234)
         curses.init_pair(C.SCR_COLOR_BLUE_GRAY_BGRD, curses.COLOR_BLUE, 234)
+        curses.init_pair(C.SCR_COLOR_MAGENTA_GRAY_BGRD, curses.COLOR_MAGENTA, 234)
 
         curses.init_pair(C.SCR_COLOR_WHITE_GRAY_BGRD, curses.COLOR_WHITE, 234)
         curses.init_pair(C.SCR_COLOR_GRAY_WHITE_BGRD, 236, curses.COLOR_WHITE)

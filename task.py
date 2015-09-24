@@ -26,6 +26,8 @@ def ValueToColor(value):
       return C.SCR_COLOR_YELLOW
     elif value < 5:
       return C.SCR_COLOR_GREEN
+    elif value < 20:
+      return C.SCR_COLOR_CYAN
     else:
       return C.SCR_COLOR_BLUE
 
@@ -169,7 +171,7 @@ class Daily(Task):
 	self.startDate = str(data['startDate'])
 
 	# Is it due today?
-	self.isDue     = H.isDueDaily(self)
+	self.isDue     = H.isDueDaily(self.data)
 	if not self.isDue:
 	    self.color = C.SCR_COLOR_NEUTRAL
 

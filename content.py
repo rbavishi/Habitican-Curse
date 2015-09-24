@@ -7,6 +7,7 @@
 # Standard Library Imports
 import requests
 import time
+import math
 
 # Custom Module Imports
 
@@ -30,6 +31,7 @@ class ContentManager(object):
 	resp = self.Fetch()
 	if resp.status_code == 200:
 	    self.contentDict = resp.json()
+
 	else:
 	    self.contentDict = -1
 
@@ -39,6 +41,9 @@ class ContentManager(object):
 
     def Quest(self, key):
 	return self.contentDict['quests'].get(key, {})
+
+    def Equipment(self, key):
+	return self.contentDict['gear']['flat'][key]
 
 
 class Party(object):
@@ -125,7 +130,9 @@ def EffectiveValueTask(value): # Value used for calculation of damages.
 
 
 def GetData():
+    DEBUG.Display("Please Wait...")
     resp = requests.get(RM.GET_USER_URL, headers=G.reqManager.headers)
+    DEBUG.Display(" ")
 
     # Need some error handling here
     if resp.status_code!=200:
@@ -134,16 +141,69 @@ def GetData():
     data = resp.json()
 
     # Calculate Damage to User
+    while (G.content == None):
+	DEBUG.Display("Fetching Content...")
+	time.sleep(5)
+    DEBUG.Display(" ")
+
+    userStats = H.GetUserStats(data)
+    stealth = data['stats']['buffs']['stealth']
     dailies = data['dailys']
-    #conBonus =
+    conBonus = max(1 - (userStats['con']*(1.0/250)), 0.1)
+    dailies = ([dailies]) if type(dailies) != list else dailies
+    userDamage = 0
+    partyDamage = 0
+    userDamageBoss = 0
 
     party = data['party']
-
-    if party.get('quest', {}) != {}:
-	key = party['quest']['key']
-	#if G.content.Quest(key).has_key('boss'):
-
-
+    quest = party.get('quest', {})
+    if quest != {}:
+	questDetails = G.content.Quest(quest['key'])
+	userDamageBoss = math.floor(quest['progress']['up']*10)/10
 
 
+    for daily in dailies:
+	if not H.isDueDaily(daily) or daily['completed']:
+	    continue
 
+	if stealth > 0:
+	    stealth -= 1
+	    continue
+
+	checklist = daily['checklist']
+        done = len([i for i in checklist if i['completed']])
+        total = len(checklist)
+	checklistProportionDone = 0.0
+
+	if total > 0:
+	    checklistProportionDone = (done*1.0)/total
+
+	damage = 0.9747**(EffectiveValueTask(daily['value']))
+	damage = damage*(1 - checklistProportionDone)
+
+	# Due To Boss
+	if quest != {}:
+	    bossDamage = damage
+	    if questDetails.has_key('boss'):
+		if daily['priority'] < 1:
+		    bossDamage *= daily['priority']
+
+		partyDamage += bossDamage * questDetails['boss']['str']
+
+
+	userDamage += damage * conBonus * daily['priority'] * 2
+    
+    userDamage += partyDamage
+
+    userDamage = math.ceil(userDamage*10)/10
+    partyDamage = math.ceil(partyDamage*10)/10
+    data_items = ["Est. Damage to You: "+str(userDamage), "Est. Damage to Party: "+str(partyDamage), 
+	          "Est. Damage to Boss: "+str(userDamageBoss)]
+    data_items = [M.SimpleTextItem(i) for i in data_items]
+
+    G.screen.SaveInRegister(1)
+    dataMenu = M.SimpleTextMenu(data_items, C.SCR_TEXT_AREA_LENGTH)
+    dataMenu.SetXY(C.SCR_FIRST_HALF_LENGTH, 5) 
+    dataMenu.Display()
+    dataMenu.Input()
+    G.screen.RestoreRegister(1)

@@ -14,6 +14,7 @@ import helper as H
 import menu as M
 import request_manager as RM
 import debug as DEBUG
+import content as CT
 
 
 class Interface(object):
@@ -145,6 +146,8 @@ class Interface(object):
             G.reqManager.FetchData()
             G.screen.Erase()
             self.Init()
+
+	    G.user.PrintUserStats()
         
         elif command == "party":
             G.screen.SaveInRegister(1)
@@ -152,7 +155,7 @@ class Interface(object):
             G.screen.RestoreRegister(1)
 
 	elif command == "data-display":
-	    G.reqManager.DataDisplayTool()
+	    CT.GetData()
 
 	else:
 	    DEBUG.Display("Invalid: " + command)

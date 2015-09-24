@@ -17,6 +17,8 @@ import content as CT
 
 
 def Round(num):
+    if num < 0:
+	return -1 * int(round(abs(num), 0))
     return int(round(num, 0))
 
 
@@ -34,31 +36,44 @@ class User(object):
     def __init__(self, data):
  
         self.data = data
+	self.stats = data['stats']
 
         # Basic User Stats
-        self.hp          = Round(data['hp'])
-        self.maxHealth   = Round(data['maxHealth'])
-        self.mp          = int(data['mp'])
-        self.maxMP       = Round(data['maxMP'])
-        self.gp          = int(data['gp'])
-        self.exp         = int(data['exp'])
-        self.toNextLevel = Round(data['toNextLevel'])
-        self.lvl         = data['lvl']
+        self.hp          = Round(self.stats['hp'])
+        self.maxHealth   = Round(self.stats['maxHealth'])
+        self.mp          = int(self.stats['mp'])
+        self.maxMP       = Round(self.stats['maxMP'])
+        self.gp          = int(self.stats['gp'])
+        self.exp         = int(self.stats['exp'])
+        self.toNextLevel = Round(self.stats['toNextLevel'])
+        self.lvl         = self.stats['lvl']
+	
+	# Stats, gear etc.
+	# Strength, Intelligence, Perception, Constitution
+	self.attrStats   = {} # Will be updated when habitica content is fetched
+	self.equipGear   = self.data['items']['gear']['equipped']
 
         self.cursorPositions = []
 
     # Written separately to avoid confusion
     def Reload(self, data):
+        self.data = data
+	self.stats = data['stats']
 
         # Basic User Stats
-        self.hp          = Round(data['hp'])
-        self.maxHealth   = Round(data['maxHealth'])
-        self.mp          = int(data['mp'])
-        self.maxMP       = Round(data['maxMP'])
-        self.gp          = int(data['gp'])
-        self.exp         = int(data['exp'])
-        self.toNextLevel = Round(data['toNextLevel'])
-        self.lvl         = data['lvl']
+        self.hp          = Round(self.stats['hp'])
+        self.maxHealth   = Round(self.stats['maxHealth'])
+        self.mp          = int(self.stats['mp'])
+        self.maxMP       = Round(self.stats['maxMP'])
+        self.gp          = int(self.stats['gp'])
+        self.exp         = int(self.stats['exp'])
+        self.toNextLevel = Round(self.stats['toNextLevel'])
+        self.lvl         = self.stats['lvl']
+
+	# Stats, gear etc.
+	# Strength, Intelligence, Perception, Constitution
+	self.attrStats   = H.GetUserStats(data) 
+	self.equipGear   = self.data['items']['gear']['equipped']
 
     def PrintData(self):
         G.screen.DisplayCustomColor(" "*(C.SCR_Y-1), C.SCR_COLOR_WHITE_GRAY_BGRD, C.SCR_X-2, 0)
@@ -100,11 +115,22 @@ class User(object):
 
         self.cursorPositions.append(cursor)
         cursor += len(string) + 3 - len(C.SYMBOL_GOLD)
+        self.cursorPositions.append(cursor)
+
+    def PrintUserStats(self, cursor=-1):
+	if cursor == -1:
+	    cursor = self.cursorPositions[-1]
+
+	string = ("STR: " + str(self.attrStats['str']) + " " +
+		  "INT: " + str(self.attrStats['int']) + " " +
+		  "PER: " + str(self.attrStats['per']) + " " + 
+		  "CON: " + str(self.attrStats['con']))
+
+	G.screen.DisplayCustomColorBold(string, C.SCR_COLOR_MAGENTA_GRAY_BGRD, C.SCR_X-2, C.SCR_Y-(3 + len(string)))
 
     def PrintDiff(self, diffDict):
         for i in diffDict:
-            diffDict[i] = Round(diffDict[i])
-            self.data[i] = self.data[i] + diffDict[i]
+            self.stats[i] = self.stats[i] + diffDict[i]
             diffDict[i] = SignFormat(diffDict[i])
 
         self.Reload(self.data)

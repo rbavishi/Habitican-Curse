@@ -61,7 +61,7 @@ class RequestManager(object):
         habits, dailies, todos = json['habits'], json['dailys'], json['todos']
 
         # Initialize User Stats
-        G.user = U.User(json['stats']) 
+        G.user = U.User(json) 
 
         # Convert everything to list form. In case of a single task, the
         # response won't be a list
@@ -113,7 +113,7 @@ class RequestManager(object):
 
             json = response.json()
             for i in diffDict:
-                diffDict[i] = json[i] - origDict[i]
+		diffDict[i] = U.Round(json[i]) - U.Round(origDict[i])
 
             # Check for drops
             tmp_var = json['_tmp']
@@ -136,7 +136,7 @@ class RequestManager(object):
 
             json = response.json()
             for i in diffDict:
-                diffDict[i] = json[i] - origDict[i]
+		diffDict[i] = U.Round(json[i]) - U.Round(origDict[i])
 
         # Dailies and TODOS marked as completed
         for i in self.MarkQueue:
@@ -158,7 +158,7 @@ class RequestManager(object):
 	    json = response.json()
 	    
 	    for i in diffDict:
-		diffDict[i] = json[i] - origDict[i]
+		diffDict[i] = U.Round(json[i]) - U.Round(origDict[i])
 
 	    # Check for drops
 	    tmp_var = json['_tmp']
@@ -188,6 +188,7 @@ class RequestManager(object):
         G.screen.Erase()
         G.user.PrintDiff(diffDict)
         G.intf.Init()
+	G.user.PrintUserStats()
 
         # Display Drop Messages
         if Drops:

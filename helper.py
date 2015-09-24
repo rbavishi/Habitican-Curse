@@ -15,6 +15,7 @@ import config as C
 from screen import Screen
 import global_objects as G
 import debug as DEBUG
+import content as CT
 
 
 class Status(object):
@@ -69,7 +70,7 @@ class Status(object):
         for (key, value) in self.attributes.items():
             if value != None:
                 if value:
-                    G.screen.DisplayCustomColorBold(key, C.SCR_COLOR_CYAN, X, Y)
+		    G.screen.DisplayCustomColorBold(key, C.SCR_COLOR_YELLOW, X, Y)
                 else:
                     G.screen.DisplayCustomColorBold(key, C.SCR_COLOR_DARK_GRAY, X, Y)
                 Y -= 2
@@ -189,19 +190,20 @@ def GetDifferenceTime(d2, d1=-1): # d1 - d2
 
     return str(diffDate.minutes)+'m ago'
 
+
 def isDueDaily(task):
-    if task.frequency == 'weekly':
+    if task['frequency'] == 'weekly':
 	translateDict = {0: 'm', 1: 't', 2: 'w', 3: 'th', 4: 'f', 5: 's', 6: 'su'}
-	if task.repeat[translateDict[datetime.today().weekday()]]:
+	if task['repeat'][translateDict[datetime.today().weekday()]]:
 	    return True
 	else:
 	    return False
 
-    elif task.frequency == 'daily':
-	startDate = DateTime(task.startDate)
+    elif task['frequency'] == 'daily':
+	startDate = DateTime(str(task['startDate']))
 	current   = DateTime(-1)
 	diffDay   = relativedelta.relativedelta(current.date, startDate.date).days
-	if diffDay % (task.everyX) == 0:
+	if diffDay % (task['everyX']) == 0:
 	    return True
 	else:
 	    return False
@@ -209,6 +211,74 @@ def isDueDaily(task):
     return False
 
 
+def GetUserStats(data):
+    stats = data['stats']
+    gear  = data['items']['gear']['equipped']
+    userClass = stats['class']
 
+    # Intelligence
+    statInt = (stats['int'] +            # Allocated
+    	      stats['buffs']['int'] +    # Buffed
+	      min(stats['lvl'],100)/2)   # Level Bonus
 
+    for i in gear.values():
+	gearStats = G.content.Equipment(i)
+	if ((gearStats['klass'] == userClass) or 
+		(gearStats['klass'] == "special" and gearStats['specialClass'] == userClass)):
+	       statInt += gearStats['int']*1.5
+	else:
+	    statInt += gearStats['int']
+
+    # Perception
+    statPer = (stats['per'] +            # Allocated
+    	       stats['buffs']['per'] +   # Buffed
+	       min(stats['lvl'],100)/2)  # Level Bonus
+
+    for i in gear.values():
+	gearStats = G.content.Equipment(i)
+	if ((gearStats['klass'] == userClass) or 
+		(gearStats['klass'] == "special" and gearStats['specialClass'] == userClass)):
+	       statPer += gearStats['per']*1.5
+	else:
+	    statPer += gearStats['per']
+
+    # Strength
+    statStr = (stats['str'] +            # Allocated
+    	       stats['buffs']['str'] +   # Buffed
+	       min(stats['lvl'],100)/2)  # Level Bonus
+
+    for i in gear.values():
+	gearStats = G.content.Equipment(i)
+	if ((gearStats['klass'] == userClass) or 
+		(gearStats['klass'] == "special" and gearStats['specialClass'] == userClass)):
+	       statStr += gearStats['str']*1.5
+	else:
+	    statStr += gearStats['str']
+
+    # Constitution
+    statCon = (stats['con'] +            # Allocated
+    	       stats['buffs']['con'] +   # Buffed
+	       min(stats['lvl'],100)/2)  # Level Bonus
+
+    for i in gear.values():
+	gearStats = G.content.Equipment(i)
+	if ((gearStats['klass'] == userClass) or 
+		(gearStats['klass'] == "special" and gearStats['specialClass'] == userClass)):
+	       statCon += gearStats['con']*1.5
+	else:
+	    statCon += gearStats['con']
+
+    if statInt == int(statInt):
+	statInt = int(statInt)
+
+    if statStr == int(statStr):
+	statStr = int(statStr)
+
+    if statPer == int(statPer):
+	statPer = int(statPer)
+
+    if statCon == int(statCon):
+	statCon = int(statCon)
+
+    return {'int': statInt, 'per': statPer, 'str': statStr, 'con': statCon}
 

@@ -39,6 +39,10 @@ def BookKeepingThread():
 def ContentFetchThread():
     G.content = CT.ContentManager()
 
+    # Set user stats now that content has been fetched
+    G.user.attrStats = H.GetUserStats(G.user.data)
+    G.user.PrintUserStats()
+
 def main(curses_screen):
     G.screen = Screen(curses_screen)
     G.screen.Initialize()
