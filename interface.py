@@ -160,6 +160,10 @@ class Interface(object):
     def Input(self):
         while(1):
             c = G.screen.GetCharacter()
+
+	    # Clear Notification Line
+	    DEBUG.Display(" ")
+
             if c == curses.KEY_UP:
                 self.ScrollUp()
             elif c == curses.KEY_DOWN:

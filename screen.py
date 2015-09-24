@@ -100,6 +100,9 @@ class Screen(object):
 
 	self.ctxts[register].seek(0)
         self.screen = curses.getwin(self.ctxts[register])
+
+	# Clear Notification Line
+	DEBUG.Display(" ")
         self.Refresh()
 
     def Save(self):
@@ -113,6 +116,10 @@ class Screen(object):
 
         self.stackFile.seek(self.stack[-1])
         self.screen = curses.getwin(self.stackFile)
+
+	# Clear Notification Line
+	DEBUG.Display(" ")
+
         self.Refresh()
 
     def Display(self, string, x=0, y=0):

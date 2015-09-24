@@ -9,10 +9,12 @@ import curses
 NUM_CONTEXT_REGISTERS = 4
 
 # Screen Specifications - Will be adjusted during runtime
-SCR_MAX_MENU_ROWS   = 10
+SCR_MAX_MENU_ROWS   = 10   # Keep this as an even number please
 SCR_X = 0
 SCR_Y = 0
 SCR_MENU_ITEM_WIDTH = 0
+SCR_FIRST_HALF_LENGTH = 0  # Space taken up by the upper half menu of tasks
+SCR_TEXT_AREA_LENGTH = 0
 
 # Colors
 SCR_COLOR_RED          = 2
@@ -64,8 +66,10 @@ ChecklistStatus = {SYMBOL_TICK: False, SYMBOL_DELETE: False, SYMBOL_EDIT: False}
 # Function for setting values at runtime
 
 def ConfigureRuntime(screen):
-    global SCR_Y, SCR_X, SCR_MENU_ITEM_WIDTH
+    global SCR_Y, SCR_X, SCR_MENU_ITEM_WIDTH, SCR_TEXT_AREA_LENGTH, SCR_FIRST_HALF_LENGTH
     SCR_X, SCR_Y = screen.getmaxyx()
     SCR_MENU_ITEM_WIDTH = (SCR_Y - 10)/3
+    SCR_TEXT_AREA_LENGTH = (SCR_X - (SCR_MAX_MENU_ROWS + 7 + 4))
+    SCR_FIRST_HALF_LENGTH = SCR_MAX_MENU_ROWS + 7
 
 

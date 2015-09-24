@@ -18,6 +18,7 @@ import helper as H
 import menu as M
 import request_manager as RM
 import interface as I
+import content as CT
 
 user_id = ''
 api_token = ''
@@ -35,7 +36,8 @@ def BookKeepingThread():
         i += 1
         time.sleep(2)
 
-
+def ContentFetchThread():
+    G.content = CT.ContentManager()
 
 def main(curses_screen):
     G.screen = Screen(curses_screen)
@@ -45,9 +47,10 @@ def main(curses_screen):
     G.reqManager.FetchData()
     G.intf = I.Interface()
     G.intf.Init()
+    thread.start_new_thread(ContentFetchThread, ())
+
     G.intf.Input()
 
-    #thread.start_new_thread(BookKeepingThread, ())
     #G.screen.GetCharacter()
 
 

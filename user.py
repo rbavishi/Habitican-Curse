@@ -2,6 +2,8 @@
 
     All user related data such as health, gold, mana etc. are stored here
 """
+# Standard Library Imports
+import time
 
 # Custom Module Imports
 
@@ -11,6 +13,7 @@ import debug as DEBUG
 import request_manager as RM
 import helper as H
 import menu as M
+import content as CT
 
 
 def Round(num):
@@ -35,10 +38,10 @@ class User(object):
         # Basic User Stats
         self.hp          = Round(data['hp'])
         self.maxHealth   = Round(data['maxHealth'])
-        self.mp          = Round(data['mp'])
+        self.mp          = int(data['mp'])
         self.maxMP       = Round(data['maxMP'])
-        self.gp          = Round(data['gp'])
-        self.exp         = Round(data['exp'])
+        self.gp          = int(data['gp'])
+        self.exp         = int(data['exp'])
         self.toNextLevel = Round(data['toNextLevel'])
         self.lvl         = data['lvl']
 
@@ -50,10 +53,10 @@ class User(object):
         # Basic User Stats
         self.hp          = Round(data['hp'])
         self.maxHealth   = Round(data['maxHealth'])
-        self.mp          = Round(data['mp'])
+        self.mp          = int(data['mp'])
         self.maxMP       = Round(data['maxMP'])
-        self.gp          = Round(data['gp'])
-        self.exp         = Round(data['exp'])
+        self.gp          = int(data['gp'])
+        self.exp         = int(data['exp'])
         self.toNextLevel = Round(data['toNextLevel'])
         self.lvl         = data['lvl']
 
@@ -133,17 +136,5 @@ class User(object):
             return 
 
         data = resp.json()
-        chat_items = []
-        chat = data['chat'][:50]
-        for i in chat:
-            timeElapsed = H.GetDifferenceTime(i['timestamp'])
-            detailString = i.get('user', '') + " " + timeElapsed
-            chat_items += [M.SimpleTextItem(str(i['text']), additional=str(detailString))]
-
-        chatMenu = M.SimpleTextMenu(chat_items, C.SCR_X-(C.SCR_MAX_MENU_ROWS+7+4))
-        chatMenu.SetXY(C.SCR_MAX_MENU_ROWS+7, 5) 
-        chatMenu.Display()
-        chatMenu.Input()
-
-
-
+	partyObj = CT.Party(data)
+	partyObj.Display()

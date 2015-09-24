@@ -195,8 +195,8 @@ class RequestManager(object):
             for i in Drops:
                 drop_items += [M.SimpleTextItem(i)]
 
-            dropMenu = M.SimpleTextMenu(drop_items, C.SCR_X-(C.SCR_MAX_MENU_ROWS+7+4))
-            dropMenu.SetXY(C.SCR_MAX_MENU_ROWS+7, 5) 
+            dropMenu = M.SimpleTextMenu(drop_items, C.SCR_TEXT_AREA_LENGTH)
+            dropMenu.SetXY(C.SCR_FIRST_HALF_LENGTH, 5) 
             dropMenu.Display()
             dropMenu.Input()
             G.screen.RestoreRegister(1)
@@ -266,8 +266,8 @@ class RequestManager(object):
 	    for i in xrange(len(labels)):
                 data_items += [M.SimpleTextItem(labels[i] + " " + values[i])]
 
-            dataMenu = M.SimpleTextMenu(data_items, C.SCR_X-(C.SCR_MAX_MENU_ROWS+7+4))
-            dataMenu.SetXY(C.SCR_MAX_MENU_ROWS+7, 5) 
+            dataMenu = M.SimpleTextMenu(data_items, C.SCR_TEXT_AREA_LENGTH)
+            dataMenu.SetXY(C.SCR_FIRST_HALF_LENGTH, 5) 
             dataMenu.Display()
             dataMenu.Input()
             G.screen.RestoreRegister(1)

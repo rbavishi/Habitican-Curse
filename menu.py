@@ -389,8 +389,15 @@ class SimpleTextMenu(object):
         self.x = x
         self.y = y
 
+    def SetNumRows(self, numRows):
+	self.num_rows = numRows
+
+        # Menu Window Specifications
+        self.start = 0
+        self.end = min(self.num_rows, len(self.text))
+
     def Display(self):
-        G.screen.RestoreRegister(0)
+        G.screen.ClearRegion(self.x, self.x+self.num_rows, self.y, C.SCR_Y-1)
         X, Y = self.x, self.y
 
         G.screen.ScrollBar(X, C.SCR_Y-5, self.start, self.end, len(self.text), self.num_rows)
