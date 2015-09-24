@@ -166,6 +166,13 @@ class Daily(Task):
         self.frequency = data['frequency']
         self.repeat    = data['repeat']
         self.everyX    = data['everyX']
+	self.startDate = str(data['startDate'])
+
+	# Is it due today?
+	self.isDue     = H.isDueDaily(self)
+	if not self.isDue:
+	    self.color = C.SCR_COLOR_NEUTRAL
+
 
 	# Checklist Menu. None if it is empty
 	self.checklistMenu = ChecklistMenu(self.checklist)
@@ -191,6 +198,9 @@ class Daily(Task):
             G.screen.DisplayCustomColorBold("Checklist: " + "("+str(done)+"/"+str(total)+")" + " completed", 
                                              C.SCR_COLOR_MAGENTA, X, Y)
             X += 2
+	
+	if not self.isDue:
+	    G.screen.DisplayCustomColorBold("Not Due Today", C.SCR_COLOR_NEUTRAL, X, Y)
 
     def ShowChecklist(self):
 	if self.checklistMenu == None:

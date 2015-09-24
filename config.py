@@ -42,6 +42,9 @@ SCR_COLOR_WHITE_GRAY_BGRD  = 21
 # Background Color (Default black)
 SCR_COLOR_BGRD = curses.COLOR_BLACK
 
+# Special Color Codes
+SCR_COLOR_NEUTRAL = SCR_COLOR_LIGHT_GRAY
+
 # Special Symbols
 SYMBOL_TICK = u'\u2714'.encode("utf-8")
 SYMBOL_DISC = u'\u25CF'.encode("utf-8")

@@ -18,6 +18,7 @@ import menu as M
 import task as T
 import debug as DEBUG
 import user as U
+import request_manager as RM
 
 FETCH_URL = "https://habitica.com:443/api/v2/content"
 
@@ -112,6 +113,37 @@ class Party(object):
 	self.chatMenu.SetNumRows(MAX_X - (X + 1))
 	self.chatMenu.Display()
 	self.chatMenu.Input()
+
+def EffectiveValueTask(value): # Value used for calculation of damages.
+    			       # Between -47.27 and 21.27
+    if value < -47.27:
+	return -47.27
+    if value > 21.27:
+	return 21.27
+
+    return value
+
+
+def GetData():
+    resp = requests.get(RM.GET_USER_URL, headers=G.reqManager.headers)
+
+    # Need some error handling here
+    if resp.status_code!=200:
+	return
+
+    data = resp.json()
+
+    # Calculate Damage to User
+    dailies = data['dailys']
+    #conBonus =
+
+    party = data['party']
+
+    if party.get('quest', {}) != {}:
+	key = party['quest']['key']
+	#if G.content.Quest(key).has_key('boss'):
+
+
 
 
 

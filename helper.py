@@ -138,14 +138,20 @@ class Status(object):
 class DateTime(object):
     """ Class for handling various date-time formats used in Habitica """
 
-    def __init__(self, inpDate):
+    def __init__(self, inpDate=-1):
+	if inpDate == -1:
+	    inpDate = time.time()*1000
         
         self.date = self.ConvertDate(inpDate)
 
     def ConvertDate(self, date):
         if type(date) == int or type(date) == float:
             # Milliseconds included in the timestamp
-            return datetime.fromtimestamp(date*1.0/1000) 
+            retDate = datetime.fromtimestamp(date*1.0/1000) 
+	    retDate = retDate.replace(tzinfo=tz.tzlocal())
+
+	    return retDate
+
         elif type(date) == str:
             # UTC Format. We'll convert it to local time.
             # We assume that local time zone can be computed by dateutil
@@ -165,8 +171,6 @@ class DateTime(object):
 
 
 def GetDifferenceTime(d2, d1=-1): # d1 - d2
-    if d1 == -1:
-        d1 = time.time() * 1000
     Date1 = DateTime(d1)
     Date2 = DateTime(d2)
     #DEBUG.Display(Date1.DueDateFormat())
@@ -184,6 +188,26 @@ def GetDifferenceTime(d2, d1=-1): # d1 - d2
         return str(diffDate.hours)+'h ago'
 
     return str(diffDate.minutes)+'m ago'
+
+def isDueDaily(task):
+    if task.frequency == 'weekly':
+	translateDict = {0: 'm', 1: 't', 2: 'w', 3: 'th', 4: 'f', 5: 's', 6: 'su'}
+	if task.repeat[translateDict[datetime.today().weekday()]]:
+	    return True
+	else:
+	    return False
+
+    elif task.frequency == 'daily':
+	startDate = DateTime(task.startDate)
+	current   = DateTime(-1)
+	diffDay   = relativedelta.relativedelta(current.date, startDate.date).days
+	if diffDay % (task.everyX) == 0:
+	    return True
+	else:
+	    return False
+
+    return False
+
 
 
 
