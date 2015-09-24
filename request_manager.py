@@ -144,10 +144,10 @@ class RequestManager(object):
                 URL = GET_TASKS_URL + "/" + i.task.taskID + "/" + "up"
             else:
                 URL = GET_TASKS_URL + "/" + i.task.taskID + "/" + "down"
-            response = requests.post(URL, headers=self.headers)
+	    response = requests.post(URL, headers=self.headers)
 
-            # Need some error handling here
-            if response.status_code!=200:
+	    # Need some error handling here
+	    if response.status_code!=200:
                 return
 
             if i.task.task_type == "todo":
@@ -155,19 +155,20 @@ class RequestManager(object):
             elif i.task.task_type == "daily":
                 i.task.completed ^= True
 
-            json = response.json()
-            for i in diffDict:
-                diffDict[i] = json[i] - origDict[i]
+	    json = response.json()
+	    
+	    for i in diffDict:
+		diffDict[i] = json[i] - origDict[i]
 
-            # Check for drops
-            tmp_var = json['_tmp']
-            if tmp_var.has_key('drop'):
-                if tmp_var['drop'].has_key('dialog'):
-                    Drops+=[str(tmp_var['drop']['dialog'])]
-                elif tmp_var['drop'].has_key('text'):
-                    Drops+=[str(tmp_var['drop']['text'])]
-                elif tmp_var['drop'].has_key('notes'):
-                    Drops+=[str(tmp_var['drop']['notes'])]
+	    # Check for drops
+	    tmp_var = json['_tmp']
+	    if tmp_var.has_key('drop'):
+		if tmp_var['drop'].has_key('dialog'):
+		    Drops+=[str(tmp_var['drop']['dialog'])]
+		elif tmp_var['drop'].has_key('text'):
+		    Drops+=[str(tmp_var['drop']['text'])]
+		elif tmp_var['drop'].has_key('notes'):
+		    Drops+=[str(tmp_var['drop']['notes'])]
 
         for i in self.DeleteQueue:
             URL = GET_TASKS_URL + "/" + i.task.taskID
