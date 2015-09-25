@@ -147,6 +147,14 @@ class Interface(object):
             G.screen.Erase()
             self.Init()
 
+	    # User Stats
+	    while (G.content == None):
+		DEBUG.Display("Fetching Content...")
+		time.sleep(5)
+	    DEBUG.Display(" ")
+
+	    G.user.attrStats = H.GetUserStats(G.user.data)
+
 	    G.user.PrintUserStats()
         
         elif command == "party":

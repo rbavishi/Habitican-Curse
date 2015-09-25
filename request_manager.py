@@ -42,6 +42,15 @@ class RequestManager(object):
         self.DeleteQueue = []
         self.EditQueue = []
 
+    def ClearQueues(self):
+
+        self.MarkUpQueue = []
+        self.MarkDownQueue = []
+        self.MarkQueue = []
+        self.DeleteQueue = []
+        self.EditQueue = []
+
+
     def FetchData(self):
         #del(G.HabitMenu)
         #del(G.TODOMenu)
@@ -62,6 +71,7 @@ class RequestManager(object):
 
         # Initialize User Stats
         G.user = U.User(json) 
+
 
         # Convert everything to list form. In case of a single task, the
         # response won't be a list
@@ -113,7 +123,7 @@ class RequestManager(object):
 
             json = response.json()
             for i in diffDict:
-		diffDict[i] = U.Round(json[i]) - U.Round(origDict[i])
+		diffDict[i] = json[i]
 
             # Check for drops
             tmp_var = json['_tmp']
@@ -136,7 +146,8 @@ class RequestManager(object):
 
             json = response.json()
             for i in diffDict:
-		diffDict[i] = U.Round(json[i]) - U.Round(origDict[i])
+		#diffDict[i] = U.Round(json[i]) - U.Round(origDict[i])
+	        diffDict[i] = json[i]
 
         # Dailies and TODOS marked as completed
         for i in self.MarkQueue:
@@ -158,7 +169,7 @@ class RequestManager(object):
 	    json = response.json()
 	    
 	    for i in diffDict:
-		diffDict[i] = U.Round(json[i]) - U.Round(origDict[i])
+		diffDict[i] = json[i]
 
 	    # Check for drops
 	    tmp_var = json['_tmp']
@@ -202,6 +213,8 @@ class RequestManager(object):
             dropMenu.Display()
             dropMenu.Input()
             G.screen.RestoreRegister(1)
+
+	self.ClearQueues()
 
     def PartyRequest(self):
         DEBUG.Display("Please Wait...")

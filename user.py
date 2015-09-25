@@ -128,12 +128,24 @@ class User(object):
 
 	G.screen.DisplayCustomColorBold(string, C.SCR_COLOR_MAGENTA_GRAY_BGRD, C.SCR_X-2, C.SCR_Y-(3 + len(string)))
 
-    def PrintDiff(self, diffDict):
-        for i in diffDict:
-            self.stats[i] = self.stats[i] + diffDict[i]
-            diffDict[i] = SignFormat(diffDict[i])
+    def PrintDiff(self, newDict):
+	diffDict = {}
 
-        self.Reload(self.data)
+	diffDict['hp'] = Round(newDict['hp']) - self.hp; self.hp = Round(newDict['hp']); self.stats['hp'] = newDict['hp']
+	diffDict['mp'] = int(newDict['mp']) - self.mp; self.mp = int(newDict['mp']); self.stats['mp'] = newDict['mp']
+	diffDict['gp'] = int(newDict['gp']) - self.gp; self.gp = int(newDict['gp']); self.stats['gp'] = newDict['gp']
+	diffDict['exp'] = int(newDict['exp']) - self.exp; self.exp = int(newDict['exp']); self.stats['exp'] = newDict['exp']
+	diffDict['lvl'] = newDict['lvl'] - self.lvl; self.lvl = newDict['lvl']; self.stats['lvl'] = newDict['lvl']
+
+	for i in diffDict:
+	    diffDict[i] = SignFormat(diffDict[i])
+
+        #for i in diffDict:
+	    #newVal = diffDict[i]
+            #self.stats[i] = self.stats[i] + diffDict[i]
+            #diffDict[i] = SignFormat(diffDict[i])
+
+        #self.Reload(self.data)
 
         # Difficult to maintain the correct increase in experience when level changes
         if diffDict['lvl'] != "":
