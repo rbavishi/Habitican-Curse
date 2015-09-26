@@ -28,5 +28,8 @@
 
 ### ScreenShots
 
+#### Main Task Menu
 ![Main Task Menu](/img/TaskScreenShot.png)
+
+#### Party Details
 ![Party Details](/img/PartyScreenShot.png)
