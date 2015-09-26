@@ -31,5 +31,11 @@
 #### Main Task Menu
 ![Main Task Menu](/img/TaskScreenShot.png)
 
+#### Task Marking
+![Party Details](/img/MarkingScreenShot.png)
+
 #### Party Details
 ![Party Details](/img/PartyScreenShot.png)
+
+#### Checklist Example
+![Party Details](/img/ChecklistScreenShot.png)
