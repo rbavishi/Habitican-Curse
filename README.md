@@ -28,4 +28,5 @@
 
 ### ScreenShots
 
-![My image](rbavishi.github.com/Habitican-Curse/img/TaskScreenShot.png)
+![Main Task Menu](/img/TaskScreenShot.png)
+![Party Details](/img/PartyScreenShot.png)
