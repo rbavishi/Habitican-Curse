@@ -8,7 +8,6 @@
 
 * Launch habitica.py from the source directory using `python habitica.py`
 
-
 ### Common Commands
 
 * Press `m` to mark an item for toggling its completion status. Press `+` and `-` for habits. Press the key again to unmark it. Similarly press `d` to toggle deletion status
@@ -17,6 +16,12 @@
 
 * `:r` to reload the tasks from the server - basically rebooting the interface.
 
+* `c` to display the checklist(if any) for the highlighted task. Press arrow keys to navigate, `m` for marking, `d` for delete, and `ENTER` for changing name etc. Press enter on `Add an Item` to add a new checklist item.
+
 ### Party
 
 * If you are a member of a party, you can type `:party` to display the chat messages and quest details (if any).
+
+### Data-Display
+
+* `:data-display` to display some basic details like "Est. Damage to You", "Est. Damage to Party", "Est. Damage to Boss" etc. The statistical functions used are borrowed from the excellent data-display tool by LadyAlys (https://github.com/Alys/tools-for-habitrpg)
