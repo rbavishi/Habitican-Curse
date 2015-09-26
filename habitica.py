@@ -7,7 +7,7 @@ import curses
 import tempfile
 import time
 import locale
-import thread
+import threading
 
 # Custom Module Imports
 
@@ -26,17 +26,7 @@ api_token = ''
 # Ability to display symbols
 locale.setlocale(locale.LC_ALL, '') 
 
-
 def BookKeepingThread():
-    while(G.screen == None):
-        i = 2
-    i = 2
-    while(1):
-        G.screen.Display(str(i))
-        i += 1
-        time.sleep(2)
-
-def ContentFetchThread():
     G.content = CT.ContentManager()
 
     # Set user stats now that content has been fetched
@@ -51,11 +41,13 @@ def main(curses_screen):
     G.reqManager.FetchData()
     G.intf = I.Interface()
     G.intf.Init()
-    thread.start_new_thread(ContentFetchThread, ())
+    bookThread = threading.Thread(target=BookKeepingThread)
+    bookThread.start()
+    #inputThread = threading.Thread(target=G.intf.Input)
+    #inputThread.start()
+
 
     G.intf.Input()
-
-    #G.screen.GetCharacter()
 
 
 curses.wrapper(main)

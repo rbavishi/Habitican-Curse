@@ -6,6 +6,7 @@
 # Standard Library Imports
 import textwrap
 import curses
+import time
 
 # Custom Module Imports
 
@@ -14,6 +15,7 @@ from screen import Screen
 import global_objects as G
 import helper as H
 import debug as DEBUG
+import task as T
 
 def truncate(string, size):
     return (string[:size-3]+"...") if len(string)>size else string
@@ -88,6 +90,7 @@ class MenuItem(object):
         G.screen.DisplayCustomColorBold(" "*self.width, color, self.x+1,
                                         self.y)
         if hasattr(self.task, 'completed') and self.task.completed:
+	    color = C.SCR_COLOR_NEUTRAL
             G.screen.DisplayCustomColorBold(C.SYMBOL_TICK, color, self.x,
                                             self.y + status_length)
         if len(self.taskname) < first_row_size: # No need to truncate
@@ -185,9 +188,23 @@ class MenuItem(object):
         self.status.ToggleEdit()
         self.HighlightName()
 
-    def ShowChecklist(self):
-	self.task.ShowChecklist()
+    def EnterNewName(self):
+	# Used for changing names of checklist items
+	# and adding new items
+	G.screen.Display(" "*(C.SCR_Y - self.y - 1), self.x, self.y)
+	G.screen.Display(" "*(C.SCR_Y - self.y - 1), self.x+1, self.y)
+	newName = G.screen.StringInput(self.x, self.y)
+	self.task.newName = newName
+	self.taskname = newName # Will be restored if changes are cancelled
 
+	# Clear it up a bit
+	G.screen.Display(" "*(C.SCR_Y - self.y - 1), self.x, self.y)
+	G.screen.Display(" "*(C.SCR_Y - self.y - 1), self.x+1, self.y)
+
+	self.HighlightName()
+
+    def ShowChecklist(self):
+	self.task.ShowChecklist(self)
 
 
 class Menu(object):
@@ -196,8 +213,14 @@ class Menu(object):
 
     def __init__(self, items, title, rows=-1, menu_type = "task"):
         self.items = items           # Item List
+	self.backupItems = []        # Will be used for backing up tasks when
+				     # adding items to checklists
         self.title = title
         self.menu_type = menu_type
+
+	# Special behavior of checklist
+	if self.menu_type == "checklist_menu":
+	    self.items.append(T.DummyChecklistItem())
 
         # Defining the menu window using start and end
         if rows == -1:
@@ -212,6 +235,7 @@ class Menu(object):
         self.x = 0
         self.y = 0
 
+
     def SetXY(self, x=0, y=0):
         self.x = x
         self.y = y
@@ -222,6 +246,8 @@ class Menu(object):
         return True
 
     def Init(self):
+	if self.menu_type == "checklist_menu":
+	    G.screen.ClearTextArea()
         X, Y = self.x, self.y
         G.screen.DisplayBold(self.title, X, Y)
         X += 2
@@ -291,14 +317,37 @@ class Menu(object):
 	# Implemented specially for checklists and similar menus
 	if self.menu_type == "checklist_menu":
 	    self.items[self.current].HighlightName()
+	    DEBUG.Display("(c) confirm; (q) cancel")
+	    self.backupItems = self.items[:-1]
 	while(1):
 	    c = G.screen.GetCharacter()
 	    if c == curses.KEY_UP:
 		self.ScrollUp()
 	    elif c == curses.KEY_DOWN:
 		self.ScrollDown()
+	    elif c == ord('m'):
+		if self.current != self.end - 1:
+		    self.items[self.current].ToggleMark()
+	    elif c == ord('d'):
+		if self.current != self.end - 1:
+		    self.items[self.current].ToggleDelete()
+	    elif c == ord('\n'):
+		self.items[self.current].EnterNewName()
+		if self.current != self.end - 1:
+		    self.items[self.current].ToggleEdit()
+		else:
+		    self.items[self.current].task.ChangeName()
+		    self.items[self.current].status.SetNewItem()
+		    self.items.append(T.DummyChecklistItem())
+
+		    self.Reload()
+		    self.Init()
+		    self.items[self.current].HighlightName()
+
 	    elif c == ord('q') or c == 27:
-		break
+		return 0
+	    elif c == ord('c'):
+		return 1
 
     def InitialCurrentTask(self):
         G.prevTask = G.currentTask
@@ -332,6 +381,58 @@ class Menu(object):
             elif i.status.attributes.get(C.SYMBOL_EDIT, False):
                 G.reqManager.EditQueue.append(i)
                 i.status.Reset()
+
+    def WriteChecklistChanges(self, mainTask):
+
+	# This is used only for checklists
+	anyChange = False
+	newChecklist = []
+	newItems = []
+	for i in self.items[:-1]:
+	    if i.status.attributes.get(C.SYMBOL_TICK, False):
+		anyChange = True
+		i.task.Mark()
+		newChecklist += [i.task.data]
+		newItems += [i]
+	    elif i.status.attributes.get(C.SYMBOL_DELETE, False):
+		anyChange = True
+	    elif i.status.attributes.get(C.SYMBOL_EDIT, False): # Name Change
+		anyChange = True
+		i.task.ChangeName()
+		newChecklist += [i.task.data]
+		newItems += [i]
+	    elif i.status.IsNewItem():
+		anyChange = True
+		newChecklist += [i.task.data]
+		newItems += [i]
+	    else:
+		newChecklist += [i.task.data]
+		newItems += [i]
+
+	    i.status.Reset()
+
+	if not anyChange: # No change, continue.
+	    return
+
+	# Accomodate any deletions
+	self.items = newItems + [self.items[-1]]
+	newItems = []
+	self.Reload()
+
+	mainTask.ToggleEdit()
+	mainTask.task.ChangeChecklist(newChecklist)
+	mainTask.status.SetChecklist(mainTask.task.ChecklistTuple())
+	self.backupItems = []
+
+    def CancelChecklistChanges(self):
+	for i in self.items:
+	    i.status.Reset()
+	    i.task.newName = ""
+	    i.taskname = i.task.text
+
+	self.items = self.backupItems[:] + [self.items[-1]]
+	self.Reload()
+	self.backupItems = []
 
 
 

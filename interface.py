@@ -128,6 +128,7 @@ class Interface(object):
 	G.screen.SaveInRegister(1)
 	G.currentTask.ShowChecklist()
 	G.screen.RestoreRegister(1)
+	self.Highlight()
 
     def Command(self, command):
         if command == "w":

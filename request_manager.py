@@ -108,9 +108,9 @@ class RequestManager(object):
         Drops = []
 
         # Difference obtained in user stats due to these operations
-        diffDict = {'hp': 0, 'gp': 0, 'mp': 0, 'exp': 0, 'lvl': 0}
         origDict = {'hp': G.user.hp, 'gp': G.user.gp, 'mp': G.user.mp,
                     'exp': G.user.exp, 'lvl': G.user.lvl}
+        diffDict = origDict.copy()
 
         # Habits marked as +
         for i in self.MarkUpQueue:
@@ -195,6 +195,14 @@ class RequestManager(object):
                 G.DailyMenu.Remove(i.task.taskID)
             elif i.task.task_type == "todo":
                 G.TODOMenu.Remove(i.task.taskID)
+
+        for i in self.EditQueue:
+            URL = GET_TASKS_URL + "/" + i.task.taskID
+            response = requests.put(URL, headers=self.headers, json=i.task.data)
+
+            # Need some error handling here
+            if response.status_code!=200:
+                return
 
         G.screen.Erase()
         G.user.PrintDiff(diffDict)

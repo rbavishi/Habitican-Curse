@@ -7,6 +7,7 @@
 import curses
 import tempfile
 import math
+import threading
 
 # Custom Module Imports
 
@@ -33,6 +34,16 @@ class Screen(object):
         self.SCR_X=0
         self.SCR_Y=0
         self.SCR_MENU_ITEM_WIDTH=0
+
+	self.lock = threading.RLock()
+
+    def Lock(self):
+	# Synchronize screen input/output
+	self.lock.acquire()
+
+    def Release(self):
+	# Synchronize screen input/output
+	self.lock.release()
 
     def Initialize(self):
         #global SCR_X, SCR_Y, SCR_MENU_ITEM_WIDTH
@@ -124,29 +135,42 @@ class Screen(object):
         self.Refresh()
 
     def Display(self, string, x=0, y=0):
+	self.Lock()
         self.screen.addstr(x, y, string)
         self.Refresh()
+	self.Release()
 
     def DisplayBold(self, string, x=0, y=0):
+	self.Lock()
         self.screen.addstr(x, y, string, curses.A_BOLD)
         self.Refresh()
+	self.Release()
 
     def Highlight(self, string, x=0, y=0):
+	self.Lock()
         self.screen.addstr(x, y, string, curses.A_BOLD |
                                          curses.color_pair(C.SCR_COLOR_WHITE_GRAY_BGRD))
         self.Refresh()
+	self.Release()
 
     def DisplayCustomColor(self, string, color=0, x=0, y=0):
+	self.Lock()
         self.screen.addstr(x, y, string, curses.color_pair(color))
         self.Refresh()
+	self.Release()
 
     def DisplayCustomColorBold(self, string, color=0, x=0, y=0):
+	self.Lock()
         self.screen.addstr(x, y, string, curses.A_BOLD |
                                          curses.color_pair(color))
         self.Refresh()
+	self.Release()
 
     def GetCharacter(self):
-        return self.screen.getch()
+	self.Lock()
+        c = self.screen.getch()
+	self.Release()
+	return c
 
     def Echo(self):
         curses.echo()
@@ -169,6 +193,7 @@ class Screen(object):
 	self.ClearRegion(C.SCR_MAX_MENU_ROWS+7, C.SCR_X-2, 0, C.SCR_Y)
 
     def Command(self):
+	self.Lock()
         self.Display(" "*(C.SCR_Y-1), C.SCR_X-1, 0)
         self.Display(":", C.SCR_X-1, 0)
 
@@ -202,9 +227,24 @@ class Screen(object):
                 continue
         self.Noecho()
         self.CursorHide()
+	self.Release()
         return read_string
 
+    def StringInput(self, x=0, y=0):
+	self.Lock()
+	self.Echo()
+	self.CursorBlink()
+
+	inpString = self.screen.getstr(x, y, C.SCR_Y-20)
+
+	self.Noecho()
+	self.CursorHide()
+	self.Release()
+
+	return inpString
+
     def ScrollBar(self, X, Y, start, end, length, rows = -1):
+	self.Lock()
         if length == 0:       # Empty Menu
             return
         if rows == -1:
@@ -231,4 +271,6 @@ class Screen(object):
 
         for i in xrange(starting, ending):
             self.DisplayCustomColorBold(" ", C.SCR_COLOR_GRAY_WHITE_BGRD, i, Y)
+
+	self.Release()
 

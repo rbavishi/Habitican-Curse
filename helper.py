@@ -35,6 +35,7 @@ class Status(object):
         self.due = due
         self.x = 0
         self.y = 0
+	self.newItem = False
 
     def ReturnLenString(self):
         length = 2*len([i for i in self.attributes if self.attributes[i]!=None])
@@ -50,6 +51,9 @@ class Status(object):
     def SetXY(self, x=0, y=0):
         self.x = x
         self.y = y
+
+    def SetChecklist(self, checklist):
+	self.checklist = checklist
 
     def Display(self):
         X, Y = self.x, self.y
@@ -130,9 +134,32 @@ class Status(object):
         else:
             self.attributes[C.SYMBOL_DELETE] = True
 
+    def ToggleEdit(self):
+        # Return if the delete option has already been enabled or the edit
+        # status is true
+	if self.attributes[C.SYMBOL_DELETE]:
+            return
+
+        for key in self.attributes:
+            if key != C.SYMBOL_EDIT:
+                self.attributes[key] = False
+
+        if self.attributes[C.SYMBOL_EDIT]:
+            self.attributes[C.SYMBOL_EDIT] = False
+        else:
+            self.attributes[C.SYMBOL_EDIT] = True
+
     def Reset(self):
         for key in self.attributes:
             self.attributes[key] = False
+
+	self.newItem = False
+
+    def IsNewItem(self):
+	return self.newItem
+
+    def SetNewItem(self):
+	self.newItem = True
 
 
 

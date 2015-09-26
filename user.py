@@ -140,13 +140,6 @@ class User(object):
 	for i in diffDict:
 	    diffDict[i] = SignFormat(diffDict[i])
 
-        #for i in diffDict:
-	    #newVal = diffDict[i]
-            #self.stats[i] = self.stats[i] + diffDict[i]
-            #diffDict[i] = SignFormat(diffDict[i])
-
-        #self.Reload(self.data)
-
         # Difficult to maintain the correct increase in experience when level changes
         if diffDict['lvl'] != "":
             diffDict['exp'] = ""

@@ -5,6 +5,7 @@
 """
 # Standard Library Imports
 import textwrap
+import uuid
 
 # Custom Module Imports
 
@@ -64,6 +65,14 @@ def ChecklistMenu(checklist):
     menuObj = M.Menu(checklist_items, 'Checklist', (C.SCR_X - (C.SCR_MAX_MENU_ROWS+7+4+2)), 'checklist_menu')
     menuObj.SetXY(C.SCR_MAX_MENU_ROWS+7, 5)
     return menuObj
+
+def DummyChecklistItem():
+    # Return an "Add an item"-named dummy checklist item
+    newItem = {}
+    newItem[u'text']      = u'Add New Item'
+    newItem[u'completed'] = False
+    newItem[u'id']        = str(uuid.uuid4())
+    return M.MenuItem(ChecklistItem(newItem), 'checklist', newItem['text'], width=(C.SCR_Y-20))
 
 
 class Task(object):
@@ -127,12 +136,22 @@ class ChecklistItem(object):
     def __init__(self, data):
 
 	# Checklist Item Specifications
+	self.data      = data
 	self.text      = str(data['text'])
 	self.completed = data['completed']
 	self.ID        = str(data['id'])
+	self.newName   = ""               # In case we change the name
 
     def Display(self): # Dummy
 	return
+
+    def Mark(self):
+	self.completed ^= True
+	self.data['completed'] = self.completed
+
+    def ChangeName(self):
+	self.text = self.newName
+	self.data['text'] = self.text
 
 
 class Habit(Task):
@@ -153,6 +172,9 @@ class Habit(Task):
         # Something can be added here
         # Maybe use the data-display tool
 
+    def ShowChecklist(self, menuItem):
+	# Dummy to avoid crashes
+	return
 
 class Daily(Task):
     """ Class for holding a daily """
@@ -204,13 +226,22 @@ class Daily(Task):
 	if not self.isDue:
 	    G.screen.DisplayCustomColorBold("Not Due Today", C.SCR_COLOR_NEUTRAL, X, Y)
 
-    def ShowChecklist(self):
+    def ShowChecklist(self, menuItem):
 	if self.checklistMenu == None:
 	    return
 
 	G.screen.ClearTextArea()
 	self.checklistMenu.Init()
-	self.checklistMenu.Input()
+	retVal = self.checklistMenu.Input()
+
+	if retVal == 0: # Cancel changes
+	    self.checklistMenu.CancelChecklistChanges()
+	else:
+	    self.checklistMenu.WriteChecklistChanges(menuItem)
+
+    def ChangeChecklist(self, checklist):
+	self.checklist = checklist
+	self.data['checklist'] = checklist
 
 
 class TODO(Task):
@@ -256,10 +287,19 @@ class TODO(Task):
                                              C.SCR_COLOR_MAGENTA, X, Y)
             X += 2
 
-    def ShowChecklist(self):
+    def ShowChecklist(self, menuItem):
 	if self.checklistMenu == None:
 	    return
 
 	G.screen.ClearTextArea()
 	self.checklistMenu.Init()
-	self.checklistMenu.Input()
+	retVal = self.checklistMenu.Input()
+
+	if retVal == 0: # Cancel changes
+	    self.checklistMenu.CancelChecklistChanges()
+	else:
+	    self.checklistMenu.WriteChecklistChanges(menuItem)
+
+    def ChangeChecklist(self, checklist):
+	self.checklist = checklist
+	self.data['checklist'] = checklist
