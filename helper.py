@@ -229,7 +229,7 @@ def isDueDaily(task):
     elif task['frequency'] == 'daily':
 	startDate = DateTime(str(task['startDate']))
 	current   = DateTime(-1)
-	diffDay   = relativedelta.relativedelta(current.date, startDate.date).days
+	diffDay   = (current.date - startDate.date).days
 	if diffDay % (task['everyX']) == 0:
 	    return True
 	else:
