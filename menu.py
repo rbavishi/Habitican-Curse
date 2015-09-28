@@ -211,6 +211,10 @@ class MenuItem(object):
     def ShowChecklist(self):
 	self.task.ShowChecklist(self)
 
+    def ChangePriority(self, key):
+        self.task.ChangePriority(key)
+	self.status.ToggleEdit()
+
 
 class Menu(object):
     """ The menu class - For selecting tasks from the interface. General enough

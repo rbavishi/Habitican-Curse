@@ -129,6 +129,12 @@ class Task(object):
 
         return X
 
+    def ChangePriority(self, key):
+	priorityDict = {"trivial": 0.1, "easy": 1, "medium": 1.5, "hard": 2}
+	self.priority = priorityDict[key]
+	self.data['priority'] = self.priority
+	self.difficulty = key
+
 
 class ChecklistItem(object):
     """ Class for holding a checklist item """

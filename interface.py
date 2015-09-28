@@ -4,6 +4,7 @@
 """
 # Standard Library Imports
 import curses
+import shlex # For parsing
 
 # Custom Module Imports
 
@@ -130,6 +131,33 @@ class Interface(object):
 	G.screen.RestoreRegister(1)
 	self.Highlight()
 
+    def Idx(self, parsed, index):
+	# Return element in the parsed list at index. Return "" if not present
+	try:
+	    return parsed[index]
+	except:
+	    return ""
+
+    def Parser(self, command):
+	parsed = shlex.split(command)
+	if self.Idx(parsed, 0) == "set":
+	    if not self.Idx(parsed, 1) in  C.SET_COMMANDS:
+		DEBUG.Display("Invalid Set: " + command)
+		return
+	    c = self.Idx(parsed, 1)
+
+	    if c == "d":
+		if (not self.Idx(parsed, 2) in C.DIFFS) or (self.Idx(parsed, 3) != "") :
+		    DEBUG.Display("Invalid set d: " + command)
+		    return
+		key = self.Idx(parsed, 2)
+		G.currentTask.ChangePriority(key)
+		self.Highlight()
+		return 
+
+	DEBUG.Display("Invalid: " + command)
+
+
     def Command(self, command):
         if command == "w":
             G.prevTask = None
@@ -167,7 +195,7 @@ class Interface(object):
 	    CT.GetData()
 
 	else:
-	    DEBUG.Display("Invalid: " + command)
+	    self.Parser(command)
 
     def Input(self):
         while(1):

@@ -144,9 +144,7 @@ class Status(object):
             if key != C.SYMBOL_EDIT:
                 self.attributes[key] = False
 
-        if self.attributes[C.SYMBOL_EDIT]:
-            self.attributes[C.SYMBOL_EDIT] = False
-        else:
+        if not self.attributes[C.SYMBOL_EDIT]: # Edits cannot be turned "off"
             self.attributes[C.SYMBOL_EDIT] = True
 
     def Reset(self):
