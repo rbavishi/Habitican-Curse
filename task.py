@@ -54,8 +54,8 @@ def RepeatToString(repeat):
     return retString
 
 def ChecklistMenu(checklist):
-    if not checklist:
-	return None
+    #if not checklist:
+	#return None
 
     checklist_items = []
     for i in checklist:
@@ -276,7 +276,7 @@ class TODO(Task):
 
         # Due Date
         if self.date != "":
-            G.screen.DisplayCustomColorBold("Due: " + H.DateTime(self.date).DateCreatedFormat(),
+            G.screen.DisplayCustomColorBold("Due: " + H.DateTime(self.date).DateCreatedFormat() + " (dd/mm/yy)",
                                             C.SCR_COLOR_MAGENTA, X, Y)
             X += 2
 

@@ -173,7 +173,10 @@ class DateTime(object):
         self.date = self.ConvertDate(inpDate)
 
     def ConvertDate(self, date):
-        if type(date) == int or type(date) == float:
+	if type(date) == datetime:
+	    return date
+
+        elif type(date) == int or type(date) == float:
             # Milliseconds included in the timestamp
             retDate = datetime.fromtimestamp(date*1.0/1000) 
 	    retDate = retDate.replace(tzinfo=tz.tzlocal())

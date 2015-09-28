@@ -71,24 +71,27 @@ class MenuItem(object):
     def SetXY(self, x=0, y=0):
         self.x = x
         self.y = y
+	self.SetStatusXY()
 
+    def SetStatusXY(self):
         if self.front:
-            self.status.SetXY(x, y + self.status.ReturnLenString() - 2)
+            self.status.SetXY(self.x, self.y + self.status.ReturnLenString() - 2)
         else:
-            self.status.SetXY(x, y + self.width - 1)
+            self.status.SetXY(self.x, self.y + self.width - 1)
+
 
     def DisplayName(self, color=0):
         if hasattr(self.task, "color"):
             color = self.task.color
 
-        self.status.Display()
         status_length = self.status.ReturnLenString()
         first_row_size = self.width - status_length - 1
 
-        G.screen.DisplayCustomColorBold(" "*first_row_size, color, self.x,
-                                        self.y+status_length+1)
+        G.screen.DisplayCustomColorBold(" "*(first_row_size+2), color, self.x,
+                                        self.y+status_length-1)
         G.screen.DisplayCustomColorBold(" "*self.width, color, self.x+1,
                                         self.y)
+        self.status.Display()
         if hasattr(self.task, 'completed') and self.task.completed:
 	    color = C.SCR_COLOR_NEUTRAL
             G.screen.DisplayCustomColorBold(C.SYMBOL_TICK, color, self.x,
@@ -126,16 +129,18 @@ class MenuItem(object):
     def HighlightName(self):
         self.task.Display()
 
-        self.status.Display()
         status_length = self.status.ReturnLenString()
         first_row_size = self.width - status_length - 1
 
         # Display Task Details
 
-        G.screen.Highlight(" "*first_row_size, self.x,
-                           self.y+status_length+1)
+	G.screen.Highlight(" "*(first_row_size+1), self.x,
+			   self.y+status_length)
+        #G.screen.Highlight(" "*self.width, self.x,
+                                        #self.y)
         G.screen.Highlight(" "*self.width, self.x+1,
                                         self.y)
+        self.status.Display()
         if hasattr(self.task, 'completed') and self.task.completed:
             G.screen.Highlight(C.SYMBOL_TICK, self.x,
                                             self.y + status_length)
@@ -422,6 +427,7 @@ class Menu(object):
 	mainTask.ToggleEdit()
 	mainTask.task.ChangeChecklist(newChecklist)
 	mainTask.status.SetChecklist(mainTask.task.ChecklistTuple())
+	mainTask.SetStatusXY()
 	self.backupItems = []
 
     def CancelChecklistChanges(self):
