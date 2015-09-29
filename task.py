@@ -249,6 +249,40 @@ class Daily(Task):
 	self.checklist = checklist
 	self.data['checklist'] = checklist
 
+    def SetWeekly(self, repeat):
+	if self.frequency != "weekly":
+	    self.frequency = "weekly"
+	    self.data['frequency'] = self.frequency
+	    self.data['everyX'] = 1
+	    self.everyX = 1
+	
+	self.repeat = repeat
+	self.data['repeat'] = repeat
+
+	# Is it due today?
+	self.isDue     = H.isDueDaily(self.data)
+	if not self.isDue:
+	    self.color = C.SCR_COLOR_NEUTRAL
+	else:
+	    self.color = ValueToColor(self.priority)
+
+    def SetEvery(self, days):
+	if self.frequency != "daily":
+	    self.frequency = "daily"
+	    self.data['frequency'] = self.frequency
+	    self.repeat = C.DEFAULT_REPEAT
+	    self.data['repeat'] = self.repeat
+	
+	self.everyX = days
+	self.data['everyX'] = days
+
+	# Is it due today?
+	self.isDue     = H.isDueDaily(self.data)
+	if not self.isDue:
+	    self.color = C.SCR_COLOR_NEUTRAL
+	else:
+	    self.color = ValueToColor(self.priority)
+
 
 class TODO(Task):
     """ Class for holding a habit """

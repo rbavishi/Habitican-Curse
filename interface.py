@@ -175,6 +175,30 @@ class Interface(object):
 		self.Highlight()
 		return 
 
+	    # Set weekly options for dailies
+	    elif c == "weekly":
+		if G.currentTask.task_type != "daily":
+		    return
+
+		repeat = H.RepeatPicker(G.currentTask.task.repeat)
+		if repeat != None:
+		    G.currentTask.SetWeekly(repeat)
+		self.Highlight()
+		return 
+
+	    # Set every X days option for dailies
+	    elif c == "every":
+		if G.currentTask.task_type != "daily":
+		    return
+
+		if not Idx(parsed, 2).isdigit():
+		    DEBUG.Display("Invalid number of days.")
+		    return
+
+		G.currentTask.SetEvery(int(Idx(parsed, 2)))
+		self.Highlight()
+		return 
+
 	if command != "":
 	    DEBUG.Display("Invalid: " + command)
 

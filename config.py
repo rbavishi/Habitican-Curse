@@ -84,4 +84,5 @@ SET_COMMANDS = ["d", "due", "every", "weekly", "plus", "minus"]
 DIFFS      = ["trivial", "easy", "medium", "hard"]
 DATEPARSER = datetime.datetime.strptime 
 DATEFORMATS = ["%d/%m/%Y", "%d/%m/%y"]
+DEFAULT_REPEAT = {'m': True, 't': True, 'w': True, 'th': True, 'f': True, 's': True, 'su': True}
 

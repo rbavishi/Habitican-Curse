@@ -6,6 +6,7 @@
 
 # Standard Library Imports
 import time
+import curses
 from datetime import datetime, timedelta
 from dateutil import tz, relativedelta
 
@@ -360,3 +361,43 @@ def DatePicker():
 
     DEBUG.Display("")
     return finalDate
+
+
+def RepeatPicker(original=C.DEFAULT_REPEAT):
+    newRepeat = original.copy()
+    translate = {"m": "Mon", "t": "Tue", "w": "Wed", "th": "Thurs", "f": "Fri", "s": "Sat", "su": "Sun"}
+    sequence = ["m", "t", "w", "th", "f", "s", "su"]
+
+    X, Y = C.SCR_X-4, 5
+    G.screen.ClearTextArea()
+    DEBUG.Display("Press arrow keys to navigate. (t) Toggle; (c) Confirm; (q) Cancel")
+    current = 0
+    while(1):
+	dY = Y
+	G.screen.DisplayBold("Set Weekly: ", X-1, Y)
+	for i in xrange(7):
+	    if i == current:
+		if newRepeat[sequence[i]]:
+		    G.screen.DisplayCustomColorBold(translate[sequence[i]], C.SCR_COLOR_MAGENTA_GRAY_BGRD, X, dY)
+		else:
+		    G.screen.DisplayCustomColorBold(translate[sequence[i]], C.SCR_COLOR_WHITE_GRAY_BGRD, X, dY)
+	    else:
+		if newRepeat[sequence[i]]:
+		    G.screen.DisplayCustomColorBold(translate[sequence[i]], C.SCR_COLOR_MAGENTA, X, dY)
+		else:
+		    G.screen.DisplayCustomColorBold(translate[sequence[i]], C.SCR_COLOR_NEUTRAL, X, dY)
+	    dY += len(translate[sequence[i]]) + 1
+
+	c = G.screen.GetCharacter()
+	if c == ord('t'):
+	    newRepeat[sequence[current]]^=True
+	elif c == ord('q'):
+	    DEBUG.Display("")
+	    return None
+	elif c == ord('c'):
+	    DEBUG.Display("")
+	    return newRepeat
+	elif c == curses.KEY_LEFT:
+	    current = max(0, current-1)
+	elif c == curses.KEY_RIGHT:
+	    current = min(6, current+1)

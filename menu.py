@@ -234,6 +234,20 @@ class MenuItem(object):
 	self.status.SetDue("")
 	self.status.ToggleEdit()
 
+    def SetWeekly(self, repeat):
+	if self.task_type != "daily":
+	    return
+
+	self.task.SetWeekly(repeat)
+	self.status.ToggleEdit()
+
+    def SetEvery(self, days):
+	if self.task_type != "daily":
+	    return 
+
+	self.task.SetEvery(days)
+	self.status.ToggleEdit()
+
 
 class Menu(object):
     """ The menu class - For selecting tasks from the interface. General enough
