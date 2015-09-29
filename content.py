@@ -161,11 +161,13 @@ def GetData():
 	questDetails = G.content.Quest(quest['key'])
 	userDamageBoss = math.floor(quest['progress']['up']*10)/10
 
+    dailiesIncomplete = 0
 
     for daily in dailies:
 	if not H.isDueDaily(daily) or daily['completed']:
 	    continue
 
+        dailiesIncomplete += 1
 	if stealth > 0:
 	    stealth -= 1
 	    continue
@@ -197,7 +199,7 @@ def GetData():
 
     userDamage = math.ceil(userDamage*10)/10
     partyDamage = math.ceil(partyDamage*10)/10
-    data_items = ["Est. Damage to You: "+str(userDamage), "Est. Damage to Party: "+str(partyDamage), 
+    data_items = ["Current Health: "+str(G.user.hp), "Dailies Incomplete: "+str(dailiesIncomplete), "Est. Damage to You: "+str(userDamage), "Est. Damage to Party: "+str(partyDamage), 
 	          "Est. Damage to Boss: "+str(userDamageBoss)]
     data_items = [M.SimpleTextItem(i) for i in data_items]
 
