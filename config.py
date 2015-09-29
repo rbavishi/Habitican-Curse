@@ -83,5 +83,5 @@ def ConfigureRuntime(screen):
 SET_COMMANDS = ["d", "due", "every", "weekly", "plus", "minus"]
 DIFFS      = ["trivial", "easy", "medium", "hard"]
 DATEPARSER = datetime.datetime.strptime 
-DATEFORMAT = "%d/%m/%Y"
+DATEFORMATS = ["%d/%m/%Y", "%d/%m/%y"]
 

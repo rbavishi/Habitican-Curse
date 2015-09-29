@@ -261,7 +261,7 @@ class TODO(Task):
         self.completed = data['completed']
         self.checklist = data['checklist']
 
-        if data.has_key('date'): # Due Date Stuff
+        if data.has_key('date') and data['date'] != "": # Due Date Stuff
             self.dueDate = H.DateTime(str(data['date'])).DueDateFormat()
             self.date    = str(data['date'])
         else:
@@ -275,6 +275,18 @@ class TODO(Task):
         done = len([i for i in self.checklist if i['completed']])
         total = len(self.checklist)
         return [done, total]
+
+    def ChangeDueDate(self, date):
+	self.data['date'] = date
+	self.dueDate = H.DateTime(str(self.data['date'])).DueDateFormat()
+	self.date = str(self.data['date'])
+
+    def RemoveDueDate(self): 
+	if self.data.has_key('date'):
+	    self.data['date']=""
+
+	self.dueDate = ""
+	self.date    = ""
 
     def Display(self):
         X = super(TODO, self).Display()

@@ -6,7 +6,7 @@
 
 # Standard Library Imports
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil import tz, relativedelta
 
 # Custom Module Imports
@@ -54,6 +54,9 @@ class Status(object):
 
     def SetChecklist(self, checklist):
 	self.checklist = checklist
+
+    def SetDue(self, due):
+	self.due = due
 
     def Display(self):
         X, Y = self.x, self.y
@@ -172,7 +175,8 @@ class DateTime(object):
 
     def ConvertDate(self, date):
 	if type(date) == datetime:
-	    return date
+	    retDate = date.replace(tzinfo=tz.tzlocal())
+	    return retDate
 
         elif type(date) == int or type(date) == float:
             # Milliseconds included in the timestamp
@@ -190,6 +194,11 @@ class DateTime(object):
             retDate = retDate.astimezone(tz.tzlocal())   # Local Time
 
             return retDate
+
+    def ConvertUTC(self):
+	retDate = self.date.replace(tzinfo=tz.tzlocal())
+	retDate = retDate.astimezone(tz.tzutc())
+	return retDate.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
     def DueDateFormat(self):
         return self.date.strftime('[%d/%m]')
@@ -310,3 +319,44 @@ def GetUserStats(data):
 
     return {'int': statInt, 'per': statPer, 'str': statStr, 'con': statCon}
 
+
+def DatePicker():
+    X, Y = C.SCR_X - 4, 5
+
+    # Clear Text Region
+    G.screen.ClearTextArea()
+
+    helpString = "Enter Date (dd/mm/yyyy): "
+    G.screen.DisplayCustomColorBold(helpString, C.SCR_COLOR_MAGENTA, X, 5)
+    Y += len(helpString)
+    DEBUG.Display("Enter 'q' to exit.")
+
+    while(1):
+	inpDate = G.screen.StringInput(X, Y)
+	if inpDate == "q":
+	    DEBUG.Display("")
+	    return
+
+	finalDate = None
+	success = False
+	for dateFormat in C.DATEFORMATS:
+	    try:
+		# Time will be the midnight of the previous day. So we need to add a day
+		finalDate = (DateTime(datetime.strptime(inpDate, dateFormat)
+ 			     + timedelta(hours=23, minutes=59, seconds=59)))
+		success = True
+		if finalDate.date < DateTime(-1).date:
+		    success = False
+		break
+	    except:
+		pass
+
+	if success:
+	    break
+
+	DEBUG.Display("Invalid Date. Please try again. Enter 'q' to cancel.")
+	G.screen.ClearTextArea()
+	G.screen.DisplayCustomColorBold(helpString, C.SCR_COLOR_MAGENTA, X, 5)
+
+    DEBUG.Display("")
+    return finalDate

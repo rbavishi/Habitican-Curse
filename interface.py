@@ -18,6 +18,14 @@ import debug as DEBUG
 import content as CT
 
 
+def Idx(parsed, index):
+    # Return element in the parsed list at index. Return "" if not present
+    try:
+	return parsed[index]
+    except:
+	return ""
+
+
 class Interface(object):
     
     def __init__(self):
@@ -131,31 +139,44 @@ class Interface(object):
 	G.screen.RestoreRegister(1)
 	self.Highlight()
 
-    def Idx(self, parsed, index):
-	# Return element in the parsed list at index. Return "" if not present
-	try:
-	    return parsed[index]
-	except:
-	    return ""
-
+    # Command Parser
     def Parser(self, command):
 	parsed = shlex.split(command)
-	if self.Idx(parsed, 0) == "set":
-	    if not self.Idx(parsed, 1) in  C.SET_COMMANDS:
+	if Idx(parsed, 0) == "set":
+	    if not Idx(parsed, 1) in  C.SET_COMMANDS:
 		DEBUG.Display("Invalid Set: " + command)
 		return
-	    c = self.Idx(parsed, 1)
+	    c = Idx(parsed, 1)
 
+	    # Change Difficulty
 	    if c == "d":
-		if (not self.Idx(parsed, 2) in C.DIFFS) or (self.Idx(parsed, 3) != "") :
+		if (not Idx(parsed, 2) in C.DIFFS) or (Idx(parsed, 3) != "") :
 		    DEBUG.Display("Invalid set d: " + command)
 		    return
-		key = self.Idx(parsed, 2)
+		key = Idx(parsed, 2)
 		G.currentTask.ChangePriority(key)
 		self.Highlight()
 		return 
 
-	DEBUG.Display("Invalid: " + command)
+	    # Change/Remove Due Date
+	    elif c == "due":
+		if G.currentTask.task_type != "todo":
+		    return
+		# set due remove - Remove the current due date if any
+		if Idx(parsed, 2) == "remove":
+		    G.currentTask.RemoveDueDate()
+		    self.Highlight()
+		    return
+
+		retDate = H.DatePicker()
+		if retDate != None:
+		    G.currentTask.ChangeDueDate(retDate.ConvertUTC())
+
+		self.Highlight()
+		return 
+
+	if command != "":
+	    DEBUG.Display("Invalid: " + command)
 
 
     def Command(self, command):

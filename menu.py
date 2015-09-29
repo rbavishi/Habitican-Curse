@@ -87,8 +87,8 @@ class MenuItem(object):
         status_length = self.status.ReturnLenString()
         first_row_size = self.width - status_length - 1
 
-        G.screen.DisplayCustomColorBold(" "*(first_row_size+2), color, self.x,
-                                        self.y+status_length-1)
+        G.screen.DisplayCustomColorBold(" "*self.width, color, self.x,
+                                        self.y)
         G.screen.DisplayCustomColorBold(" "*self.width, color, self.x+1,
                                         self.y)
         self.status.Display()
@@ -134,6 +134,8 @@ class MenuItem(object):
 
         # Display Task Details
 
+        G.screen.DisplayCustomColorBold(" "*self.width, C.SCR_COLOR_NEUTRAL, self.x,
+                                        self.y)
 	G.screen.Highlight(" "*(first_row_size+1), self.x,
 			   self.y+status_length)
         #G.screen.Highlight(" "*self.width, self.x,
@@ -213,6 +215,23 @@ class MenuItem(object):
 
     def ChangePriority(self, key):
         self.task.ChangePriority(key)
+	self.status.ToggleEdit()
+
+    def ChangeDueDate(self, date):
+	if self.task_type != "todo":
+	    return
+
+	self.task.ChangeDueDate(date)
+	self.status.SetDue(H.DateTime(date).DueDateFormat())
+	self.SetStatusXY()
+	self.status.ToggleEdit()
+
+    def RemoveDueDate(self):
+	if self.task_type != "todo":
+	    return
+
+	self.task.RemoveDueDate()
+	self.status.SetDue("")
 	self.status.ToggleEdit()
 
 
