@@ -238,11 +238,13 @@ def isDueDaily(task):
 	    return False
 
     elif task['frequency'] == 'daily':
-	startDate = DateTime(str(task['startDate']))
-	current   = DateTime(-1)
-	diff      = (current.date - startDate.date)
+	start       = DateTime(str(task['startDate']))
+	startDate   = datetime(start.date.year, start.date.month, start.date.day)
+	current     = DateTime(-1)
+	currentDate = datetime(current.date.year, current.date.month, current.date.day)
+	diff        = (currentDate - startDate)
 	# Taking care of offsets
-	diffDay   = diff.days + ((diff.seconds > 0) or (diff.microseconds > 0))
+	diffDay     = diff.days
 	if diffDay % (task['everyX']) == 0:
 	    return True
 	else:
