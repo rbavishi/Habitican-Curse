@@ -266,7 +266,7 @@ def GetUserStats(data):
     for i in gear.values():
 	gearStats = G.content.Equipment(i)
 	if ((gearStats['klass'] == userClass) or 
-		(gearStats['klass'] == "special" and gearStats['specialClass'] == userClass)):
+		(gearStats['klass'] == "special" and gearStats.get('specialClass', '') == userClass)):
 	       statInt += gearStats['int']*1.5
 	else:
 	    statInt += gearStats['int']
@@ -279,7 +279,7 @@ def GetUserStats(data):
     for i in gear.values():
 	gearStats = G.content.Equipment(i)
 	if ((gearStats['klass'] == userClass) or 
-		(gearStats['klass'] == "special" and gearStats['specialClass'] == userClass)):
+		(gearStats['klass'] == "special" and gearStats.get('specialClass', '') == userClass)):
 	       statPer += gearStats['per']*1.5
 	else:
 	    statPer += gearStats['per']
@@ -292,7 +292,7 @@ def GetUserStats(data):
     for i in gear.values():
 	gearStats = G.content.Equipment(i)
 	if ((gearStats['klass'] == userClass) or 
-		(gearStats['klass'] == "special" and gearStats['specialClass'] == userClass)):
+		(gearStats['klass'] == "special" and gearStats.get('specialClass', '') == userClass)):
 	       statStr += gearStats['str']*1.5
 	else:
 	    statStr += gearStats['str']
@@ -305,7 +305,7 @@ def GetUserStats(data):
     for i in gear.values():
 	gearStats = G.content.Equipment(i)
 	if ((gearStats['klass'] == userClass) or 
-		(gearStats['klass'] == "special" and gearStats['specialClass'] == userClass)):
+		(gearStats['klass'] == "special" and gearStats.get('specialClass', '') == userClass)):
 	       statCon += gearStats['con']*1.5
 	else:
 	    statCon += gearStats['con']
