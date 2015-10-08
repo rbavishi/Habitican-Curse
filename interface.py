@@ -199,6 +199,42 @@ class Interface(object):
 		self.Highlight()
 		return 
 
+	elif Idx(parsed, 0) == "et": # Create Todo
+	    c_title = Idx(parsed, 1)
+	    if c_title == "" :
+		title = H.TitlePicker()
+	    else:
+		title = Idx(parsed, 1)
+
+	    G.reqManager.CreateTask(title, "todo")
+	    self.trinity[self.currentMenu].InitialCurrentTask()
+
+	    self.Highlight()
+	    return
+
+	elif Idx(parsed, 0) == "ed": # Create Todo
+	    c_title = Idx(parsed, 1)
+	    if c_title == "" :
+		title = H.TitlePicker()
+	    else:
+		title = Idx(parsed, 1)
+
+	    G.reqManager.CreateTask(title, "daily")
+	    self.trinity[self.currentMenu].InitialCurrentTask()
+	    self.Highlight()
+	    return
+
+	elif Idx(parsed, 0) == "eh": # Create Todo
+	    c_title = Idx(parsed, 1)
+	    if c_title == "" :
+		title = H.TitlePicker()
+	    else:
+		title = Idx(parsed, 1)
+
+	    G.reqManager.CreateTask(title, "habit")
+	    self.trinity[self.currentMenu].InitialCurrentTask()
+	    self.Highlight()
+	    return
 	if command != "":
 	    DEBUG.Display("Invalid: " + command)
 

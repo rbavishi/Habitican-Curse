@@ -405,3 +405,30 @@ def RepeatPicker(original=C.DEFAULT_REPEAT):
 	    current = max(0, current-1)
 	elif c == curses.KEY_RIGHT:
 	    current = min(6, current+1)
+
+
+def TitlePicker():
+    X, Y = C.SCR_X - 4, 5
+
+    # Clear Text Region
+    G.screen.ClearTextArea()
+
+    helpString = "Enter Title: "
+    G.screen.DisplayCustomColorBold(helpString, C.SCR_COLOR_MAGENTA, X, 5)
+    Y += len(helpString)
+
+    while(1):
+	inpTitle = G.screen.StringInput(X, Y)
+	success = True
+	if inpTitle == "":
+	  success = False
+
+	if success:
+	    break
+
+	DEBUG.Display(" Please enter a non-empty title string.")
+	G.screen.ClearTextArea()
+	G.screen.DisplayCustomColorBold(helpString, C.SCR_COLOR_MAGENTA, X, 5)
+
+    DEBUG.Display("")
+    return inpTitle

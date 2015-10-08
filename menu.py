@@ -406,6 +406,11 @@ class Menu(object):
                 self.items.remove(i)
                 break
 
+    def Insert(self, item):
+	self.items.insert(0, item)
+	self.Reload()
+	self.Init()
+
     def WriteChanges(self):
         for i in self.items:
             if i.status.attributes.get("+", False):

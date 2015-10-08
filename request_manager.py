@@ -230,77 +230,49 @@ class RequestManager(object):
         DEBUG.Display(" ")
         return resp
 
-    def DataDisplayTool(self):
-	# WARNING!!  Experimental support
+    def CreateTask(self, title, task_type):
+	task = {}
+	task['text'] = title 
+	task['type'] = task_type
+	task['priority'] = 1
 
-	DEBUG.Display("Connecting...")
-	from selenium import webdriver
-	import pyvirtualdisplay
-	import bs4
+	if task_type == 'todo' or task_type == 'daily':
+	    task['checklist'] = []
+	if task_type == "daily":
+	    task['everyX'] = 1
+	    task['frequency'] = 'weekly'
+	    task['repeat'] = {'m': True, 't': True, 'w': True, 'th': True, 'f': True, 's': True, 'su': True}
+	if task_type == "habit":
+	    task['up'] = True
+	    task['down'] = True
 
-	# Hide Browser
-	try:
-	    display = pyvirtualdisplay.Display(visible=0, size=(800, 600))
-	    trash = display.start()
+	
+	DEBUG.Display("Creating Task...");
+	response = requests.post(GET_TASKS_URL, headers=self.headers, json=task)
 
-	    # Create Browser Instance
-	    driver = webdriver.Firefox()
-	    driver.get('https://oldgods.net/habitrpg/habitrpg_user_data_display.html')
+	# Need some error handling here
+	if response.status_code!=200:
+	    DEBUG.Display("Failed")
+	    return
 
-	    pageSource = driver.page_source.encode("utf-8")
-	    initialNum = pageSource.find("Enter your Habitica API details")
+	DEBUG.Display(" ")
+	ret_task = response.json()
+	if task_type == "habit":
+            item = T.Habit(ret_task)
+            menu_item = M.MenuItem(item, "habit", item.text)
+	    G.HabitMenu.Insert(menu_item)
 
-	    DEBUG.Display("Logging In...")
-	    # Fill Form
-	    userElement = driver.find_element_by_id('userId')
-	    userElement.send_keys(self.userID)
+        elif task_type == "daily":
+            item = T.Daily(ret_task)
+            menu_item = M.MenuItem(item, "daily", item.text)
+	    G.DailyMenu.Insert(menu_item)
 
-	    passElement = driver.find_element_by_id('apiToken')
-	    passElement.send_keys(self.key)
+	elif task_type == "todo":
+            item = T.TODO(ret_task)
+            menu_item = M.MenuItem(item, "todo", item.text)
+	    G.TODOMenu.Insert(menu_item)
 
-	    # Submit Stuff
-	    driver.find_element_by_xpath('//input[@value = "Fetch My Data"]').click()
-	    DEBUG.Display("Login Successful.")
 
-	    DEBUG.Display("Loading... Please wait...")
 
-	    # Ugly Waiting Loop
 
-	    pageSource = driver.page_source.encode("utf-8")
-	    finalNum = pageSource.find("Enter your Habitica API details")
 
-	    while(finalNum <= 380000):
-		time.sleep(1)
-
-		pageSource = driver.page_source.encode("utf-8")
-		finalNum = pageSource.find("Enter your Habitica API details")
-
-	    html = driver.execute_script("return document.documentElement.outerHTML;")
-	    soup = bs4.BeautifulSoup(html)
-	    s = soup('div', {'id':'DASHBOARD'})[0]
-
-	    labels = [i.text + ":" for i in s.findAll('div', {'class':'label'})]
-	    values = [i.text for i in s.findAll('div', {'class':'value'})]
-
-	    DEBUG.Display(" ")
-
-            G.screen.SaveInRegister(1)
-            data_items = []
-	    for i in xrange(len(labels)):
-                data_items += [M.SimpleTextItem(labels[i] + " " + values[i])]
-
-            dataMenu = M.SimpleTextMenu(data_items, C.SCR_TEXT_AREA_LENGTH)
-            dataMenu.SetXY(C.SCR_FIRST_HALF_LENGTH, 5) 
-            dataMenu.Display()
-            dataMenu.Input()
-            G.screen.RestoreRegister(1)
-
-	    driver.quit()
-	    trash=display.stop()
-
-	except:
-	    try:
-		driver.quit()
-		trash=display.stop()
-	    except:
-		pass
