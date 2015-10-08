@@ -212,7 +212,7 @@ class Interface(object):
 	    self.Highlight()
 	    return
 
-	elif Idx(parsed, 0) == "ed": # Create Todo
+	elif Idx(parsed, 0) == "ed": # Create Daily
 	    c_title = Idx(parsed, 1)
 	    if c_title == "" :
 		title = H.TitlePicker()
@@ -224,7 +224,7 @@ class Interface(object):
 	    self.Highlight()
 	    return
 
-	elif Idx(parsed, 0) == "eh": # Create Todo
+	elif Idx(parsed, 0) == "eh": # Create Habit
 	    c_title = Idx(parsed, 1)
 	    if c_title == "" :
 		title = H.TitlePicker()
@@ -235,6 +235,7 @@ class Interface(object):
 	    self.trinity[self.currentMenu].InitialCurrentTask()
 	    self.Highlight()
 	    return
+
 	if command != "":
 	    DEBUG.Display("Invalid: " + command)
 
