@@ -276,6 +276,9 @@ class Interface(object):
 	elif command == "data-display":
 	    CT.GetData()
 
+	elif command == "help":
+	    H.HelpPage()
+
 	else:
 	    self.Parser(command)
 

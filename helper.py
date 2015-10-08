@@ -17,6 +17,7 @@ from screen import Screen
 import global_objects as G
 import debug as DEBUG
 import content as CT
+import menu as M
 
 
 class Status(object):
@@ -432,3 +433,39 @@ def TitlePicker():
 
     DEBUG.Display("")
     return inpTitle
+
+
+def HelpPage():
+    help_items = [ "##########################################################",
+		   "Marking/Deletion",
+	    	   " 'm' - Mark/Unmark a TODO/Daily to toggle completion status",
+		   " 'd' - Mark/Unmark a Habit/Daily/TODO to toggle deletion status",
+		   " '+' - Mark/Unmark a Habit to toggle mark-UP status",
+		   " '-' - Mark/Unmark a Habit to toggle mark-DOWN status",
+		   "##########################################################",
+		   "Checklists",
+		   " 'c' - View checklist associated with a daily/TODO. The same marking/deletion rules as above for TODOS/dailies apply here.",
+		   " Press Enter on a checklist name to change its title. Press Enter on 'Add an Item' to add a checklist item with the entered title",
+		   "##########################################################",
+		   "Creating Tasks",
+		   " ':et <taskname>' - Create a TODO with the given taskname. Put the name in quotes if it has multiple words. Empty taskname will prompt for a title",
+		   " ':ed <taskname>' - Create a Daily with the given taskname. Put the name in quotes if it has multiple words. Empty taskname will prompt for a title",
+		   " ':eh <taskname>' - Create a Habit with the given taskname. Put the name in quotes if it has multiple words. Empty taskname will prompt for a title",
+		   "##########################################################",
+		   "Reading/Writing changes",
+		   " ':w' - Flush all the mark/deletion/edit changes and push them onto the server",
+		   "##########################################################",
+		   "Extra Tools",
+		   " ':party' - Display information related to current party if any.",
+		   " ':data-display' - Display useful information regarding damage, uncompleted dailies etc. Functions borrowed from the excellent Data-Display Tool by @LadyAlys",
+		   "##########################################################"
+		   ]
+
+    help_items = [M.SimpleTextItem(i) for i in help_items]
+    G.screen.SaveInRegister(1)
+    helpMenu = M.SimpleTextMenu(help_items, C.SCR_TEXT_AREA_LENGTH)
+    helpMenu.SetXY(C.SCR_FIRST_HALF_LENGTH, 5) 
+    helpMenu.Display()
+    helpMenu.Input()
+    G.screen.RestoreRegister(1)
+
