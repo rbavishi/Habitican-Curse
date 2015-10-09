@@ -437,6 +437,9 @@ def TitlePicker():
 
 def HelpPage():
     help_items = [ "##########################################################",
+	    	   "Movement/Scrolling",
+		   " Use Arrow keys or the vim-style h, j, k, l", 
+		   "##########################################################",
 		   "Marking/Deletion",
 	    	   " 'm' - Mark/Unmark a TODO/Daily to toggle completion status",
 		   " 'd' - Mark/Unmark a Habit/Daily/TODO to toggle deletion status",

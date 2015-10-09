@@ -363,9 +363,9 @@ class Menu(object):
 	    self.backupItems = self.items[:-1]
 	while(1):
 	    c = G.screen.GetCharacter()
-	    if c == curses.KEY_UP:
+	    if c == curses.KEY_UP or c == ord('k'):
 		self.ScrollUp()
-	    elif c == curses.KEY_DOWN:
+	    elif c == curses.KEY_DOWN or c == ord('j'):
 		self.ScrollDown()
 	    elif c == ord('m'):
 		if self.current != self.end - 1:
@@ -579,9 +579,9 @@ class SimpleTextMenu(object):
         DEBUG.Display("Press q to exit...")
         while(1):
             c = G.screen.GetCharacter()
-            if c == curses.KEY_UP:
+            if c == curses.KEY_UP or c == ord('k'):
                 self.ScrollUp()
-            elif c == curses.KEY_DOWN:
+            elif c == curses.KEY_DOWN or c == ord('j'):
                 self.ScrollDown()
             elif c == 27 or c == ord('q'):
                 break

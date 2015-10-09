@@ -289,13 +289,13 @@ class Interface(object):
 	    # Clear Notification Line
 	    DEBUG.Display(" ")
 
-            if c == curses.KEY_UP:
+            if c == curses.KEY_UP or c == ord('k'):
                 self.ScrollUp()
-            elif c == curses.KEY_DOWN:
+            elif c == curses.KEY_DOWN or c == ord('j'):
                 self.ScrollDown()
-            elif c == curses.KEY_LEFT:
+            elif c == curses.KEY_LEFT or c == ord('h'):
                 self.ScrollLeft()
-            elif c == curses.KEY_RIGHT:
+            elif c == curses.KEY_RIGHT or c == ord('l'):
                 self.ScrollRight()
             elif c == ord('m'):
                 self.ToggleMark()
