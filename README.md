@@ -4,7 +4,7 @@
 
 ### Configuring Habitican Curse
 
-* Habitican Curse uses the amazing `requests` library to connect to Habitica. Please install it first using `python habitica.py`.
+* Habitican Curse uses the amazing `requests` library to connect to Habitica. Please install it first using `pip install requests`.
 
 * You will need to have a 256-color terminal, with support for basic unicode symbols. The shell used in the screenshots is the simple GNOME shell and will suffice.
 
