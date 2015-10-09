@@ -19,6 +19,7 @@ import menu as M
 import request_manager as RM
 import interface as I
 import content as CT
+import debug as DEBUG
 
 user_id = ''
 api_token = ''
@@ -27,7 +28,10 @@ api_token = ''
 locale.setlocale(locale.LC_ALL, '') 
 
 def BookKeepingThread():
-    G.content = CT.ContentManager()
+    try:
+	G.content = CT.ContentManager()
+    except:
+        return
 
     # Set user stats now that content has been fetched
     G.user.attrStats = H.GetUserStats(G.user.data)
@@ -47,7 +51,13 @@ def main(curses_screen):
     #inputThread.start()
 
 
-    G.intf.Input()
+    try:
+	G.intf.Input()
+    except:
+	DEBUG.Display("Cleaning up...")
+	bookThread.join()
 
+if __name__ == "__main__":
+    G.reqManager = RM.RequestManager()
+    curses.wrapper(main)
 
-curses.wrapper(main)

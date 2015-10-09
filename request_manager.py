@@ -30,9 +30,28 @@ class RequestManager(object):
     """ The main class for sending/receiving data to the habitica server """
 
     def __init__(self):
-        f = open(os.getenv("HOME")+'/.habiticarc', 'r')
-        self.userID  = f.readline()[:-1]
-        self.key     = f.readline()[:-1]
+        try:
+	    f = open(os.getenv("HOME")+'/.habiticarc', 'r')
+	except:
+	    print "Enter UUID: ",
+	    uuid = raw_input()
+	    print " "
+	    print "Enter API-Key: ",
+	    key = raw_input()
+
+	    f = open(os.getenv("HOME")+'/.habiticarc', 'w+')
+	    f.write("uuid="+uuid+"\n")
+	    f.write("key="+key+"\n")
+	    f.close()
+
+	    f = open(os.getenv("HOME")+'/.habiticarc', 'r')
+
+	pair1 = f.readline()[:-1].split("=")
+	pair2 = f.readline()[:-1].split("=")
+	keyMap = {pair1[0]: pair1[1], pair2[0]: pair2[1]}
+
+        self.userID  = keyMap["uuid"]
+        self.key     = keyMap["key"]
         self.headers = {'x-api-key': self.key, 'x-api-user': self.userID}
 
         # Flush Queues

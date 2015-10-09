@@ -8,7 +8,13 @@
 
 * Launch habitica.py from the source directory using `python habitica.py`
 
+* WARNING: There can be undefined behavior if your supplied UUID and KEY are incorrect. Also please do not use Ctrl-C to exit. Exception handling has not been implemented completely. Only use `:q` to exit.
+
 ### Common Commands
+
+* `:help` - View detailed description of all the commands.
+
+* Use arrow keys for movement. You can also the Vim-style h, j, k, l bindings for movement.
 
 * Press `m` to mark an item for toggling its completion status. Press `+` and `-` for habits. Press the key again to unmark it. Similarly press `d` to toggle deletion status
 
@@ -17,6 +23,10 @@
 * `:r` to reload the tasks from the server - basically rebooting the interface.
 
 * `c` to display the checklist(if any) for the highlighted task. Press arrow keys to navigate, `m` for marking, `d` for delete, and `ENTER` for changing name etc. Press enter on `Add an Item` to add a new checklist item.
+
+* `:q` to exit.
+
+* `:et`, `:ed`, `:eh` to create a TODO, Daily and a Habit respectively.
 
 ### Party
 
