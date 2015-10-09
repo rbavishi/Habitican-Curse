@@ -4,6 +4,10 @@
 
 ### Configuring Habitican Curse
 
+* Habitican Curse uses the amazing `requests` library to connect to Habitica. Please install it first using `python habitica.py`.
+
+* You will need to have a 256-color terminal, with support for basic unicode symbols. The shell used in the screenshots is the simple GNOME shell and will suffice.
+
 * Create an rc file named .habiticarc in your home directory. Put your userID in the first line, followed by your key in the second. Please maintain this order. Don't forget to change read/write permissions accordingly.
 
 * Launch habitica.py from the source directory using `python habitica.py`
