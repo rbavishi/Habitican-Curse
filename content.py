@@ -103,7 +103,7 @@ class Party(object):
 	G.screen.DisplayCustomColor("-"*(C.SCR_Y-2), C.SCR_COLOR_LIGHT_GRAY, X+1, Y)
 	X += 2
 
-	if self.quest != None:
+	if self.quest != None and self.party['quest']['active'] == True:
 	    G.screen.DisplayBold("Quest: "+self.questText, X, Y)
 	    X += 1
 	    if self.questType == "boss":
@@ -113,6 +113,16 @@ class Party(object):
 					 C.SCR_COLOR_RED, MAX_X, Y)
 
 		MAX_X -= 1
+
+  	    elif self.questType == "collect":
+	        # Display Collect Statistics
+		disp_string = "Collect "
+		for (key, value) in self.questItems.items():
+		    disp_string += value['text'] + " : " + str(self.progress[key]) + "/" + str(value['count']) + " "
+
+		G.screen.DisplayCustomColorBold(disp_string, C.SCR_COLOR_YELLOW, MAX_X, Y)
+		MAX_X -= 1
+
 
 	self.chatMenu.SetXY(X+1, 1) 
 	self.chatMenu.SetNumRows(MAX_X - (X + 1))

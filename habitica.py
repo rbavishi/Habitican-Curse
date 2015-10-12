@@ -51,11 +51,9 @@ def main(curses_screen):
     #inputThread.start()
 
 
-    try:
-	G.intf.Input()
-    except:
-	DEBUG.Display("Cleaning up...")
-	bookThread.join()
+    G.intf.Input()
+    DEBUG.Display("Cleaning up...")
+    bookThread.join()
 
 if __name__ == "__main__":
     G.reqManager = RM.RequestManager()
