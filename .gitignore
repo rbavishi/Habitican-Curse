@@ -3,3 +3,6 @@
 *.swp
 trial.py
 *.txt
+setup.py
+dist
+*.egg-info
