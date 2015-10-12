@@ -4,15 +4,19 @@
 
 ### Configuring Habitican Curse
 
-* Habitican Curse uses the amazing `requests` library to connect to Habitica. Please install it first using `pip install requests`.
-
 * You will need to have a 256-color terminal, with support for basic unicode symbols. The shell used in the screenshots is the simple GNOME shell and will suffice.
 
-* Create an rc file named .habiticarc in your home directory. Put your userID in the first line, followed by your key in the second. Please maintain this order. Don't forget to change read/write permissions accordingly.
+* You can install Habitican Curse using pip - `sudo pip install habitican_curse`
 
-* Launch habitica.py from the source directory using `python habitica.py`
+* Launch the program by typing `habitican-curse` in the terminal.
 
 * WARNING: There can be undefined behavior if your supplied UUID and KEY are incorrect. Also please do not use Ctrl-C to exit. Exception handling has not been implemented completely. Only use `:q` to exit.
+
+### Acknowledgements
+
+* Habitican Curse uses the amazing `requests` library for communicating with the Habitica server.
+
+* Functions used in data-display are borrowed from the excellent data-display tool by LadyAlys (https://github.com/Alys/tools-for-habitrpg)
 
 ### Common Commands
 
@@ -38,7 +42,7 @@
 
 ### Data-Display
 
-* `:data-display` to display some basic details like "Est. Damage to You", "Est. Damage to Party", "Est. Damage to Boss" etc. The statistical functions used are borrowed from the excellent data-display tool by LadyAlys (https://github.com/Alys/tools-for-habitrpg)
+* `:data-display` to display some basic details like "Est. Damage to You", "Est. Damage to Party", "Est. Damage to Boss" etc.
 
 ### ScreenShots
 
