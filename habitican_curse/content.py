@@ -211,6 +211,15 @@ def GetData():
     partyDamage = math.ceil(partyDamage*10)/10
     data_items = ["Current Health: "+str(G.user.hp), "Dailies Incomplete: "+str(dailiesIncomplete), "Est. Damage to You: "+str(userDamage), "Est. Damage to Party: "+str(partyDamage), 
 	          "Est. Damage to Boss: "+str(userDamageBoss)]
+
+    # Collection statistics if it is a collect quest
+    if questDetails.has_key('collect'):
+	disp_string = "You have found "
+	for (key, value) in quest['progress']['collect'].items():
+	    disp_string += str(value) + " " + questDetails['collect'][key]['text'] + " "
+	data_items += [disp_string]
+
+
     data_items = [M.SimpleTextItem(i) for i in data_items]
 
     G.screen.SaveInRegister(1)
