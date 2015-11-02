@@ -4,6 +4,7 @@
 """
 # Standard Library Imports
 import time
+import datetime
 
 # Custom Module Imports
 
@@ -115,7 +116,15 @@ class User(object):
 
         self.cursorPositions.append(cursor)
         cursor += len(string) + 3 - len(C.SYMBOL_GOLD)
+
+	# Last Update
+	string = "Last Update: " + G.LastUpdate.strftime("%H:%M:%S %d/%m")
+	G.screen.DisplayCustomColorBold(string, C.SCR_COLOR_MAGENTA_GRAY_BGRD, C.SCR_X-2, cursor)
+
         self.cursorPositions.append(cursor)
+	cursor += len(string) + 1
+	self.cursorPositions.append(cursor)
+
 
     def PrintUserStats(self, cursor=-1):
 	if cursor == -1:

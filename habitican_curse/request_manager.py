@@ -8,6 +8,7 @@ import os
 import time
 import imp
 import importlib
+import datetime
 
 # Custom Module Imports
 
@@ -74,6 +75,7 @@ class RequestManager(object):
         #del(G.HabitMenu)
         #del(G.TODOMenu)
         #del(G.DailyMenu)
+	G.LastUpdate = datetime.datetime.now()
 
         DEBUG.Display("Connecting...")
         response = requests.get(GET_USER_URL, headers=self.headers)
@@ -121,6 +123,7 @@ class RequestManager(object):
         G.HabitMenu = M.Menu(habit_items, "Habits")
         G.DailyMenu = M.Menu(dailies_items, "Dailies")
         G.TODOMenu  = M.Menu(todos_items, "TODOs")
+
 
     def Flush(self):
         DEBUG.Display("Please Wait...")

@@ -16,3 +16,6 @@ content = None  # This will be initialized using a thread,
 HabitMenu = None
 DailyMenu = None
 TODOMenu = None
+
+# Global data
+LastUpdate = None
