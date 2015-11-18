@@ -35,10 +35,10 @@ class RequestManager(object):
 	    f = open(os.getenv("HOME")+'/.habiticarc', 'r')
 	except:
 	    print "Enter UUID: ",
-	    uuid = raw_input()
+	    uuid = raw_input().strip()
 	    print " "
 	    print "Enter API-Key: ",
-	    key = raw_input()
+	    key = raw_input().strip()
 
 	    f = open(os.getenv("HOME")+'/.habiticarc', 'w+')
 	    f.write("uuid="+uuid+"\n")
