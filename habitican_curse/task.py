@@ -295,7 +295,7 @@ class TODO(Task):
         self.completed = data['completed']
         self.checklist = data['checklist']
 
-        if data.has_key('date') and data['date'] != "": # Due Date Stuff
+        if data.has_key('date') and data['date'] != "" and data['date'] != None: # Due Date Stuff
             self.dueDate = H.DateTime(str(data['date'])).DueDateFormat()
             self.date    = str(data['date'])
         else:
