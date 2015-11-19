@@ -317,7 +317,7 @@ class TODO(Task):
 
     def RemoveDueDate(self): 
 	if self.data.has_key('date'):
-	    self.data['date']=""
+	    self.data.pop('date')
 
 	self.dueDate = ""
 	self.date    = ""
