@@ -190,7 +190,10 @@ class DateTime(object):
         elif type(date) == str:
             # UTC Format. We'll convert it to local time.
             # We assume that local time zone can be computed by dateutil
-            retDate = datetime.strptime(date,"%Y-%m-%dT%H:%M:%S.%fZ")
+	    try:
+		retDate = datetime.strptime(date,"%Y-%m-%dT%H:%M:%S.%fZ")
+	    except ValueError:
+	        retDate = datetime.strptime(date,"%Y-%m-%dT%H:%M:%SZ")
 
             retDate = retDate.replace(tzinfo=tz.tzutc()) # UTC Time zone convert
             retDate = retDate.astimezone(tz.tzlocal())   # Local Time
@@ -200,7 +203,12 @@ class DateTime(object):
     def ConvertUTC(self):
 	retDate = self.date.replace(tzinfo=tz.tzlocal())
 	retDate = retDate.astimezone(tz.tzutc())
-	return retDate.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+	try:
+	    res = retDate.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+	except:
+	    res = retDate.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+	return res
 
     def DueDateFormat(self):
         return self.date.strftime('[%d/%m]')

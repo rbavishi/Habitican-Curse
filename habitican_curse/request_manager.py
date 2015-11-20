@@ -254,7 +254,7 @@ class RequestManager(object):
 
     def CreateTask(self, title, task_type):
 	task = {}
-	task['text'] = title 
+	task['text'] = title.decode("utf-8") 
 	task['type'] = task_type
 	task['priority'] = 1
 

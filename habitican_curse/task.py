@@ -86,8 +86,8 @@ class Task(object):
         self.data = data          # JSON response received from request
 
         # Basic Details
-        self.text        = str(data['text'])
-        self.taskID      = str(data['id'])
+        self.text        = data['text'].encode("utf-8")
+        self.taskID      = data['id']
         self.dateCreated = H.DateTime(str(data['dateCreated']))
         self.priority    = data['priority']
         self.value       = data['value']
@@ -143,9 +143,9 @@ class ChecklistItem(object):
 
 	# Checklist Item Specifications
 	self.data      = data
-	self.text      = str(data['text'])
+	self.text      = data['text'].encode("utf-8")
 	self.completed = data['completed']
-	self.ID        = str(data['id'])
+	self.ID        = data['id']
 	self.newName   = ""               # In case we change the name
 
     def Display(self): # Dummy
