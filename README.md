@@ -10,6 +10,8 @@
 
 * Launch the program by typing `habitican-curse` in the terminal.
 
+* If not done already, the program will ask for you UUID and API-KEY. This will be stored in plaintext in a file named `.habiticarc` in your home directory. As per my knowledge, I don't know of any way to encrypt this file and still not waste user-time by asking them to provide the key for decryption. I'd suggest changing file permissions to prevent read/write across ssh or by another user.
+
 * WARNING: There can be undefined behavior if your supplied UUID and KEY are incorrect. Also please do not use Ctrl-C to exit. Exception handling has not been implemented completely. Only use `:q` to exit.
 
 ### Acknowledgements
