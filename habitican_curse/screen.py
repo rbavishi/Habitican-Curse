@@ -210,7 +210,7 @@ class Screen(object):
                 self.Noecho()
                 self.CursorHide()
                 return ""
-            elif c == curses.KEY_BACKSPACE:
+            elif c == curses.KEY_BACKSPACE or c == curses.KEY_DC or c == 127:
                 cursor -= 1
                 if cursor == 0:
                     self.Noecho()
