@@ -284,6 +284,12 @@ class Interface(object):
 
     def Input(self):
         while(1):
+	    try:
+	        # Don't starve the book-keeping thread unnecessarily
+	        G.screen.Release()
+            except:
+	        pass
+
             c = G.screen.GetCharacter()
 
 	    # Clear Notification Line

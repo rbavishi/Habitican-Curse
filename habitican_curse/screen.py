@@ -217,8 +217,9 @@ class Screen(object):
                     self.CursorHide()
                     return ""
 
-                self.Display(" ", C.SCR_X-1, cursor)
+		self.Display(" "*(C.SCR_Y-1), C.SCR_X-1, 0)
 		read_string = read_string[:-1]
+		self.Display(":" + read_string, C.SCR_X-1, 0)
 
             else:
                 if c < 256:
