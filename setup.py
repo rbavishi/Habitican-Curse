@@ -9,5 +9,9 @@ setup(
     author_email = 'rohan.bavishi95@gmail.com',
     url = 'https://github.com/rbavishi/Habitican-Curse',
     license = 'MIT',
-    scripts = ['habitican-curse']
+    scripts = ['habitican-curse'],
+    install_requires=[
+        'python-dateutil',
+        'requests',
+    ],
 )
