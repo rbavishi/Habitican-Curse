@@ -72,6 +72,7 @@ class Party(object):
 	    self.questText    = str(self.questDetails['text'])
 
 	    self.questType = ""
+            self.progress = 0
 
 	    if self.questDetails.has_key('boss'):
 		self.questType     = "boss"
@@ -80,12 +81,15 @@ class Party(object):
 		self.bossRage      = self.questDetails['boss'].get('rage', None)
 		self.bossStrength  = self.questDetails['boss']['str']
 
-		self.progress      = int(round(party['quest']['progress']['hp'],0))
+		if(party['quest']['active']):
+		    self.progress      = int(round(party['quest']['progress']['hp'],0))
 
 	    elif self.questDetails.has_key('collect'):
 		self.questType     = "collect"
 		self.questItems    = self.questDetails['collect']
-		self.progress      = party['quest']['progress']['collect']
+
+		if(party['quest']['active']):
+		    self.progress      = party['quest']['progress']['collect']
 
 
     def Display(self):
