@@ -20,9 +20,9 @@ import content as CT
 def Idx(parsed, index):
     # Return element in the parsed list at index. Return "" if not present
     try:
-	return parsed[index]
+        return parsed[index]
     except:
-	return ""
+        return ""
 
 
 class Interface(object):
@@ -133,125 +133,125 @@ class Interface(object):
 
     # Display Checklist
     def Checklist(self):
-	G.screen.SaveInRegister(1)
-	G.currentTask.ShowChecklist()
-	G.screen.RestoreRegister(1)
-	self.Highlight()
+        G.screen.SaveInRegister(1)
+        G.currentTask.ShowChecklist()
+        G.screen.RestoreRegister(1)
+        self.Highlight()
 
     # Command Parser
     def Parser(self, command):
-	parsed = shlex.split(command)
-	if Idx(parsed, 0) == "set":
+        parsed = shlex.split(command)
+        if Idx(parsed, 0) == "set":
 
             DEBUG.Display("Set not implemented for API V3")
             return
 
-	    if not Idx(parsed, 1) in  C.SET_COMMANDS:
-		DEBUG.Display("Invalid Set: " + command)
-		return
-	    c = Idx(parsed, 1)
+            if not Idx(parsed, 1) in  C.SET_COMMANDS:
+                DEBUG.Display("Invalid Set: " + command)
+                return
+            c = Idx(parsed, 1)
 
-	    # Change Difficulty
-	    if c == "d":
-		if (not Idx(parsed, 2) in C.DIFFS) or (Idx(parsed, 3) != "") :
-		    DEBUG.Display("Invalid set d: " + command)
-		    return
-		key = Idx(parsed, 2)
-		G.currentTask.ChangePriority(key)
-		self.Highlight()
-		return
+            # Change Difficulty
+            if c == "d":
+                if (not Idx(parsed, 2) in C.DIFFS) or (Idx(parsed, 3) != "") :
+                    DEBUG.Display("Invalid set d: " + command)
+                    return
+                key = Idx(parsed, 2)
+                G.currentTask.ChangePriority(key)
+                self.Highlight()
+                return
 
-	    # Change/Remove Due Date
-	    elif c == "due":
-		if G.currentTask.task_type != "todo":
-		    return
-		# set due remove - Remove the current due date if any
-		if Idx(parsed, 2) == "remove":
-		    G.currentTask.RemoveDueDate()
-		    self.Highlight()
-		    return
+            # Change/Remove Due Date
+            elif c == "due":
+                if G.currentTask.task_type != "todo":
+                    return
+                # set due remove - Remove the current due date if any
+                if Idx(parsed, 2) == "remove":
+                    G.currentTask.RemoveDueDate()
+                    self.Highlight()
+                    return
 
-		retDate = H.DatePicker()
-		if retDate != None:
-		    G.currentTask.ChangeDueDate(retDate.ConvertUTC())
+                retDate = H.DatePicker()
+                if retDate != None:
+                    G.currentTask.ChangeDueDate(retDate.ConvertUTC())
 
-		self.Highlight()
-		return
+                self.Highlight()
+                return
 
-	    # Set weekly options for dailies
-	    elif c == "weekly":
-		if G.currentTask.task_type != "daily":
-		    return
+            # Set weekly options for dailies
+            elif c == "weekly":
+                if G.currentTask.task_type != "daily":
+                    return
 
-		repeat = H.RepeatPicker(G.currentTask.task.repeat)
-		if repeat != None:
-		    G.currentTask.SetWeekly(repeat)
-		self.Highlight()
-		return
+                repeat = H.RepeatPicker(G.currentTask.task.repeat)
+                if repeat != None:
+                    G.currentTask.SetWeekly(repeat)
+                self.Highlight()
+                return
 
-	    # Set every X days option for dailies
-	    elif c == "every":
-		if G.currentTask.task_type != "daily":
-		    return
+            # Set every X days option for dailies
+            elif c == "every":
+                if G.currentTask.task_type != "daily":
+                    return
 
-		if not Idx(parsed, 2).isdigit():
-		    DEBUG.Display("Invalid number of days.")
-		    return
+                if not Idx(parsed, 2).isdigit():
+                    DEBUG.Display("Invalid number of days.")
+                    return
 
-		G.currentTask.SetEvery(int(Idx(parsed, 2)))
-		self.Highlight()
-		return
+                G.currentTask.SetEvery(int(Idx(parsed, 2)))
+                self.Highlight()
+                return
 
-	elif Idx(parsed, 0) == "et": # Create Todo
+        elif Idx(parsed, 0) == "et": # Create Todo
 
             DEBUG.Display("Create Todo not implemented for API V3")
             return
 
-	    c_title = Idx(parsed, 1)
-	    if c_title == "" :
-		title = H.TitlePicker()
-	    else:
-		title = Idx(parsed, 1)
+            c_title = Idx(parsed, 1)
+            if c_title == "" :
+                title = H.TitlePicker()
+            else:
+                title = Idx(parsed, 1)
 
-	    G.reqManager.CreateTask(title, "todo")
-	    self.trinity[self.currentMenu].InitialCurrentTask()
+            G.reqManager.CreateTask(title, "todo")
+            self.trinity[self.currentMenu].InitialCurrentTask()
 
-	    self.Highlight()
-	    return
+            self.Highlight()
+            return
 
-	elif Idx(parsed, 0) == "ed": # Create Daily
+        elif Idx(parsed, 0) == "ed": # Create Daily
 
             DEBUG.Display("Create Daily not implemented for API V3")
             return
 
-	    c_title = Idx(parsed, 1)
-	    if c_title == "" :
-		title = H.TitlePicker()
-	    else:
-		title = Idx(parsed, 1)
+            c_title = Idx(parsed, 1)
+            if c_title == "" :
+                title = H.TitlePicker()
+            else:
+                title = Idx(parsed, 1)
 
-	    G.reqManager.CreateTask(title, "daily")
-	    self.trinity[self.currentMenu].InitialCurrentTask()
-	    self.Highlight()
-	    return
+            G.reqManager.CreateTask(title, "daily")
+            self.trinity[self.currentMenu].InitialCurrentTask()
+            self.Highlight()
+            return
 
-	elif Idx(parsed, 0) == "eh": # Create Habit
+        elif Idx(parsed, 0) == "eh": # Create Habit
             DEBUG.Display("Create Habit not implemented for API V3")
             return
 
-	    c_title = Idx(parsed, 1)
-	    if c_title == "" :
-		title = H.TitlePicker()
-	    else:
-		title = Idx(parsed, 1)
+            c_title = Idx(parsed, 1)
+            if c_title == "" :
+                title = H.TitlePicker()
+            else:
+                title = Idx(parsed, 1)
 
-	    G.reqManager.CreateTask(title, "habit")
-	    self.trinity[self.currentMenu].InitialCurrentTask()
-	    self.Highlight()
-	    return
+            G.reqManager.CreateTask(title, "habit")
+            self.trinity[self.currentMenu].InitialCurrentTask()
+            self.Highlight()
+            return
 
-	if command != "":
-	    DEBUG.Display("Invalid: " + command)
+        if command != "":
+            DEBUG.Display("Invalid: " + command)
 
 
     def Command(self, command):
@@ -272,42 +272,42 @@ class Interface(object):
             G.screen.Erase()
             self.Init()
 
-	    # User Stats
-	    while (G.content == None):
-		DEBUG.Display("Fetching Content...")
-		time.sleep(5)
-	    DEBUG.Display(" ")
+            # User Stats
+            while (G.content == None):
+                DEBUG.Display("Fetching Content...")
+                time.sleep(5)
+            DEBUG.Display(" ")
 
-	    G.user.attrStats = H.GetUserStats(G.user.data)
+            G.user.attrStats = H.GetUserStats(G.user.data)
 
-	    G.user.PrintUserStats()
+            G.user.PrintUserStats()
 
         elif command == "party":
             G.screen.SaveInRegister(1)
             G.user.GetPartyData()
             G.screen.RestoreRegister(1)
 
-	elif command == "data-display":
-	    CT.GetData()
+        elif command == "data-display":
+            CT.GetData()
 
-	elif command == "help":
-	    H.HelpPage()
+        elif command == "help":
+            H.HelpPage()
 
-	else:
-	    self.Parser(command)
+        else:
+            self.Parser(command)
 
     def Input(self):
         while(1):
-	    try:
-	        # Don't starve the book-keeping thread unnecessarily
-	        G.screen.Release()
+            try:
+                # Don't starve the book-keeping thread unnecessarily
+                G.screen.Release()
             except:
-	        pass
+                pass
 
             c = G.screen.GetCharacter()
 
-	    # Clear Notification Line
-	    DEBUG.Display(" ")
+            # Clear Notification Line
+            DEBUG.Display(" ")
 
             if c == curses.KEY_UP or c == ord('k'):
                 self.ScrollUp()
@@ -325,8 +325,8 @@ class Interface(object):
                 self.ToggleMarkUp()
             elif c == ord('-'):
                 self.ToggleMarkDown()
-	    elif c == ord('c'):
-		self.Checklist()
+            elif c == ord('c'):
+                self.Checklist()
             elif c == ord(':'):
                 command = G.screen.Command()
 

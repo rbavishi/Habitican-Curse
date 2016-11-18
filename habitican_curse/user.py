@@ -18,7 +18,7 @@ import content as CT
 
 def Round(num):
     if num < 0:
-	return -1 * int(round(abs(num), 0))
+        return -1 * int(round(abs(num), 0))
     return int(round(num, 0))
 
 
@@ -36,7 +36,7 @@ class User(object):
     def __init__(self, data):
 
         self.data = data
-	self.stats = data['stats']
+        self.stats = data['stats']
 
         # Basic User Stats
         self.hp          = Round(self.stats['hp'])
@@ -48,17 +48,17 @@ class User(object):
         self.toNextLevel = Round(self.stats['toNextLevel'])
         self.lvl         = self.stats['lvl']
 
-	# Stats, gear etc.
-	# Strength, Intelligence, Perception, Constitution
-	self.attrStats   = {} # Will be updated when habitica content is fetched
-	self.equipGear   = self.data['items']['gear']['equipped']
+        # Stats, gear etc.
+        # Strength, Intelligence, Perception, Constitution
+        self.attrStats   = {} # Will be updated when habitica content is fetched
+        self.equipGear   = self.data['items']['gear']['equipped']
 
         self.cursorPositions = []
 
     # Written separately to avoid confusion
     def Reload(self, data):
         self.data = data
-	self.stats = data['stats']
+        self.stats = data['stats']
 
         # Basic User Stats
         self.hp          = Round(self.stats['hp'])
@@ -70,10 +70,10 @@ class User(object):
         self.toNextLevel = Round(self.stats['toNextLevel'])
         self.lvl         = self.stats['lvl']
 
-	# Stats, gear etc.
-	# Strength, Intelligence, Perception, Constitution
-	self.attrStats   = H.GetUserStats(data)
-	self.equipGear   = self.data['items']['gear']['equipped']
+        # Stats, gear etc.
+        # Strength, Intelligence, Perception, Constitution
+        self.attrStats   = H.GetUserStats(data)
+        self.equipGear   = self.data['items']['gear']['equipped']
 
     def PrintData(self):
         G.screen.DisplayCustomColor(" "*(C.SCR_Y-1), C.SCR_COLOR_WHITE_GRAY_BGRD, C.SCR_X-2, 0)
@@ -116,37 +116,37 @@ class User(object):
         self.cursorPositions.append(cursor)
         cursor += len(string) + 3 - len(C.SYMBOL_GOLD)
 
-	# Last Update
-	string = "Last Update: " + G.LastUpdate.strftime("%H:%M:%S %d/%m")
-	G.screen.DisplayCustomColorBold(string, C.SCR_COLOR_MAGENTA_GRAY_BGRD, C.SCR_X-2, cursor)
+        # Last Update
+        string = "Last Update: " + G.LastUpdate.strftime("%H:%M:%S %d/%m")
+        G.screen.DisplayCustomColorBold(string, C.SCR_COLOR_MAGENTA_GRAY_BGRD, C.SCR_X-2, cursor)
 
         self.cursorPositions.append(cursor)
-	cursor += len(string) + 1
-	self.cursorPositions.append(cursor)
+        cursor += len(string) + 1
+        self.cursorPositions.append(cursor)
 
 
     def PrintUserStats(self, cursor=-1):
-	if cursor == -1:
-	    cursor = self.cursorPositions[-1]
+        if cursor == -1:
+            cursor = self.cursorPositions[-1]
 
-	string = ("STR: " + str(self.attrStats['str']) + " " +
-		  "INT: " + str(self.attrStats['int']) + " " +
-		  "PER: " + str(self.attrStats['per']) + " " +
-		  "CON: " + str(self.attrStats['con']))
+        string = ("STR: " + str(self.attrStats['str']) + " " +
+                  "INT: " + str(self.attrStats['int']) + " " +
+                  "PER: " + str(self.attrStats['per']) + " " +
+                  "CON: " + str(self.attrStats['con']))
 
-	G.screen.DisplayCustomColorBold(string, C.SCR_COLOR_MAGENTA_GRAY_BGRD, C.SCR_X-2, C.SCR_Y-(3 + len(string)))
+        G.screen.DisplayCustomColorBold(string, C.SCR_COLOR_MAGENTA_GRAY_BGRD, C.SCR_X-2, C.SCR_Y-(3 + len(string)))
 
     def PrintDiff(self, newDict):
-	diffDict = {}
+        diffDict = {}
 
-	diffDict['hp'] = Round(newDict['hp']) - self.hp; self.hp = Round(newDict['hp']); self.stats['hp'] = newDict['hp']
-	diffDict['mp'] = int(newDict['mp']) - self.mp; self.mp = int(newDict['mp']); self.stats['mp'] = newDict['mp']
-	diffDict['gp'] = int(newDict['gp']) - self.gp; self.gp = int(newDict['gp']); self.stats['gp'] = newDict['gp']
-	diffDict['exp'] = int(newDict['exp']) - self.exp; self.exp = int(newDict['exp']); self.stats['exp'] = newDict['exp']
-	diffDict['lvl'] = newDict['lvl'] - self.lvl; self.lvl = newDict['lvl']; self.stats['lvl'] = newDict['lvl']
+        diffDict['hp'] = Round(newDict['hp']) - self.hp; self.hp = Round(newDict['hp']); self.stats['hp'] = newDict['hp']
+        diffDict['mp'] = int(newDict['mp']) - self.mp; self.mp = int(newDict['mp']); self.stats['mp'] = newDict['mp']
+        diffDict['gp'] = int(newDict['gp']) - self.gp; self.gp = int(newDict['gp']); self.stats['gp'] = newDict['gp']
+        diffDict['exp'] = int(newDict['exp']) - self.exp; self.exp = int(newDict['exp']); self.stats['exp'] = newDict['exp']
+        diffDict['lvl'] = newDict['lvl'] - self.lvl; self.lvl = newDict['lvl']; self.stats['lvl'] = newDict['lvl']
 
-	for i in diffDict:
-	    diffDict[i] = SignFormat(diffDict[i])
+        for i in diffDict:
+            diffDict[i] = SignFormat(diffDict[i])
 
         # Difficult to maintain the correct increase in experience when level changes
         if diffDict['lvl'] != "":
@@ -173,5 +173,5 @@ class User(object):
         resp = G.reqManager.FetchJSON('party')
         DEBUG.Display(" ")
 
-	partyObj = CT.Party(resp)
-	partyObj.Display()
+        partyObj = CT.Party(resp)
+        partyObj.Display()

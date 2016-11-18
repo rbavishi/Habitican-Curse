@@ -18,19 +18,19 @@ import menu as M
 
 def ValueToColor(value):
     if value < -20:
-      return C.SCR_COLOR_RED
+        return C.SCR_COLOR_RED
     elif value < -10:
-      return C.SCR_COLOR_DARK_ORANGE
+        return C.SCR_COLOR_DARK_ORANGE
     elif value < -1:
-      return C.SCR_COLOR_LIGHT_ORANGE
+        return C.SCR_COLOR_LIGHT_ORANGE
     elif value < 1:
-      return C.SCR_COLOR_YELLOW
+        return C.SCR_COLOR_YELLOW
     elif value < 5:
-      return C.SCR_COLOR_GREEN
+        return C.SCR_COLOR_GREEN
     elif value < 20:
-      return C.SCR_COLOR_CYAN
+        return C.SCR_COLOR_CYAN
     else:
-      return C.SCR_COLOR_BLUE
+        return C.SCR_COLOR_BLUE
 
 
 def PriorityToDifficulty(priority):
@@ -55,12 +55,12 @@ def RepeatToString(repeat):
 
 def ChecklistMenu(checklist):
     #if not checklist:
-	#return None
+        #return None
 
     checklist_items = []
     for i in checklist:
-	task_item = ChecklistItem(i)
-	checklist_items += [M.MenuItem(task_item, 'checklist', task_item.text, width=(C.SCR_Y-20))]
+        task_item = ChecklistItem(i)
+        checklist_items += [M.MenuItem(task_item, 'checklist', task_item.text, width=(C.SCR_Y-20))]
 
     menuObj = M.Menu(checklist_items, 'Checklist', (C.SCR_X - (C.SCR_MAX_MENU_ROWS+7+4+2)), 'checklist_menu')
     menuObj.SetXY(C.SCR_MAX_MENU_ROWS+7, 5)
@@ -130,10 +130,10 @@ class Task(object):
         return X
 
     def ChangePriority(self, key):
-	priorityDict = {"trivial": 0.1, "easy": 1, "medium": 1.5, "hard": 2}
-	self.priority = priorityDict[key]
-	self.data['priority'] = self.priority
-	self.difficulty = key
+        priorityDict = {"trivial": 0.1, "easy": 1, "medium": 1.5, "hard": 2}
+        self.priority = priorityDict[key]
+        self.data['priority'] = self.priority
+        self.difficulty = key
 
 
 class ChecklistItem(object):
@@ -141,23 +141,23 @@ class ChecklistItem(object):
 
     def __init__(self, data):
 
-	# Checklist Item Specifications
-	self.data      = data
-	self.text      = data['text'].encode("utf-8")
-	self.completed = data['completed']
-	self.ID        = data['id']
-	self.newName   = ""               # In case we change the name
+        # Checklist Item Specifications
+        self.data      = data
+        self.text      = data['text'].encode("utf-8")
+        self.completed = data['completed']
+        self.ID        = data['id']
+        self.newName   = ""               # In case we change the name
 
     def Display(self): # Dummy
-	return
+        return
 
     def Mark(self):
-	self.completed ^= True
-	self.data['completed'] = self.completed
+        self.completed ^= True
+        self.data['completed'] = self.completed
 
     def ChangeName(self):
-	self.text = self.newName
-	self.data['text'] = self.text
+        self.text = self.newName
+        self.data['text'] = self.text
 
 
 class Habit(Task):
@@ -179,8 +179,8 @@ class Habit(Task):
         # Maybe use the data-display tool
 
     def ShowChecklist(self, menuItem):
-	# Dummy to avoid crashes
-	return
+        # Dummy to avoid crashes
+        return
 
 class Daily(Task):
     """ Class for holding a daily """
@@ -196,16 +196,16 @@ class Daily(Task):
         self.frequency = data['frequency']
         self.repeat    = data['repeat']
         self.everyX    = data['everyX']
-	self.startDate = str(data['startDate'])
+        self.startDate = str(data['startDate'])
 
-	# Is it due today?
-	self.isDue     = H.isDueDaily(self.data)
-	if not self.isDue:
-	    self.color = C.SCR_COLOR_NEUTRAL
+        # Is it due today?
+        self.isDue     = H.isDueDaily(self.data)
+        if not self.isDue:
+            self.color = C.SCR_COLOR_NEUTRAL
 
 
-	# Checklist Menu. None if it is empty
-	self.checklistMenu = ChecklistMenu(self.checklist)
+        # Checklist Menu. None if it is empty
+        self.checklistMenu = ChecklistMenu(self.checklist)
 
     def ChecklistTuple(self):  # Return (done/total)
         done = len([i for i in self.checklist if i['completed']])
@@ -229,59 +229,59 @@ class Daily(Task):
                                              C.SCR_COLOR_MAGENTA, X, Y)
             X += 2
 
-	if not self.isDue:
-	    G.screen.DisplayCustomColorBold("Not Due Today", C.SCR_COLOR_NEUTRAL, X, Y)
+        if not self.isDue:
+            G.screen.DisplayCustomColorBold("Not Due Today", C.SCR_COLOR_NEUTRAL, X, Y)
 
     def ShowChecklist(self, menuItem):
-	if self.checklistMenu == None:
-	    return
+        if self.checklistMenu == None:
+            return
 
-	G.screen.ClearTextArea()
-	self.checklistMenu.Init()
-	retVal = self.checklistMenu.Input()
+        G.screen.ClearTextArea()
+        self.checklistMenu.Init()
+        retVal = self.checklistMenu.Input()
 
-	if retVal == 0: # Cancel changes
-	    self.checklistMenu.CancelChecklistChanges()
-	else:
-	    self.checklistMenu.WriteChecklistChanges(menuItem)
+        if retVal == 0: # Cancel changes
+            self.checklistMenu.CancelChecklistChanges()
+        else:
+            self.checklistMenu.WriteChecklistChanges(menuItem)
 
     def ChangeChecklist(self, checklist):
-	self.checklist = checklist
-	self.data['checklist'] = checklist
+        self.checklist = checklist
+        self.data['checklist'] = checklist
 
     def SetWeekly(self, repeat):
-	if self.frequency != "weekly":
-	    self.frequency = "weekly"
-	    self.data['frequency'] = self.frequency
-	    self.data['everyX'] = 1
-	    self.everyX = 1
+        if self.frequency != "weekly":
+            self.frequency = "weekly"
+            self.data['frequency'] = self.frequency
+            self.data['everyX'] = 1
+            self.everyX = 1
 
-	self.repeat = repeat
-	self.data['repeat'] = repeat
+        self.repeat = repeat
+        self.data['repeat'] = repeat
 
-	# Is it due today?
-	self.isDue     = H.isDueDaily(self.data)
-	if not self.isDue:
-	    self.color = C.SCR_COLOR_NEUTRAL
-	else:
-	    self.color = ValueToColor(self.priority)
+        # Is it due today?
+        self.isDue     = H.isDueDaily(self.data)
+        if not self.isDue:
+            self.color = C.SCR_COLOR_NEUTRAL
+        else:
+            self.color = ValueToColor(self.priority)
 
     def SetEvery(self, days):
-	if self.frequency != "daily":
-	    self.frequency = "daily"
-	    self.data['frequency'] = self.frequency
-	    self.repeat = C.DEFAULT_REPEAT
-	    self.data['repeat'] = self.repeat
+        if self.frequency != "daily":
+            self.frequency = "daily"
+            self.data['frequency'] = self.frequency
+            self.repeat = C.DEFAULT_REPEAT
+            self.data['repeat'] = self.repeat
 
-	self.everyX = days
-	self.data['everyX'] = days
+        self.everyX = days
+        self.data['everyX'] = days
 
-	# Is it due today?
-	self.isDue     = H.isDueDaily(self.data)
-	if not self.isDue:
-	    self.color = C.SCR_COLOR_NEUTRAL
-	else:
-	    self.color = ValueToColor(self.priority)
+        # Is it due today?
+        self.isDue     = H.isDueDaily(self.data)
+        if not self.isDue:
+            self.color = C.SCR_COLOR_NEUTRAL
+        else:
+            self.color = ValueToColor(self.priority)
 
 
 class TODO(Task):
@@ -302,8 +302,8 @@ class TODO(Task):
             self.dueDate = ""
             self.date    = ""
 
-	# Checklist Menu. None if it is empty
-	self.checklistMenu = ChecklistMenu(self.checklist)
+        # Checklist Menu. None if it is empty
+        self.checklistMenu = ChecklistMenu(self.checklist)
 
     def ChecklistTuple(self):  # Return (done/total)
         done = len([i for i in self.checklist if i['completed']])
@@ -311,16 +311,16 @@ class TODO(Task):
         return [done, total]
 
     def ChangeDueDate(self, date):
-	self.data['date'] = date
-	self.dueDate = H.DateTime(str(self.data['date'])).DueDateFormat()
-	self.date = str(self.data['date'])
+        self.data['date'] = date
+        self.dueDate = H.DateTime(str(self.data['date'])).DueDateFormat()
+        self.date = str(self.data['date'])
 
     def RemoveDueDate(self):
-	if self.data.has_key('date'):
-	    self.data.pop('date')
+        if self.data.has_key('date'):
+            self.data.pop('date')
 
-	self.dueDate = ""
-	self.date    = ""
+        self.dueDate = ""
+        self.date    = ""
 
     def Display(self):
         X = super(TODO, self).Display()
@@ -340,18 +340,18 @@ class TODO(Task):
             X += 2
 
     def ShowChecklist(self, menuItem):
-	if self.checklistMenu == None:
-	    return
+        if self.checklistMenu == None:
+            return
 
-	G.screen.ClearTextArea()
-	self.checklistMenu.Init()
-	retVal = self.checklistMenu.Input()
+        G.screen.ClearTextArea()
+        self.checklistMenu.Init()
+        retVal = self.checklistMenu.Input()
 
-	if retVal == 0: # Cancel changes
-	    self.checklistMenu.CancelChecklistChanges()
-	else:
-	    self.checklistMenu.WriteChecklistChanges(menuItem)
+        if retVal == 0: # Cancel changes
+            self.checklistMenu.CancelChecklistChanges()
+        else:
+            self.checklistMenu.WriteChecklistChanges(menuItem)
 
     def ChangeChecklist(self, checklist):
-	self.checklist = checklist
-	self.data['checklist'] = checklist
+        self.checklist = checklist
+        self.data['checklist'] = checklist

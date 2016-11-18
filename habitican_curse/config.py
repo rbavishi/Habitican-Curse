@@ -95,35 +95,35 @@ user_config = None
 
 #Read in the configuration files
 def ReadConfigFile():
-        global user_config
-        user_config = dict()
+    global user_config
+    user_config = dict()
 
-        DEBUG.logging.debug("Reading in config file!")
-        CONFIG_FILE = os.getenv("HOME")+'/.habiticarc'
+    DEBUG.logging.debug("Reading in config file!")
+    CONFIG_FILE = os.getenv("HOME")+'/.habiticarc'
 
-        try:
-	    f = open(CONFIG_FILE, 'r')
-	except:
-            import sys
-            DEBUG.logging.warn("Unexpected error opening ",CONFIG_FILE,":", sys.exc_info()[0])
-	    print "Enter UUID: ",
-	    uuid = raw_input().strip()
-	    print " "
-	    print "Enter API-Key: ",
-	    key = raw_input().strip()
+    try:
+        f = open(CONFIG_FILE, 'r')
+    except:
+        import sys
+        DEBUG.logging.warn("Unexpected error opening ",CONFIG_FILE,":", sys.exc_info()[0])
+        print "Enter UUID: ",
+        uuid = raw_input().strip()
+        print " "
+        print "Enter API-Key: ",
+        key = raw_input().strip()
 
-	    f = open(CONFIG_FILE, 'w+')
-	    f.write("uuid="+uuid+"\n")
-	    f.write("key="+key+"\n")
-	    f.close()
-
-	    f = open(CONFIG_FILE, 'r')
-
-        for x in f.xreadlines():
-            x = x[:-1].split("=")
-            user_config[x[0]] = x[1]
-
+        f = open(CONFIG_FILE, 'w+')
+        f.write("uuid="+uuid+"\n")
+        f.write("key="+key+"\n")
         f.close()
+
+        f = open(CONFIG_FILE, 'r')
+
+    for x in f.xreadlines():
+        x = x[:-1].split("=")
+        user_config[x[0]] = x[1]
+
+    f.close()
 
 def getConfig(value):
     if( user_config is None):

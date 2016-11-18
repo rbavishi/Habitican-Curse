@@ -35,15 +35,15 @@ class Screen(object):
         self.SCR_Y=0
         self.SCR_MENU_ITEM_WIDTH=0
 
-	self.lock = threading.RLock()
+        self.lock = threading.RLock()
 
     def Lock(self):
-	# Synchronize screen input/output
-	self.lock.acquire()
+        # Synchronize screen input/output
+        self.lock.acquire()
 
     def Release(self):
-	# Synchronize screen input/output
-	self.lock.release()
+        # Synchronize screen input/output
+        self.lock.release()
 
     def Initialize(self):
         #global SCR_X, SCR_Y, SCR_MENU_ITEM_WIDTH
@@ -110,11 +110,11 @@ class Screen(object):
         if not self.active_registers[register]:
             return
 
-	self.ctxts[register].seek(0)
+        self.ctxts[register].seek(0)
         self.screen = curses.getwin(self.ctxts[register])
 
-	# Clear Notification Line
-	DEBUG.Display(" ")
+        # Clear Notification Line
+        DEBUG.Display(" ")
         self.Refresh()
 
     def Save(self):
@@ -129,48 +129,48 @@ class Screen(object):
         self.stackFile.seek(self.stack[-1])
         self.screen = curses.getwin(self.stackFile)
 
-	# Clear Notification Line
-	DEBUG.Display(" ")
+        # Clear Notification Line
+        DEBUG.Display(" ")
 
         self.Refresh()
 
     def Display(self, string, x=0, y=0):
-	self.Lock()
+        self.Lock()
         self.screen.addstr(x, y, string)
         self.Refresh()
-	self.Release()
+        self.Release()
 
     def DisplayBold(self, string, x=0, y=0):
-	self.Lock()
+        self.Lock()
         self.screen.addstr(x, y, string, curses.A_BOLD)
         self.Refresh()
-	self.Release()
+        self.Release()
 
     def Highlight(self, string, x=0, y=0):
-	self.Lock()
+        self.Lock()
         self.screen.addstr(x, y, string, curses.A_BOLD |
                                          curses.color_pair(C.SCR_COLOR_WHITE_GRAY_BGRD))
         self.Refresh()
-	self.Release()
+        self.Release()
 
     def DisplayCustomColor(self, string, color=0, x=0, y=0):
-	self.Lock()
+        self.Lock()
         self.screen.addstr(x, y, string, curses.color_pair(color))
         self.Refresh()
-	self.Release()
+        self.Release()
 
     def DisplayCustomColorBold(self, string, color=0, x=0, y=0):
-	self.Lock()
+        self.Lock()
         self.screen.addstr(x, y, string, curses.A_BOLD |
                                          curses.color_pair(color))
         self.Refresh()
-	self.Release()
+        self.Release()
 
     def GetCharacter(self):
-	self.Lock()
+        self.Lock()
         c = self.screen.getch()
-	self.Release()
-	return c
+        self.Release()
+        return c
 
     def Echo(self):
         curses.echo()
@@ -185,15 +185,15 @@ class Screen(object):
         curses.curs_set(0)
 
     def ClearRegion(self, x1, x2, y1, y2):
-	for i in xrange(x1, x2):
-	    self.Display(" "*(y2 - y1), i, y1)
+        for i in xrange(x1, x2):
+            self.Display(" "*(y2 - y1), i, y1)
 
     def ClearTextArea(self):
-	# Clear the area where tasks are displayed
-	self.ClearRegion(C.SCR_MAX_MENU_ROWS+7, C.SCR_X-2, 0, C.SCR_Y)
+        # Clear the area where tasks are displayed
+        self.ClearRegion(C.SCR_MAX_MENU_ROWS+7, C.SCR_X-2, 0, C.SCR_Y)
 
     def Command(self):
-	self.Lock()
+        self.Lock()
         self.Display(" "*(C.SCR_Y-1), C.SCR_X-1, 0)
         self.Display(":", C.SCR_X-1, 0)
 
@@ -217,9 +217,9 @@ class Screen(object):
                     self.CursorHide()
                     return ""
 
-		self.Display(" "*(C.SCR_Y-1), C.SCR_X-1, 0)
-		read_string = read_string[:-1]
-		self.Display(":" + read_string, C.SCR_X-1, 0)
+                self.Display(" "*(C.SCR_Y-1), C.SCR_X-1, 0)
+                read_string = read_string[:-1]
+                self.Display(":" + read_string, C.SCR_X-1, 0)
 
             else:
                 if c < 256:
@@ -228,24 +228,24 @@ class Screen(object):
                 continue
         self.Noecho()
         self.CursorHide()
-	self.Release()
+        self.Release()
         return read_string
 
     def StringInput(self, x=0, y=0):
-	self.Lock()
-	self.Echo()
-	self.CursorBlink()
+        self.Lock()
+        self.Echo()
+        self.CursorBlink()
 
-	inpString = self.screen.getstr(x, y, C.SCR_Y-20)
+        inpString = self.screen.getstr(x, y, C.SCR_Y-20)
 
-	self.Noecho()
-	self.CursorHide()
-	self.Release()
+        self.Noecho()
+        self.CursorHide()
+        self.Release()
 
-	return inpString
+        return inpString
 
     def ScrollBar(self, X, Y, start, end, length, rows = -1):
-	self.Lock()
+        self.Lock()
         if length == 0:       # Empty Menu
             return
         if rows == -1:
@@ -264,14 +264,13 @@ class Screen(object):
         for i in xrange(start_space):
             self.DisplayCustomColorBold(" ", C.SCR_COLOR_WHITE_GRAY_BGRD, X+i, Y)
             starting = X + i
-        
+
         for i in xrange(end_space):
-            self.DisplayCustomColorBold(" ", C.SCR_COLOR_WHITE_GRAY_BGRD, 
+            self.DisplayCustomColorBold(" ", C.SCR_COLOR_WHITE_GRAY_BGRD,
                                         X+rows-1-i, Y)
             ending = X + rows - 1 - i
 
         for i in xrange(starting, ending):
             self.DisplayCustomColorBold(" ", C.SCR_COLOR_GRAY_WHITE_BGRD, i, Y)
 
-	self.Release()
-
+        self.Release()

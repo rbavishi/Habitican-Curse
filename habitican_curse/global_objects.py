@@ -10,7 +10,7 @@ reqManager = None
 currentTask = None
 prevTask = None
 content = None  # This will be initialized using a thread,
-		# so as to reduce start time
+                # so as to reduce start time
 
 # Task Menus
 HabitMenu = None

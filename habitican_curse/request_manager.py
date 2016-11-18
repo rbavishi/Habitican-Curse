@@ -197,8 +197,8 @@ class RequestManager(object):
             elif i.task.task_type == "daily":
                 i.task.completed ^= True
 
-	    for i in diffDict:
-		diffDict[i] = json[i]
+            for i in diffDict:
+                diffDict[i] = json[i]
 
             # Check for drops
             tmpdrp = CT.CheckDrops( json['_tmp'] )
@@ -272,48 +272,43 @@ class RequestManager(object):
         #TODO: Needs to be updated to V3 API
         return 0
 
-	task = {}
-	task['text'] = title.decode("utf-8")
-	task['type'] = task_type
-	task['priority'] = 1
+        task = {}
+        task['text'] = title.decode("utf-8")
+        task['type'] = task_type
+        task['priority'] = 1
 
-	if task_type == 'todo' or task_type == 'daily':
-	    task['checklist'] = []
-	if task_type == "daily":
-	    task['everyX'] = 1
-	    task['frequency'] = 'weekly'
-	    task['repeat'] = {'m': True, 't': True, 'w': True, 'th': True, 'f': True, 's': True, 'su': True}
-	if task_type == "habit":
-	    task['up'] = True
-	    task['down'] = True
+        if task_type == 'todo' or task_type == 'daily':
+            task['checklist'] = []
+        if task_type == "daily":
+            task['everyX'] = 1
+            task['frequency'] = 'weekly'
+            task['repeat'] = {'m': True, 't': True, 'w': True, 'th': True, 'f': True, 's': True, 'su': True}
+        if task_type == "habit":
+            task['up'] = True
+            task['down'] = True
 
 
-	DEBUG.Display("Creating Task...");
-	response = requests.post(GET_TASKS_URL, headers=self.headers, json=task)
+        DEBUG.Display("Creating Task...");
+        response = requests.post(GET_TASKS_URL, headers=self.headers, json=task)
 
-	# Need some error handling here
-	if response.status_code!=200:
-	    DEBUG.Display("Failed")
-	    return
+        # Need some error handling here
+        if response.status_code!=200:
+            DEBUG.Display("Failed")
+            return
 
-	DEBUG.Display(" ")
-	ret_task = response.json()
-	if task_type == "habit":
+        DEBUG.Display(" ")
+        ret_task = response.json()
+        if task_type == "habit":
             item = T.Habit(ret_task)
             menu_item = M.MenuItem(item, "habit", item.text)
-	    G.HabitMenu.Insert(menu_item)
+            G.HabitMenu.Insert(menu_item)
 
         elif task_type == "daily":
             item = T.Daily(ret_task)
             menu_item = M.MenuItem(item, "daily", item.text)
-	    G.DailyMenu.Insert(menu_item)
+            G.DailyMenu.Insert(menu_item)
 
-	elif task_type == "todo":
+        elif task_type == "todo":
             item = T.TODO(ret_task)
             menu_item = M.MenuItem(item, "todo", item.text)
-	    G.TODOMenu.Insert(menu_item)
-
-
-
-
-
+            G.TODOMenu.Insert(menu_item)
