@@ -9,7 +9,7 @@ user = None     # User object
 reqManager = None
 currentTask = None
 prevTask = None
-content = None  # This will be initialized using a thread, 
+content = None  # This will be initialized using a thread,
 		# so as to reduce start time
 
 # Task Menus
@@ -19,3 +19,4 @@ TODOMenu = None
 
 # Global data
 LastUpdate = None
+Logger = None

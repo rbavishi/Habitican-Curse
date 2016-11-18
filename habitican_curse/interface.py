@@ -13,7 +13,6 @@ from screen import Screen
 import global_objects as G
 import helper as H
 import menu as M
-import request_manager as RM
 import debug as DEBUG
 import content as CT
 
@@ -27,7 +26,7 @@ def Idx(parsed, index):
 
 
 class Interface(object):
-    
+
     def __init__(self):
         self.trinity = []
         self.currentMenu = 0
@@ -93,7 +92,7 @@ class Interface(object):
 
     def ScrollRight(self):
         if self.currentMenu == 2: # Very annoying otherwise
-            return 
+            return
         for i in [(self.currentMenu+1)%3, (self.currentMenu+2)%3,
                 self.currentMenu]:
             if not self.trinity[i].IsEmpty():
@@ -143,6 +142,10 @@ class Interface(object):
     def Parser(self, command):
 	parsed = shlex.split(command)
 	if Idx(parsed, 0) == "set":
+
+            DEBUG.Display("Set not implemented for API V3")
+            return
+
 	    if not Idx(parsed, 1) in  C.SET_COMMANDS:
 		DEBUG.Display("Invalid Set: " + command)
 		return
@@ -156,7 +159,7 @@ class Interface(object):
 		key = Idx(parsed, 2)
 		G.currentTask.ChangePriority(key)
 		self.Highlight()
-		return 
+		return
 
 	    # Change/Remove Due Date
 	    elif c == "due":
@@ -173,7 +176,7 @@ class Interface(object):
 		    G.currentTask.ChangeDueDate(retDate.ConvertUTC())
 
 		self.Highlight()
-		return 
+		return
 
 	    # Set weekly options for dailies
 	    elif c == "weekly":
@@ -184,7 +187,7 @@ class Interface(object):
 		if repeat != None:
 		    G.currentTask.SetWeekly(repeat)
 		self.Highlight()
-		return 
+		return
 
 	    # Set every X days option for dailies
 	    elif c == "every":
@@ -197,9 +200,13 @@ class Interface(object):
 
 		G.currentTask.SetEvery(int(Idx(parsed, 2)))
 		self.Highlight()
-		return 
+		return
 
 	elif Idx(parsed, 0) == "et": # Create Todo
+
+            DEBUG.Display("Create Todo not implemented for API V3")
+            return
+
 	    c_title = Idx(parsed, 1)
 	    if c_title == "" :
 		title = H.TitlePicker()
@@ -213,6 +220,10 @@ class Interface(object):
 	    return
 
 	elif Idx(parsed, 0) == "ed": # Create Daily
+
+            DEBUG.Display("Create Daily not implemented for API V3")
+            return
+
 	    c_title = Idx(parsed, 1)
 	    if c_title == "" :
 		title = H.TitlePicker()
@@ -225,6 +236,9 @@ class Interface(object):
 	    return
 
 	elif Idx(parsed, 0) == "eh": # Create Habit
+            DEBUG.Display("Create Habit not implemented for API V3")
+            return
+
 	    c_title = Idx(parsed, 1)
 	    if c_title == "" :
 		title = H.TitlePicker()
@@ -267,7 +281,7 @@ class Interface(object):
 	    G.user.attrStats = H.GetUserStats(G.user.data)
 
 	    G.user.PrintUserStats()
-        
+
         elif command == "party":
             G.screen.SaveInRegister(1)
             G.user.GetPartyData()
@@ -318,7 +332,7 @@ class Interface(object):
 
                 # Vim style exit
                 if command == "q":
-                    break 
+                    break
 
                 G.screen.Display(" "*(C.SCR_Y-1), C.SCR_X-1, 0)
                 self.Command(command)

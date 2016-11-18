@@ -5,7 +5,6 @@
 """
 
 # Standard Library Imports
-import requests
 import time
 import math
 
@@ -19,25 +18,14 @@ import menu as M
 import task as T
 import debug as DEBUG
 import user as U
-import request_manager as RM
 
-FETCH_URL = "https://habitica.com:443/api/v2/content"
 
 class ContentManager(object):
     """ Class for managing Habitica content """
 
     def __init__(self):
 	#DEBUG.Display("Content Fetching in progress...")
-	resp = self.Fetch()
-	if resp.status_code == 200:
-	    self.contentDict = resp.json()
-
-	else:
-	    self.contentDict = -1
-
-    def Fetch(self):
-	resp = requests.get(FETCH_URL)
-	return resp
+        self.contentDict = G.reqManager.FetchJSON('content',failure='soft')
 
     def Quest(self, key):
 	return self.contentDict['quests'].get(key, {})
@@ -47,15 +35,21 @@ class ContentManager(object):
 
 
 class Party(object):
-    """ Class for storing party info, displaying chat menus, 
+    """ Class for storing party info, displaying chat menus,
     	quest details(if any) etc. """
 
     def __init__(self, party):
 	self.party = party
 
+        #DEBUG.logging.debug("Party Object - \n %s" % str(party))
+
 	# Some Basic Details
 	self.name    = str(party['name'])
-	self.members = [str(i['profile']['name']) for i in party['members']]
+
+	#self.members = [str(i['profile']['name']) for i in party['members']]
+        # V3 changes, members don't work no more :(
+        self.members = ['(Member list not implemented)']
+
 	self.chat    = party['chat']
 	chat_items = []
 	chatList = self.chat[:50]
@@ -67,6 +61,7 @@ class Party(object):
 	self.chatMenu = M.SimpleTextMenu(chat_items, C.SCR_TEXT_AREA_LENGTH)
 
 	self.quest = party.get('quest', None)
+        DEBUG.logging.debug("Current Quest: %s" % str(self.quest))
 	if self.quest != None:
 	    while (G.content == None):
 		DEBUG.Display("Fetching Content...")
@@ -109,7 +104,7 @@ class Party(object):
 	    if self.questType == "boss":
 		# Display Boss Stats
 		G.screen.DisplayCustomColorBold(str(self.bossName)+" "+C.SYMBOL_HEART+" : "+
-					 str(self.progress)+"/"+str(self.bossMaxHealth), 
+					 str(self.progress)+"/"+str(self.bossMaxHealth),
 					 C.SCR_COLOR_RED, MAX_X, Y)
 
 		MAX_X -= 1
@@ -124,10 +119,23 @@ class Party(object):
 		MAX_X -= 1
 
 
-	self.chatMenu.SetXY(X+1, 1) 
+	self.chatMenu.SetXY(X+1, 1)
 	self.chatMenu.SetNumRows(MAX_X - (X + 1))
 	self.chatMenu.Display()
 	self.chatMenu.Input()
+
+def CheckDrops(response):
+    drop = None
+    if response.has_key('drop'):
+        DEBUG.logging.debug("  Found a drop!\n%s" % str(response))
+        if response['drop'].has_key('dialog'):
+            drop=str(response['drop']['dialog'])
+        elif response['drop'].has_key('text'):
+            drops=str(response['drop']['text'])
+        elif response['drop'].has_key('notes'):
+            drop=str(response['drop']['notes'])
+
+    return drop
 
 def EffectiveValueTask(value): # Value used for calculation of damages.
     			       # Between -47.27 and 21.27
@@ -140,15 +148,10 @@ def EffectiveValueTask(value): # Value used for calculation of damages.
 
 
 def GetData():
+
     DEBUG.Display("Please Wait...")
-    resp = requests.get(RM.GET_USER_URL, headers=G.reqManager.headers)
+    data = G.reqManager.FetchJSON('user')
     DEBUG.Display(" ")
-
-    # Need some error handling here
-    if resp.status_code!=200:
-	return
-
-    data = resp.json()
 
     # Calculate Damage to User
     while (G.content == None):
@@ -158,9 +161,9 @@ def GetData():
 
     userStats = H.GetUserStats(data)
     stealth = data['stats']['buffs']['stealth']
-    dailies = data['dailys']
     conBonus = max(1 - (userStats['con']*(1.0/250)), 0.1)
-    dailies = ([dailies]) if type(dailies) != list else dailies
+
+
     userDamage = 0
     partyDamage = 0
     userDamageBoss = 0
@@ -171,9 +174,11 @@ def GetData():
 	questDetails = G.content.Quest(quest['key'])
 	userDamageBoss = math.floor(quest['progress']['up']*10)/10
 
+    dailies = G.reqManager.FetchJSON('task',params='user?type=dailys')
     dailiesIncomplete = 0
 
     for daily in dailies:
+        DEBUG.logging.debug("Processing Daily: %s" % str(daily['text']))
 	if not H.isDueDaily(daily) or daily['completed']:
 	    continue
 
@@ -202,14 +207,15 @@ def GetData():
 
 		partyDamage += bossDamage * questDetails['boss']['str']
 
-
 	userDamage += damage * conBonus * daily['priority'] * 2
-    
+
+
+
     userDamage += partyDamage
 
     userDamage = math.ceil(userDamage*10)/10
     partyDamage = math.ceil(partyDamage*10)/10
-    data_items = ["Current Health: "+str(G.user.hp), "Dailies Incomplete: "+str(dailiesIncomplete), "Est. Damage to You: "+str(userDamage), "Est. Damage to Party: "+str(partyDamage), 
+    data_items = ["Current Health: "+str(G.user.hp), "Dailies Incomplete: "+str(dailiesIncomplete), "Est. Damage to You: "+str(userDamage), "Est. Damage to Party: "+str(partyDamage),
 	          "Est. Damage to Boss: "+str(userDamageBoss)]
 
     # Collection statistics if it is a collect quest
@@ -224,7 +230,7 @@ def GetData():
 
     G.screen.SaveInRegister(1)
     dataMenu = M.SimpleTextMenu(data_items, C.SCR_TEXT_AREA_LENGTH)
-    dataMenu.SetXY(C.SCR_FIRST_HALF_LENGTH, 5) 
+    dataMenu.SetXY(C.SCR_FIRST_HALF_LENGTH, 5)
     dataMenu.Display()
     dataMenu.Input()
     G.screen.RestoreRegister(1)

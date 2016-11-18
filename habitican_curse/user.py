@@ -11,7 +11,6 @@ import datetime
 import config as C
 import global_objects as G
 import debug as DEBUG
-import request_manager as RM
 import helper as H
 import menu as M
 import content as CT
@@ -23,7 +22,7 @@ def Round(num):
     return int(round(num, 0))
 
 
-# Display positive numbers as +N and negative numbers as -N 
+# Display positive numbers as +N and negative numbers as -N
 def SignFormat(num):
     if num == 0:
         return ""
@@ -35,7 +34,7 @@ class User(object):
     """ Class to store user data """
 
     def __init__(self, data):
- 
+
         self.data = data
 	self.stats = data['stats']
 
@@ -48,7 +47,7 @@ class User(object):
         self.exp         = int(self.stats['exp'])
         self.toNextLevel = Round(self.stats['toNextLevel'])
         self.lvl         = self.stats['lvl']
-	
+
 	# Stats, gear etc.
 	# Strength, Intelligence, Perception, Constitution
 	self.attrStats   = {} # Will be updated when habitica content is fetched
@@ -73,7 +72,7 @@ class User(object):
 
 	# Stats, gear etc.
 	# Strength, Intelligence, Perception, Constitution
-	self.attrStats   = H.GetUserStats(data) 
+	self.attrStats   = H.GetUserStats(data)
 	self.equipGear   = self.data['items']['gear']['equipped']
 
     def PrintData(self):
@@ -132,7 +131,7 @@ class User(object):
 
 	string = ("STR: " + str(self.attrStats['str']) + " " +
 		  "INT: " + str(self.attrStats['int']) + " " +
-		  "PER: " + str(self.attrStats['per']) + " " + 
+		  "PER: " + str(self.attrStats['per']) + " " +
 		  "CON: " + str(self.attrStats['con']))
 
 	G.screen.DisplayCustomColorBold(string, C.SCR_COLOR_MAGENTA_GRAY_BGRD, C.SCR_X-2, C.SCR_Y-(3 + len(string)))
@@ -155,26 +154,24 @@ class User(object):
 
         # Level
         G.screen.DisplayCustomColorBold(diffDict['lvl'], C.SCR_COLOR_WHITE, C.SCR_X-1, self.cursorPositions[0]+2)
-                     
+
         # Health
         G.screen.DisplayCustomColorBold(diffDict['hp'], C.SCR_COLOR_RED, C.SCR_X-1, self.cursorPositions[1]+2)
 
         # Experience
         G.screen.DisplayCustomColorBold(diffDict['exp'], C.SCR_COLOR_GREEN, C.SCR_X-1, self.cursorPositions[2]+2)
-                     
+
         # Mana
         G.screen.DisplayCustomColorBold(diffDict['mp'], C.SCR_COLOR_BLUE, C.SCR_X-1, self.cursorPositions[3]+2)
-                     
+
         # Gold
         G.screen.DisplayCustomColorBold(diffDict['gp'], C.SCR_COLOR_YELLOW, C.SCR_X-1, self.cursorPositions[4]+2)
 
     def GetPartyData(self):
-        resp = G.reqManager.PartyRequest()
 
-        # Need some error handling here
-        if resp.status_code != 200:
-            return 
+        DEBUG.Display("Please Wait...")
+        resp = G.reqManager.FetchJSON('party')
+        DEBUG.Display(" ")
 
-        data = resp.json()
-	partyObj = CT.Party(data)
+	partyObj = CT.Party(resp)
 	partyObj.Display()

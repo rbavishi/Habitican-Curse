@@ -77,13 +77,13 @@ def DummyChecklistItem():
 
 class Task(object):
     """ Basic template for a task. There will be separate derived classes for
-    Habits, TODOs and Dailies. Basic display facilities are described in the 
-    display function of this class. Other details are displayed by the 
+    Habits, TODOs and Dailies. Basic display facilities are described in the
+    display function of this class. Other details are displayed by the
     function in the derived classes
     """
 
     def __init__(self, data):
-        self.data = data          # JSON response received from request
+        self.data = data          # JSON response
 
         # Basic Details
         self.text        = data['text'].encode("utf-8")
@@ -138,7 +138,7 @@ class Task(object):
 
 class ChecklistItem(object):
     """ Class for holding a checklist item """
-    
+
     def __init__(self, data):
 
 	# Checklist Item Specifications
@@ -225,10 +225,10 @@ class Daily(Task):
         # Checklist
         if self.checklist:
             done, total = self.ChecklistTuple()
-            G.screen.DisplayCustomColorBold("Checklist: " + "("+str(done)+"/"+str(total)+")" + " completed", 
+            G.screen.DisplayCustomColorBold("Checklist: " + "("+str(done)+"/"+str(total)+")" + " completed",
                                              C.SCR_COLOR_MAGENTA, X, Y)
             X += 2
-	
+
 	if not self.isDue:
 	    G.screen.DisplayCustomColorBold("Not Due Today", C.SCR_COLOR_NEUTRAL, X, Y)
 
@@ -255,7 +255,7 @@ class Daily(Task):
 	    self.data['frequency'] = self.frequency
 	    self.data['everyX'] = 1
 	    self.everyX = 1
-	
+
 	self.repeat = repeat
 	self.data['repeat'] = repeat
 
@@ -272,7 +272,7 @@ class Daily(Task):
 	    self.data['frequency'] = self.frequency
 	    self.repeat = C.DEFAULT_REPEAT
 	    self.data['repeat'] = self.repeat
-	
+
 	self.everyX = days
 	self.data['everyX'] = days
 
@@ -315,7 +315,7 @@ class TODO(Task):
 	self.dueDate = H.DateTime(str(self.data['date'])).DueDateFormat()
 	self.date = str(self.data['date'])
 
-    def RemoveDueDate(self): 
+    def RemoveDueDate(self):
 	if self.data.has_key('date'):
 	    self.data.pop('date')
 
@@ -335,7 +335,7 @@ class TODO(Task):
         # Checklist
         if self.checklist:
             done, total = self.ChecklistTuple()
-            G.screen.DisplayCustomColorBold("Checklist: " + "("+str(done)+"/"+str(total)+")" + " completed", 
+            G.screen.DisplayCustomColorBold("Checklist: " + "("+str(done)+"/"+str(total)+")" + " completed",
                                              C.SCR_COLOR_MAGENTA, X, Y)
             X += 2
 
