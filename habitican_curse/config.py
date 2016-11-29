@@ -9,8 +9,6 @@ import curses
 import datetime
 import os
 
-import debug as DEBUG
-
 NUM_CONTEXT_REGISTERS = 4
 
 # Screen Specifications - Will be adjusted during runtime
@@ -92,20 +90,17 @@ DEFAULT_REPEAT = {'m': True, 't': True, 'w': True, 'th': True, 'f': True, 's': T
 # Configuration file settings
 user_config = None
 
-
 #Read in the configuration files
 def ReadConfigFile():
     global user_config
     user_config = dict()
 
-    DEBUG.logging.debug("Reading in config file!")
     CONFIG_FILE = os.getenv("HOME")+'/.habiticarc'
 
     try:
         f = open(CONFIG_FILE, 'r')
     except:
         import sys
-        DEBUG.logging.warn("Unexpected error opening ",CONFIG_FILE,":", sys.exc_info()[0])
         print "Enter UUID: ",
         uuid = raw_input().strip()
         print " "
@@ -115,6 +110,7 @@ def ReadConfigFile():
         f = open(CONFIG_FILE, 'w+')
         f.write("uuid="+uuid+"\n")
         f.write("key="+key+"\n")
+        f.write("debug_lvl=50\n")
         f.close()
 
         f = open(CONFIG_FILE, 'r')
