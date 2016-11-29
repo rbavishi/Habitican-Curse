@@ -120,7 +120,11 @@ class RequestManager(object):
                     continue
                 item = T.TODO(i)
                 todos_items += [M.MenuItem(item, "todo", item.text)]
+            elif( i['type'] == "reward" ):
+                #this is a custom reward, do nothing for now
+                DEBUG.logging.warn("Custom Rewards aren't implemented yet, but the user has one: %s" % i['text'])
             else:
+                DEBUG.logging.debug("Weird task type: %s" % str(i))
                 raise ValueError("Unknown task type %s" % i['type'])
 
         # Generate the menus for the display
