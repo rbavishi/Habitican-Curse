@@ -131,8 +131,7 @@ class MenuItem(object):
                     G.screen.Display(self.taskname[:first_row_size-1]+"-",
                                      self.x, self.y,
                                      color=color, bold=True,strike=strike,highlight=highlight)
-                G.screen.Display(truncate(self.taskname[first_row_size-1:],
-                                 self.width), color,
+                G.screen.Display(truncate(self.taskname[first_row_size-1:],self.width),
                                  self.x+1, self.y,
                                  color=color, bold=True,strike=strike,highlight=highlight)
             elif self.taskname[first_row_size-1] == ' ':
