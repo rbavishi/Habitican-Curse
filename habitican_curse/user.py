@@ -76,49 +76,56 @@ class User(object):
         self.equipGear   = self.data['items']['gear']['equipped']
 
     def PrintData(self):
-        G.screen.DisplayCustomColor(" "*(C.SCR_Y-1), C.SCR_COLOR_WHITE_GRAY_BGRD, C.SCR_X-2, 0)
+        G.screen.Display(" "*(C.SCR_Y-1), C.SCR_X-2, 0,
+                color=C.SCR_COLOR_WHITE_GRAY_BGRD, bold=True)
 
         cursor = 1
         self.cursorPositions = []
 
         # Level
         string = C.SYMBOL_LEVEL + " " + str(self.lvl)
-        G.screen.DisplayCustomColorBold(string, C.SCR_COLOR_WHITE_GRAY_BGRD, C.SCR_X-2, cursor)
+        G.screen.Display(string, C.SCR_X-2, cursor,
+                color=C.SCR_COLOR_WHITE_GRAY_BGRD, bold=True)
 
         self.cursorPositions.append(cursor)
         cursor += len(string) + 3 - len(C.SYMBOL_LEVEL)
 
         # Health
         string = C.SYMBOL_HEART + " " + str(self.hp)+"/"+str(self.maxHealth)
-        G.screen.DisplayCustomColorBold(string, C.SCR_COLOR_RED_GRAY_BGRD, C.SCR_X-2, cursor)
+        G.screen.Display(string, C.SCR_X-2, cursor,
+                color=C.SCR_COLOR_RED_GRAY_BGRD, bold=True)
 
         self.cursorPositions.append(cursor)
         cursor += len(string) + 3 - len(C.SYMBOL_HEART)
 
         # XP
         string = C.SYMBOL_EXPERIENCE + " " + str(self.exp)+"/"+str(self.toNextLevel)
-        G.screen.DisplayCustomColorBold(string, C.SCR_COLOR_GREEN_GRAY_BGRD, C.SCR_X-2, cursor)
+        G.screen.Display(string, C.SCR_X-2, cursor,
+                color=C.SCR_COLOR_GREEN_GRAY_BGRD, bold=True)
 
         self.cursorPositions.append(cursor)
         cursor += len(string) + 3 - len(C.SYMBOL_EXPERIENCE)
 
         # Mana
         string = C.SYMBOL_MANA + " " + str(self.mp)+"/"+str(self.maxMP)
-        G.screen.DisplayCustomColorBold(string, C.SCR_COLOR_BLUE_GRAY_BGRD, C.SCR_X-2, cursor)
+        G.screen.Display(string, C.SCR_X-2, cursor,
+                color=C.SCR_COLOR_BLUE_GRAY_BGRD, bold=True)
 
         self.cursorPositions.append(cursor)
         cursor += len(string) + 3 - len(C.SYMBOL_MANA)
 
         # Gold
         string = C.SYMBOL_GOLD + " " + str(self.gp)
-        G.screen.DisplayCustomColorBold(string, C.SCR_COLOR_YELLOW_GRAY_BGRD, C.SCR_X-2, cursor)
+        G.screen.Display(string, C.SCR_X-2, cursor,
+                color=C.SCR_COLOR_YELLOW_GRAY_BGRD, bold=True)
 
         self.cursorPositions.append(cursor)
         cursor += len(string) + 3 - len(C.SYMBOL_GOLD)
 
         # Last Update
         string = "Last Update: " + G.LastUpdate.strftime("%H:%M:%S %d/%m")
-        G.screen.DisplayCustomColorBold(string, C.SCR_COLOR_MAGENTA_GRAY_BGRD, C.SCR_X-2, cursor)
+        G.screen.Display(string, C.SCR_X-2, cursor,
+                color=C.SCR_COLOR_MAGENTA_GRAY_BGRD, bold=True)
 
         self.cursorPositions.append(cursor)
         cursor += len(string) + 1
@@ -134,7 +141,8 @@ class User(object):
                   "PER: " + str(self.attrStats['per']) + " " +
                   "CON: " + str(self.attrStats['con']))
 
-        G.screen.DisplayCustomColorBold(string, C.SCR_COLOR_MAGENTA_GRAY_BGRD, C.SCR_X-2, C.SCR_Y-(3 + len(string)))
+        G.screen.Display(string, C.SCR_X-2, C.SCR_Y-(3 + len(string)),
+                color=C.SCR_COLOR_MAGENTA_GRAY_BGRD, bold=True)
 
     def PrintDiff(self, newDict):
         diffDict = {}
@@ -153,19 +161,24 @@ class User(object):
             diffDict['exp'] = ""
 
         # Level
-        G.screen.DisplayCustomColorBold(diffDict['lvl'], C.SCR_COLOR_WHITE, C.SCR_X-1, self.cursorPositions[0]+2)
+        G.screen.Display(diffDict['lvl'],C.SCR_X-1, self.cursorPositions[0]+2,
+                color=C.SCR_COLOR_WHITE, bold=True)
 
         # Health
-        G.screen.DisplayCustomColorBold(diffDict['hp'], C.SCR_COLOR_RED, C.SCR_X-1, self.cursorPositions[1]+2)
+        G.screen.Display(diffDict['hp'], C.SCR_X-1, self.cursorPositions[1]+2,
+            color=C.SCR_COLOR_RED,  bold=True)
 
         # Experience
-        G.screen.DisplayCustomColorBold(diffDict['exp'], C.SCR_COLOR_GREEN, C.SCR_X-1, self.cursorPositions[2]+2)
+        G.screen.Display(diffDict['exp'], C.SCR_X-1, self.cursorPositions[2]+2,
+            color=C.SCR_COLOR_GREEN,  bold=True)
 
         # Mana
-        G.screen.DisplayCustomColorBold(diffDict['mp'], C.SCR_COLOR_BLUE, C.SCR_X-1, self.cursorPositions[3]+2)
+        G.screen.Display(diffDict['mp'], C.SCR_X-1, self.cursorPositions[3]+2,
+            color=C.SCR_COLOR_BLUE,  bold=True)
 
         # Gold
-        G.screen.DisplayCustomColorBold(diffDict['gp'], C.SCR_COLOR_YELLOW, C.SCR_X-1, self.cursorPositions[4]+2)
+        G.screen.Display(diffDict['gp'], C.SCR_X-1, self.cursorPositions[4]+2,
+            color=C.SCR_COLOR_YELLOW,  bold=True)
 
     def GetPartyData(self):
 

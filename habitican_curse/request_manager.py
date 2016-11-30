@@ -284,10 +284,8 @@ class RequestManager(object):
             direction = None
             if i.task.task_type != "daily" or (not i.task.completed):
                 direction = "up"
-                #URL = GET_TASKS_URL + "/" + i.task.taskID + "/" + "up"
             else:
                 direction = "down"
-                #URL = GET_TASKS_URL + "/" + i.task.taskID + "/" + "down"
 
             if (direction is None):
                 continue

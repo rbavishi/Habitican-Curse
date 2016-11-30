@@ -134,37 +134,38 @@ class Screen(object):
 
         self.Refresh()
 
-    def Display(self, string, x=0, y=0):
-        self.Lock()
-        self.screen.addstr(x, y, string)
-        self.Refresh()
-        self.Release()
 
-    def DisplayBold(self, string, x=0, y=0):
+
+    def Display(self, string, x=0, y=0, bold=False, highlight=False,color=False):
         self.Lock()
-        self.screen.addstr(x, y, string, curses.A_BOLD)
+
+        if(highlight):
+            bold = True
+            color = C.SCR_COLOR_WHITE_GRAY_BGRD
+
+        if(bold and color):
+            self.screen.addstr(x, y, string, curses.A_BOLD |
+                                             curses.color_pair(color))
+        elif(color):
+            self.screen.addstr(x, y, string, curses.color_pair(color)) # color
+        elif(bold):
+            self.screen.addstr(x, y, string, curses.A_BOLD)
+        else:
+            self.screen.addstr(x, y, string)
+
         self.Refresh()
         self.Release()
 
     def Highlight(self, string, x=0, y=0):
-        self.Lock()
-        self.screen.addstr(x, y, string, curses.A_BOLD |
-                                         curses.color_pair(C.SCR_COLOR_WHITE_GRAY_BGRD))
-        self.Refresh()
-        self.Release()
+        self.Display(string, x, y, highlight=True)
 
-    def DisplayCustomColor(self, string, color=0, x=0, y=0):
-        self.Lock()
-        self.screen.addstr(x, y, string, curses.color_pair(color))
-        self.Refresh()
-        self.Release()
+    #def DisplayCustomColor(self, string, color=0, x=0, y=0):
+    #    self.Display(string, x, y, color=color)
+#
+#    def DisplayCustomColorBold(self, string, color=0, x=0, y=0):
+#        self.Display(string, x, y, color=color,bold=True)
 
-    def DisplayCustomColorBold(self, string, color=0, x=0, y=0):
-        self.Lock()
-        self.screen.addstr(x, y, string, curses.A_BOLD |
-                                         curses.color_pair(color))
-        self.Refresh()
-        self.Release()
+
 
     def GetCharacter(self):
         self.Lock()
@@ -254,23 +255,23 @@ class Screen(object):
         start_space = int(math.ceil((start * 1.0)/(length) * rows))
         end_space   = int(math.floor(((length - end) * 1.0)/(length) * rows))
 
-        self.DisplayCustomColor(C.SYMBOL_UP_TRIANGLE, C.SCR_COLOR_DARK_GRAY,
-                                    X-1, Y)
-        self.DisplayCustomColorBold(C.SYMBOL_DOWN_TRIANGLE, C.SCR_COLOR_DARK_GRAY,
-                                    X+rows, Y)
+        self.Display(C.SYMBOL_UP_TRIANGLE,X-1, Y,
+                                    color=C.SCR_COLOR_DARK_GRAY, bold=True)
+        self.Display(C.SYMBOL_DOWN_TRIANGLE,X+rows, Y,
+                                    color=C.SCR_COLOR_DARK_GRAY, bold=True)
 
         starting = X
         ending   = X + rows
         for i in xrange(start_space):
-            self.DisplayCustomColorBold(" ", C.SCR_COLOR_WHITE_GRAY_BGRD, X+i, Y)
+            self.Display(" ", X+i, Y, color=C.SCR_COLOR_WHITE_GRAY_BGRD,bold=True)
             starting = X + i
 
         for i in xrange(end_space):
-            self.DisplayCustomColorBold(" ", C.SCR_COLOR_WHITE_GRAY_BGRD,
-                                        X+rows-1-i, Y)
+            self.Display(" ",X+rows-1-i, Y,
+                             color=C.SCR_COLOR_WHITE_GRAY_BGRD,bold=True)
             ending = X + rows - 1 - i
 
         for i in xrange(starting, ending):
-            self.DisplayCustomColorBold(" ", C.SCR_COLOR_GRAY_WHITE_BGRD, i, Y)
+            self.Display(" ",i, Y,color=C.SCR_COLOR_GRAY_WHITE_BGRD, bold=True)
 
         self.Release()

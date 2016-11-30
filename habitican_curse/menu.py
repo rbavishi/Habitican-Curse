@@ -87,44 +87,63 @@ class MenuItem(object):
         status_length = self.status.ReturnLenString()
         first_row_size = self.width - status_length - 1
 
-        G.screen.DisplayCustomColorBold(" "*self.width, color, self.x,
-                                        self.y)
-        G.screen.DisplayCustomColorBold(" "*self.width, color, self.x+1,
-                                        self.y)
+        G.screen.Display(" "*self.width, self.x,self.y,
+                color=color, bold=True)
+
+        G.screen.Display(" "*self.width,self.x+1,self.y,
+                color=color,bold=True)
+
+
+        # Show the attributes that can be set (mark,delete, up,down,etc)
         self.status.Display()
+
+        #Add a gray tick if it's completed
         if hasattr(self.task, 'completed') and self.task.completed:
             color = C.SCR_COLOR_NEUTRAL
-            G.screen.DisplayCustomColorBold(C.SYMBOL_TICK, color, self.x,
-                                            self.y + status_length)
+            G.screen.Display(C.SYMBOL_TICK, self.x,self.y + status_length,
+                    color=color, bold=True)
+
+        #If we are set to delete, strikethrough the task name
+        #if(self.status.attributes[C.SYMBOL_DELETE]):
+        #    self.taskname = u'\u0336'.encode("utf-8").join(self.taskname) + u'\u0336'.encode("utf-8")
+
+        #Print the task name
         if len(self.taskname) < first_row_size: # No need to truncate
             if self.front:
-                G.screen.DisplayCustomColorBold(self.taskname, color, self.x, self.y +
-                                                            status_length + 1)
+                G.screen.Display(self.taskname, self.x, self.y + status_length + 1,
+                        color=color, bold=True)
+
             else:
-                G.screen.DisplayCustomColorBold(self.taskname, color, self.x, self.y)
+                G.screen.Display(self.taskname, self.x, self.y,
+                        color=color, bold=True)
 
             G.screen.Display(" "*self.width, self.x+1, self.y)
         else:                                   # We need truncation
             if self.taskname[first_row_size-1] != ' ':
                 if self.front:
-                    G.screen.DisplayCustomColorBold(self.taskname[:first_row_size-1]+"-",
-                                         color, self.x, self.y + status_length + 1)
+                    G.screen.Display(self.taskname[:first_row_size-1]+"-",
+                                     self.x, self.y + status_length + 1,
+                                     color=color, bold=True)
                 else:
-                    G.screen.DisplayCustomColorBold(self.taskname[:first_row_size-1]+"-",
-                                         color, self.x, self.y)
-                G.screen.DisplayCustomColorBold(truncate(self.taskname[first_row_size-1:],
-                                              self.width), color,
-                                              self.x+1, self.y)
+                    G.screen.Display(self.taskname[:first_row_size-1]+"-",
+                                     self.x, self.y,
+                                     color=color, bold=True)
+                G.screen.Display(truncate(self.taskname[first_row_size-1:],
+                                 self.width), color,
+                                 self.x+1, self.y,
+                                 color=color, bold=True)
             elif self.taskname[first_row_size-1] == ' ':
                 if self.front:
-                    G.screen.DisplayCustomColorBold(self.taskname[:first_row_size],
-                                         color, self.x, self.y + status_length + 1)
+                    G.screen.Display(self.taskname[:first_row_size],
+                                     self.x, self.y + status_length + 1,
+                                     color=color, bold=True)
                 else:
-                    G.screen.DisplayCustomColorBold(self.taskname[:first_row_size],
-                                         color, self.x, self.y)
-                G.screen.DisplayCustomColorBold(truncate(self.taskname[first_row_size:],
-                                              self.width), color,
-                                              self.x+1, self.y)
+                    G.screen.Display(self.taskname[:first_row_size],
+                                     self.x, self.y,
+                                     color=color, bold=True)
+                G.screen.Display(truncate(self.taskname[first_row_size:],self.width),
+                                 self.x+1, self.y,
+                                 color=color, bold=True)
 
     def HighlightName(self):
         self.task.Display()
@@ -134,12 +153,10 @@ class MenuItem(object):
 
         # Display Task Details
 
-        G.screen.DisplayCustomColorBold(" "*self.width, C.SCR_COLOR_NEUTRAL, self.x,
-                                        self.y)
+        G.screen.Display(" "*self.width,  self.x,self.y,
+                         color=C.SCR_COLOR_NEUTRAL,bold=True)
         G.screen.Highlight(" "*(first_row_size+1), self.x,
                            self.y+status_length)
-        #G.screen.Highlight(" "*self.width, self.x,
-                                        #self.y)
         G.screen.Highlight(" "*self.width, self.x+1,
                                         self.y)
         self.status.Display()
@@ -291,7 +308,7 @@ class Menu(object):
         if self.menu_type == "checklist_menu":
             G.screen.ClearTextArea()
         X, Y = self.x, self.y
-        G.screen.DisplayBold(self.title, X, Y)
+        G.screen.Display(self.title, X, Y, bold=True)
         X += 2
         G.screen.ScrollBar(X, Y-2, self.start, self.end, len(self.items), self.rows)
 
@@ -553,10 +570,12 @@ class SimpleTextMenu(object):
 
         for i in xrange(self.start, self.end):
             if self.text[i][:3] == "---" or self.text[i][0] == "#":
-                G.screen.DisplayCustomColor(self.text[i], C.SCR_COLOR_LIGHT_GRAY, X, Y)
+                G.screen.Display(self.text[i], X, Y,
+                        color=C.SCR_COLOR_LIGHT_GRAY, bold=True)
                 X += 1
             else:
-                G.screen.DisplayCustomColor(self.text[i], C.SCR_COLOR_WHITE, X, Y)
+                G.screen.Display(self.text[i],X, Y,
+                        color=C.SCR_COLOR_WHITE, bold=True)
                 X += 1
 
     def ScrollUp(self):

@@ -67,21 +67,24 @@ class Status(object):
             display_string = '('+str(self.checklist[0])+'/'+str(self.checklist[1])+')'
             Y -= (len(display_string))
             display_string = C.SYMBOL_DOWN_TRIANGLE + display_string
-            G.screen.DisplayCustomColorBold(display_string,
-                                            C.SCR_COLOR_LIGHT_GRAY, X, Y)
+            G.screen.Display(display_string,X, Y,
+                                            color=C.SCR_COLOR_LIGHT_GRAY, bold=True)
             Y -= 2
 
         if self.due != '':
             Y -= (len(self.due) + 1)
-            G.screen.DisplayCustomColorBold(C.SYMBOL_DUE + " " + self.due, C.SCR_COLOR_LIGHT_GRAY, X, Y)
+            G.screen.Display(C.SYMBOL_DUE + " " + self.due, X, Y,
+                    color=C.SCR_COLOR_LIGHT_GRAY, bold=True)
             Y -= 2
 
         for (key, value) in self.attributes.items():
             if value != None:
                 if value:
-                    G.screen.DisplayCustomColorBold(key, C.SCR_COLOR_YELLOW, X, Y)
+                    G.screen.Display(key, X, Y,
+                            color=C.SCR_COLOR_YELLOW, bold=True)
                 else:
-                    G.screen.DisplayCustomColorBold(key, C.SCR_COLOR_DARK_GRAY, X, Y)
+                    G.screen.Display(key, X, Y,
+                            color=C.SCR_COLOR_DARK_GRAY, bold=True)
                 Y -= 2
 
     def ToggleMarkUp(self):
@@ -341,7 +344,7 @@ def DatePicker():
     G.screen.ClearTextArea()
 
     helpString = "Enter Date (dd/mm/yyyy): "
-    G.screen.DisplayCustomColorBold(helpString, C.SCR_COLOR_MAGENTA, X, 5)
+    G.screen.Display(helpString, X,5,color=C.SCR_COLOR_MAGENTA, bold=True)
     Y += len(helpString)
     DEBUG.Display("Enter 'q' to exit.")
 
@@ -370,7 +373,7 @@ def DatePicker():
 
         DEBUG.Display("Invalid Date. Please try again. Enter 'q' to cancel.")
         G.screen.ClearTextArea()
-        G.screen.DisplayCustomColorBold(helpString, C.SCR_COLOR_MAGENTA, X, 5)
+        G.screen.Display(helpString, X,5,color=C.SCR_COLOR_MAGENTA, bold=True)
 
     DEBUG.Display("")
     return finalDate
@@ -387,18 +390,22 @@ def RepeatPicker(original=C.DEFAULT_REPEAT):
     current = 0
     while(1):
         dY = Y
-        G.screen.DisplayBold("Set Weekly: ", X-1, Y)
+        G.screen.Display("Set Weekly: ", X-1, Y,bold=True)
         for i in xrange(7):
             if i == current:
                 if newRepeat[sequence[i]]:
-                    G.screen.DisplayCustomColorBold(translate[sequence[i]], C.SCR_COLOR_MAGENTA_GRAY_BGRD, X, dY)
+                    G.screen.Display(translate[sequence[i]], X, dY,
+                            color=C.SCR_COLOR_MAGENTA_GRAY_BGRD, bold=True)
                 else:
-                    G.screen.DisplayCustomColorBold(translate[sequence[i]], C.SCR_COLOR_WHITE_GRAY_BGRD, X, dY)
+                    G.screen.Display(translate[sequence[i]], X, dY,
+                            color=C.SCR_COLOR_WHITE_GRAY_BGRD,  bold=True)
             else:
                 if newRepeat[sequence[i]]:
-                    G.screen.DisplayCustomColorBold(translate[sequence[i]], C.SCR_COLOR_MAGENTA, X, dY)
+                    G.screen.Display(translate[sequence[i]], X, dY,
+                            color=C.SCR_COLOR_MAGENTA,  bold=True)
                 else:
-                    G.screen.DisplayCustomColorBold(translate[sequence[i]], C.SCR_COLOR_NEUTRAL, X, dY)
+                    G.screen.Display(translate[sequence[i]], X, dY,
+                            color=C.SCR_COLOR_NEUTRAL,  bold=True)
             dY += len(translate[sequence[i]]) + 1
 
         c = G.screen.GetCharacter()
@@ -423,7 +430,8 @@ def TitlePicker():
     G.screen.ClearTextArea()
 
     helpString = "Enter Title: "
-    G.screen.DisplayCustomColorBold(helpString, C.SCR_COLOR_MAGENTA, X, 5)
+    G.screen.Display(helpString, X, 5,
+                     color=C.SCR_COLOR_MAGENTA, bold=True)
     Y += len(helpString)
 
     while(1):
@@ -437,7 +445,8 @@ def TitlePicker():
 
         DEBUG.Display(" Please enter a non-empty title string.")
         G.screen.ClearTextArea()
-        G.screen.DisplayCustomColorBold(helpString, C.SCR_COLOR_MAGENTA, X, 5)
+        G.screen.Display(helpString,X, 5,
+                color=C.SCR_COLOR_MAGENTA, bold=True)
 
     DEBUG.Display("")
     return inpTitle

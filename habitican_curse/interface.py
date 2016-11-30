@@ -45,7 +45,7 @@ class Interface(object):
         G.TODOMenu.Init()
 
         # Borders
-        G.screen.DisplayCustomColorBold("="*C.SCR_Y, C.SCR_COLOR_WHITE, 14, 0)
+        G.screen.Display("="*C.SCR_Y, 14, 0,bold=True,color=C.SCR_COLOR_WHITE)
 
         # User Stats
         G.user.PrintData()

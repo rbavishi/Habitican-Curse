@@ -98,18 +98,18 @@ class Party(object):
         MAX_X = C.SCR_X - 3
 
         titleString = "".join([self.name, " : "]+[i+", " for i in self.members[:-1]]+[self.members[-1]])
-        G.screen.DisplayCustomColorBold(titleString, C.SCR_COLOR_MAGENTA, X, Y)
-        G.screen.DisplayCustomColor("-"*(C.SCR_Y-2), C.SCR_COLOR_LIGHT_GRAY, X+1, Y)
+        G.screen.Display(titleString, X, Y,color=C.SCR_COLOR_MAGENTA,bold=True)
+        G.screen.Display("-"*(C.SCR_Y-2), X+1, Y,color=C.SCR_COLOR_LIGHT_GRAY)
         X += 2
 
         if self.quest != None and self.party['quest']['active'] == True:
-            G.screen.DisplayBold("Quest: "+self.questText, X, Y)
+            G.screen.Display("Quest: "+self.questText, X, Y,bold=True)
             X += 1
             if self.questType == "boss":
                 # Display Boss Stats
-                G.screen.DisplayCustomColorBold(str(self.bossName)+" "+C.SYMBOL_HEART+" : "+
-                                         str(self.progress)+"/"+str(self.bossMaxHealth),
-                                         C.SCR_COLOR_RED, MAX_X, Y)
+                G.screen.Display(str(self.bossName)+" "+C.SYMBOL_HEART+" : "+
+                                 str(self.progress)+"/"+str(self.bossMaxHealth),MAX_X, Y,
+                                 color=C.SCR_COLOR_RED, bold=True)
 
                 MAX_X -= 1
 
@@ -119,7 +119,8 @@ class Party(object):
                 for (key, value) in self.questItems.items():
                     disp_string += value['text'] + " : " + str(self.progress[key]) + "/" + str(value['count']) + " "
 
-                G.screen.DisplayCustomColorBold(disp_string, C.SCR_COLOR_YELLOW, MAX_X, Y)
+                G.screen.Display(disp_string, MAX_X, Y,
+                                 color=C.SCR_COLOR_YELLOW, bold=True)
                 MAX_X -= 1
 
 
