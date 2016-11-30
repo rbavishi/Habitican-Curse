@@ -88,7 +88,7 @@ class Task(object):
         # Basic Details
         self.text        = data['text'].encode("utf-8")
         self.taskID      = data['id']
-        self.dateCreated = H.DateTime(str(data['dateCreated']))
+        self.dateCreated = H.DateTime(str(data['createdAt']))
         self.priority    = data['priority']
         self.value       = data['value']
 

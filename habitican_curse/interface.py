@@ -204,16 +204,13 @@ class Interface(object):
 
         elif Idx(parsed, 0) == "et": # Create Todo
 
-            DEBUG.Display("Create Todo not implemented for API V3")
-            return
-
             c_title = Idx(parsed, 1)
             if c_title == "" :
                 title = H.TitlePicker()
             else:
                 title = Idx(parsed, 1)
 
-            G.reqManager.CreateTask(title, "todo")
+            G.reqManager.CreateTask_orig(title, "todo")
             self.trinity[self.currentMenu].InitialCurrentTask()
 
             self.Highlight()
@@ -221,23 +218,18 @@ class Interface(object):
 
         elif Idx(parsed, 0) == "ed": # Create Daily
 
-            DEBUG.Display("Create Daily not implemented for API V3")
-            return
-
             c_title = Idx(parsed, 1)
             if c_title == "" :
                 title = H.TitlePicker()
             else:
                 title = Idx(parsed, 1)
 
-            G.reqManager.CreateTask(title, "daily")
+            G.reqManager.CreateTask_orig(title, "daily")
             self.trinity[self.currentMenu].InitialCurrentTask()
             self.Highlight()
             return
 
         elif Idx(parsed, 0) == "eh": # Create Habit
-            DEBUG.Display("Create Habit not implemented for API V3")
-            return
 
             c_title = Idx(parsed, 1)
             if c_title == "" :
@@ -245,7 +237,7 @@ class Interface(object):
             else:
                 title = Idx(parsed, 1)
 
-            G.reqManager.CreateTask(title, "habit")
+            G.reqManager.CreateTask_orig(title, "habit")
             self.trinity[self.currentMenu].InitialCurrentTask()
             self.Highlight()
             return

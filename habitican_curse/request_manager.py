@@ -21,12 +21,7 @@ import debug as DEBUG
 import user as U
 
 # URL Definitions
-API_URL = dict()
-API_URL['base']    = "https://habitica.com:443/api/v3"
-API_URL['user']    = API_URL['base']+"/user"
-API_URL['task']    = API_URL['base']+"/tasks"
-API_URL['content'] = API_URL['base']+"/content"
-API_URL['party']   = API_URL['base']+"/groups/party"
+API_URL = "https://habitica.com:443/api/v3"
 
 #Request Methods
 request_methods = dict()
@@ -43,7 +38,139 @@ class RequestManager(object):
         self.headers = {'x-api-key': C.getConfig("key"), 'x-api-user': C.getConfig("uuid")}
         self.ClearQueues()
 
-    # Flush Queues
+
+    # General Wrapper to fetch JSON data from server
+    def APIV3_call(self,path,params={},failure='hard',method='get',obj=None):
+
+        if method not in request_methods:
+            raise ValueError("Unknown Method type ",method)
+
+        url = API_URL+"/"+path
+
+        if(method == 'get'):
+            url+="?"
+            for param, value in params.iteritems():
+                url+=param + "=" + value
+
+        DEBUG.logging.warn("Calling V3 API: %s" % url)
+        resp = request_methods[method](url, headers=self.headers,json=obj)
+
+        # Need some error handling here
+        if resp.status_code == 200:
+            DEBUG.logging.debug("HTTP Response: 200 Okay!")
+            rval = resp.json()['data']
+        elif  resp.status_code == 201:
+            DEBUG.logging.debug("HTTP Response: 201 Object Created")
+            rval = resp.json()['data']
+        else:
+            if(failure=='hard'):
+                raise ValueError("HTTP Response not recognized: %d" % resp.status_code)
+            else:
+                DEBUG.logging.warn("HTTP Response not recognized: %d" % resp.status_code)
+                rval = -1
+
+        return rval
+
+    ################################
+    ## V3 API Calls                #
+    ################################
+
+    #Fetches the 'content', which is basically all the strings and values that are constant in the game
+    # https://habitica.com/apidoc/#api-Content-ContentGet
+    def FetchGameContent(self):
+        return self.APIV3_call("content")
+
+    #Fetches the User Object from the API
+    # https://habitica.com/apidoc/#api-User-UserGet
+    def FetchUserData(self):
+        return self.APIV3_call("user")
+
+    #Fetches User Tasks from the API.
+    # https://habitica.com/apidoc/#api-Task-GetUserTasks
+    # task_type can be "habits", "dailys", "todos", "rewards", "completedTodos"
+    def FetchUserTasks(self,task_type=None):
+        tasks = None
+        if(task_type is None):
+            tasks = self.APIV3_call("tasks/user")
+        else:
+            if(task_type not in ["habits", "dailys", "todos", "rewards", "completedTodos"]):
+                raise ValueError("Unknown task type %s" % task_type)
+            tasks = self.APIV3_call("tasks/user",{'type':task_type})
+
+        return tasks
+
+    # Score a task up/down
+    # https://habitica.com/apidoc/#api-Task-ScoreTask
+    def ScoreTask(self,task_id,direction):
+        if(direction not in ['up','down']):
+            raise ValueError("Unknown task direction %s" % direction)
+        return self.APIV3_call("tasks/"+task_id+"/score/"+direction,method='post')
+
+    # Add a new task
+    # https://habitica.com/apidoc/#api-Task-DeleteTask
+    def DeleteTask(self, task_id):
+        return self.APIV3_call("tasks/"+task_id,method='delete')
+
+    # Add a new task
+    # https://habitica.com/apidoc/#api-Task-CreateUserTasks
+    def CreateTask(self, task_obj):
+        return self.APIV3_call("tasks/user",method='post',obj=task_obj)
+
+
+    #Fetches the User Object from the API
+    # https://habitica.com/apidoc/#api-Group-GetGroup
+    def FetchParty(self):
+        return self.APIV3_call("groups/party")
+
+
+
+    ################################
+    ## Deprecated Functions        #
+    ################################
+
+    # These are functions that don't really belong in the
+    # request manager (they're interface/model based, not
+    # request based
+
+    def CreateTask_orig(self,title,task_type):
+        task = {}
+        task['text'] = title.decode("utf-8")
+        task['type'] = task_type
+        task['priority'] = 1
+
+        if task_type == 'todo' or task_type == 'daily':
+            task['checklist'] = []
+        if task_type == "daily":
+            task['everyX'] = 1
+            task['frequency'] = 'weekly'
+            task['repeat'] = {'m': True, 't': True, 'w': True, 'th': True, 'f': True, 's': True, 'su': True}
+        if task_type == "habit":
+            task['up'] = True
+            task['down'] = True
+
+
+        DEBUG.Display("Creating Task...");
+        ret_task = self.CreateTask(task)
+        DEBUG.Display(" ")
+
+        DEBUG.logging.debug(ret_task)
+
+        if task_type == "habit":
+            item = T.Habit(ret_task)
+            menu_item = M.MenuItem(item, "habit", item.text)
+            G.HabitMenu.Insert(menu_item)
+
+        elif task_type == "daily":
+            item = T.Daily(ret_task)
+            menu_item = M.MenuItem(item, "daily", item.text)
+            G.DailyMenu.Insert(menu_item)
+
+        elif task_type == "todo":
+            item = T.TODO(ret_task)
+            menu_item = M.MenuItem(item, "todo", item.text)
+            G.TODOMenu.Insert(menu_item)
+
+    # Flush Queues (this doesn't belong as part of the reuqest manager!)
     def ClearQueues(self):
 
         self.MarkUpQueue = []
@@ -51,31 +178,6 @@ class RequestManager(object):
         self.MarkQueue = []
         self.DeleteQueue = []
         self.EditQueue = []
-
-    # General Wrapper to fetch JSON data from server
-    def FetchJSON(self,kind,params='',failure='hard',method='get'):
-
-        if kind not in API_URL:
-            raise ValueError("Unknown API type ",kind)
-        if method not in request_methods:
-            raise ValueError("Unknown Method type ",method)
-
-        url = API_URL[kind]+"/"+params
-        DEBUG.logging.warn("Requesting JSON from %s" % url)
-        resp = request_methods[method](url, headers=self.headers)
-
-        # Need some error handling here
-        if resp.status_code!=200:
-            if(failure=='hard'):
-                raise ValueError("HTTP Response not 'okay': %d" % resp.status_code)
-            else:
-                DEBUG.logging.warn("HTTP Response not 'okay': %d" % resp.status_code)
-                rval = -1
-        else:
-            rval = resp.json()['data']
-
-        #DEBUG.logging.debug("USER JSON Response -\n %s" % str( rval ) )
-        return rval
 
     #Fetches basic user data for the interface
     def FetchData(self):
@@ -86,8 +188,8 @@ class RequestManager(object):
         #Get the user data from the API
         DEBUG.Display("Connecting...")
 
-        user_json = self.FetchJSON('user')
-        task_json = self.FetchJSON('task',params='user')
+        user_json = self.FetchUserData()
+        task_json = self.FetchUserTasks()
 
         DEBUG.Display("Connected")
         time.sleep(1)
@@ -121,7 +223,6 @@ class RequestManager(object):
                 item = T.TODO(i)
                 todos_items += [M.MenuItem(item, "todo", item.text)]
             elif( i['type'] == "reward" ):
-                #this is a custom reward, do nothing for now
                 DEBUG.logging.warn("Custom Rewards aren't implemented yet, but the user has one: %s" % i['text'])
             else:
                 DEBUG.logging.debug("Weird task type: %s" % str(i))
@@ -154,7 +255,7 @@ class RequestManager(object):
         # Habits marked as +
         for i in self.MarkUpQueue:
             DEBUG.logging.debug("Marking '%s' up" % str(i.taskname))
-            json = self.FetchJSON('task',params=i.task.taskID + "/score/up",method='post')
+            json = self.ScoreTask(i.task.taskID,'up')
 
             for i in diffDict:
                 diffDict[i] = json[i]
@@ -170,9 +271,8 @@ class RequestManager(object):
         # Habits marked as -
         for i in self.MarkDownQueue:
             DEBUG.logging.debug("Marking '%s' down" % str(i))
-            json = self.FetchJSON('task',                               \
-                                  params=i.task.taskID + "/score/down", \
-                                  method='post')
+            json = self.ScoreTask(i.task.taskID,'down')
+
             for i in diffDict:
                 diffDict[i] = json[i]
 
@@ -192,9 +292,7 @@ class RequestManager(object):
             if (direction is None):
                 continue
 
-            json = self.FetchJSON('task',                               \
-                                  params=i.task.taskID + "/score/" + direction, \
-                                  method='post')
+            json = self.ScoreTask(i.task.taskID,direction)
 
             if i.task.task_type == "todo":
                 G.TODOMenu.Remove(i.task.taskID)
@@ -212,15 +310,8 @@ class RequestManager(object):
         #
         #
         #
-        #for i in self.DeleteQueue:
-        # TODO: Needs to be updated to V3 API
-        if(False):
-            URL = GET_TASKS_URL + "/" + i.task.taskID
-            response = requests.delete(URL, headers=self.headers)
-
-            # Need some error handling here
-            if response.status_code!=200:
-                return
+        for i in self.DeleteQueue:
+            self.DeleteTask(i.task.taskID)
 
             if i.task.task_type == "habit":
                 G.HabitMenu.Remove(i.task.taskID)
@@ -270,49 +361,3 @@ class RequestManager(object):
         self.ClearQueues()
 
 
-    #Add a new task
-    def CreateTask(self, title, task_type):
-
-        #TODO: Needs to be updated to V3 API
-        return 0
-
-        task = {}
-        task['text'] = title.decode("utf-8")
-        task['type'] = task_type
-        task['priority'] = 1
-
-        if task_type == 'todo' or task_type == 'daily':
-            task['checklist'] = []
-        if task_type == "daily":
-            task['everyX'] = 1
-            task['frequency'] = 'weekly'
-            task['repeat'] = {'m': True, 't': True, 'w': True, 'th': True, 'f': True, 's': True, 'su': True}
-        if task_type == "habit":
-            task['up'] = True
-            task['down'] = True
-
-
-        DEBUG.Display("Creating Task...");
-        response = requests.post(GET_TASKS_URL, headers=self.headers, json=task)
-
-        # Need some error handling here
-        if response.status_code!=200:
-            DEBUG.Display("Failed")
-            return
-
-        DEBUG.Display(" ")
-        ret_task = response.json()
-        if task_type == "habit":
-            item = T.Habit(ret_task)
-            menu_item = M.MenuItem(item, "habit", item.text)
-            G.HabitMenu.Insert(menu_item)
-
-        elif task_type == "daily":
-            item = T.Daily(ret_task)
-            menu_item = M.MenuItem(item, "daily", item.text)
-            G.DailyMenu.Insert(menu_item)
-
-        elif task_type == "todo":
-            item = T.TODO(ret_task)
-            menu_item = M.MenuItem(item, "todo", item.text)
-            G.TODOMenu.Insert(menu_item)

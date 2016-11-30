@@ -25,7 +25,7 @@ class ContentManager(object):
 
     def __init__(self):
         #DEBUG.Display("Content Fetching in progress...")
-        self.contentDict = G.reqManager.FetchJSON('content',failure='soft')
+        self.contentDict = G.reqManager.FetchGameContent()
 
     def Quest(self, key):
         return self.contentDict['quests'].get(key, {})
@@ -154,7 +154,7 @@ def EffectiveValueTask(value): # Value used for calculation of damages.
 def GetData():
 
     DEBUG.Display("Please Wait...")
-    data = G.reqManager.FetchJSON('user')
+    data = G.reqManager.FetchUserData()
     DEBUG.Display(" ")
 
     # Calculate Damage to User
@@ -178,7 +178,7 @@ def GetData():
         questDetails = G.content.Quest(quest['key'])
         userDamageBoss = math.floor(quest['progress']['up']*10)/10
 
-    dailies = G.reqManager.FetchJSON('task',params='user?type=dailys')
+    dailies = G.reqManager.FetchUserTasks("dailys")
     dailiesIncomplete = 0
 
     for daily in dailies:

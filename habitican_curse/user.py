@@ -170,7 +170,7 @@ class User(object):
     def GetPartyData(self):
 
         DEBUG.Display("Please Wait...")
-        resp = G.reqManager.FetchJSON('party')
+        resp = G.reqManager.FetchParty()
         DEBUG.Display(" ")
 
         partyObj = CT.Party(resp)
