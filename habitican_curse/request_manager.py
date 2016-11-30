@@ -235,7 +235,7 @@ class RequestManager(object):
 
 
     # Write back changes to the server and update the interface
-    def Flush(self):
+    def Flush(self,flush_for_quit=False):
 
         #TODO: most of this should not happen in the request manager
         import content as CT
@@ -330,6 +330,9 @@ class RequestManager(object):
             # Need some error handling here
             if response.status_code!=200:
                 return
+
+        if(flush_for_quit):
+            return
 
         #
         #

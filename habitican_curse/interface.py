@@ -138,6 +138,15 @@ class Interface(object):
         G.screen.RestoreRegister(1)
         self.Highlight()
 
+    # Write out any unsaed changes
+    def Flush(self):
+        G.prevTask = None
+        G.currentTask = None
+
+        G.HabitMenu.WriteChanges()
+        G.DailyMenu.WriteChanges()
+        G.TODOMenu.WriteChanges()
+
     # Command Parser
     def Parser(self, command):
         parsed = shlex.split(command)
@@ -248,17 +257,14 @@ class Interface(object):
 
     def Command(self, command):
         if command == "w":
-            G.prevTask = None
-            G.currentTask = None
-
-            G.HabitMenu.WriteChanges()
-            G.DailyMenu.WriteChanges()
-            G.TODOMenu.WriteChanges()
-            G.reqManager.Flush()
+            self.Flush() #Write out things to the request queue
+            G.reqManager.Flush() #Send the queue
 
         elif command == "r":
             G.prevTask = None
             G.currentTask = None
+            self.Flush() #Write out things to the request queue
+            G.reqManager.Flush() #Send the queue
 
             G.reqManager.FetchData()
             G.screen.Erase()
@@ -323,8 +329,25 @@ class Interface(object):
                 command = G.screen.Command()
 
                 # Vim style exit
-                if command == "q":
+                if command == "q!":
                     break
+
+                if command == "wq":
+                    self.Flush() #Write out things to the request queue
+                    G.reqManager.Flush() #Send the queue
+                    break
+
+                if command == "q":
+                    self.Flush()
+
+                    if(len(G.reqManager.MarkUpQueue) |
+                       len(G.reqManager.MarkDownQueue) |
+                       len(G.reqManager.MarkQueue) |
+                       len(G.reqManager.DeleteQueue) |
+                       len(G.reqManager.EditQueue) ):
+                        DEBUG.Display("No write since last change (add ! to override)")
+                        continue #Restart command loop
+                    break #exit
 
                 G.screen.Display(" "*(C.SCR_Y-1), C.SCR_X-1, 0)
                 self.Command(command)
