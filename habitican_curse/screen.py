@@ -136,8 +136,11 @@ class Screen(object):
 
 
 
-    def Display(self, string, x=0, y=0, bold=False, highlight=False,color=False):
+    def Display(self, string, x=0, y=0, bold=False, highlight=False,color=False,strike=False):
         self.Lock()
+
+        if(strike):
+            string = u'\u0336'.encode("utf-8").join(string) + u'\u0336'.encode("utf-8")
 
         if(highlight):
             bold = True
@@ -158,14 +161,6 @@ class Screen(object):
 
     def Highlight(self, string, x=0, y=0):
         self.Display(string, x, y, highlight=True)
-
-    #def DisplayCustomColor(self, string, color=0, x=0, y=0):
-    #    self.Display(string, x, y, color=color)
-#
-#    def DisplayCustomColorBold(self, string, color=0, x=0, y=0):
-#        self.Display(string, x, y, color=color,bold=True)
-
-
 
     def GetCharacter(self):
         self.Lock()

@@ -41,6 +41,7 @@ class Status(object):
 
     def ReturnLenString(self):
         length = 2*len([i for i in self.attributes if self.attributes[i]!=None])
+        length-=2 #Deletion attribute is not shown in status line (represented with strikethrough)
         if self.checklist[1] != 0:
             # (Done/Total) - 4 extra symbols - '(', ')', '/' and a space
             length += 5 + len(str(self.checklist[0])) + len(str(self.checklist[1]))
@@ -78,6 +79,10 @@ class Status(object):
             Y -= 2
 
         for (key, value) in self.attributes.items():
+            if key == C.SYMBOL_DELETE:
+                #Deletion status is shown with strikethrough, not needed here
+                continue
+
             if value != None:
                 if value:
                     G.screen.Display(key, X, Y,

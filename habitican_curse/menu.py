@@ -80,18 +80,19 @@ class MenuItem(object):
             self.status.SetXY(self.x, self.y + self.width - 1)
 
 
-    def DisplayName(self, color=0):
+    def DisplayName(self, color=0,highlight=False):
         if hasattr(self.task, "color"):
             color = self.task.color
 
         status_length = self.status.ReturnLenString()
         first_row_size = self.width - status_length - 1
 
-        G.screen.Display(" "*self.width, self.x,self.y,
-                color=color, bold=True)
-
+        G.screen.Display(" "*self.width,  self.x,self.y,
+                         color=C.SCR_COLOR_NEUTRAL,bold=True)
+        G.screen.Display(" "*(first_row_size+1), self.x,
+                           self.y+status_length,highlight=highlight)
         G.screen.Display(" "*self.width,self.x+1,self.y,
-                color=color,bold=True)
+                color=color,highlight=highlight)
 
 
         # Show the attributes that can be set (mark,delete, up,down,etc)
@@ -101,51 +102,56 @@ class MenuItem(object):
         if hasattr(self.task, 'completed') and self.task.completed:
             color = C.SCR_COLOR_NEUTRAL
             G.screen.Display(C.SYMBOL_TICK, self.x,self.y + status_length,
-                    color=color, bold=True)
+                    color=color, bold=True,highlight=highlight)
 
         #If we are set to delete, strikethrough the task name
-        #if(self.status.attributes[C.SYMBOL_DELETE]):
-        #    self.taskname = u'\u0336'.encode("utf-8").join(self.taskname) + u'\u0336'.encode("utf-8")
+        if(self.status.attributes[C.SYMBOL_DELETE]):
+            strike=True
+        else:
+            strike=False
 
         #Print the task name
         if len(self.taskname) < first_row_size: # No need to truncate
             if self.front:
                 G.screen.Display(self.taskname, self.x, self.y + status_length + 1,
-                        color=color, bold=True)
+                        color=color, bold=True,strike=strike,highlight=highlight)
 
             else:
                 G.screen.Display(self.taskname, self.x, self.y,
-                        color=color, bold=True)
+                        color=color, bold=True,strike=strike,highlight=highlight)
 
-            G.screen.Display(" "*self.width, self.x+1, self.y)
+            G.screen.Display(" "*self.width, self.x+1, self.y,highlight=highlight)
         else:                                   # We need truncation
             if self.taskname[first_row_size-1] != ' ':
                 if self.front:
                     G.screen.Display(self.taskname[:first_row_size-1]+"-",
                                      self.x, self.y + status_length + 1,
-                                     color=color, bold=True)
+                                     color=color, bold=True,strike=strike,highlight=highlight)
                 else:
                     G.screen.Display(self.taskname[:first_row_size-1]+"-",
                                      self.x, self.y,
-                                     color=color, bold=True)
+                                     color=color, bold=True,strike=strike,highlight=highlight)
                 G.screen.Display(truncate(self.taskname[first_row_size-1:],
                                  self.width), color,
                                  self.x+1, self.y,
-                                 color=color, bold=True)
+                                 color=color, bold=True,strike=strike,highlight=highlight)
             elif self.taskname[first_row_size-1] == ' ':
                 if self.front:
                     G.screen.Display(self.taskname[:first_row_size],
                                      self.x, self.y + status_length + 1,
-                                     color=color, bold=True)
+                                     color=color, bold=True,strike=strike,highlight=highlight)
                 else:
                     G.screen.Display(self.taskname[:first_row_size],
                                      self.x, self.y,
-                                     color=color, bold=True)
+                                     color=color, bold=True,strike=strike,highlight=highlight)
                 G.screen.Display(truncate(self.taskname[first_row_size:],self.width),
                                  self.x+1, self.y,
-                                 color=color, bold=True)
+                                 color=color, bold=True,strike=strike,highlight=highlight)
 
     def HighlightName(self):
+        self.DisplayName(self,highlight=True)
+
+    def HighlightName_old(self):
         self.task.Display()
 
         status_length = self.status.ReturnLenString()
