@@ -100,13 +100,15 @@ class Status(object):
             self.attributes[C.SYMBOL_EDIT]):
             return
 
+        #If it's already marked, unmark it
         if self.attributes["+"]:
             self.attributes["+"] = False
 
         else:
-            # Only one of "-" and "+" can be activated at a time
-            self.attributes["-"] = False
             self.attributes["+"] = True
+            # Only one of "-" and "+" can be activated at a time
+            if(self.attributes.has_key("-")):
+                self.attributes["-"] = False
 
     def ToggleMarkDown(self):
         # Return if there is no down direction, or the delete option has already
@@ -116,13 +118,15 @@ class Status(object):
             self.attributes[C.SYMBOL_EDIT]):
             return
 
+        #If it's already marked, unmark it
         if self.attributes["-"]:
             self.attributes["-"] = False
 
         else:
-            # Only one of "-" and "+" can be activated at a time
-            self.attributes["+"] = False
             self.attributes["-"] = True
+            # Only one of "-" and "+" can be activated at a time
+            if(self.attributes.has_key("+")):
+                self.attributes["+"] = False
 
     def ToggleMark(self):
         # Return if the delete option has already been enabled or the edit
