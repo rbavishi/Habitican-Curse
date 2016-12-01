@@ -139,6 +139,7 @@ class Screen(object):
     def Display(self, string, x=0, y=0, bold=False, highlight=False,color=False,strike=False):
         self.Lock()
 
+        #Does it need to be struck out?
         if(strike):
             string = u'\u0336'.encode("utf-8").join(string) + u'\u0336'.encode("utf-8")
 
@@ -146,15 +147,18 @@ class Screen(object):
             bold = True
             color = C.SCR_COLOR_WHITE_GRAY_BGRD
 
-        if(bold and color):
-            self.screen.addstr(x, y, string, curses.A_BOLD |
-                                             curses.color_pair(color))
-        elif(color):
-            self.screen.addstr(x, y, string, curses.color_pair(color)) # color
-        elif(bold):
-            self.screen.addstr(x, y, string, curses.A_BOLD)
-        else:
-            self.screen.addstr(x, y, string)
+        options = 0
+        if(color):
+            options = options | curses.color_pair(color)
+        if(bold):
+            options = options | curses.A_BOLD
+
+        try:
+            self.screen.addstr(x, y, string, options)
+        except curses.error:
+            #This is probably a cursor error, safe to ignore it?
+            #DEBUG.logging.debug("Curses error: Pads throw incorrect size errors")
+            pass
 
         self.Refresh()
         self.Release()
