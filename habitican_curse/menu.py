@@ -84,9 +84,14 @@ class MenuItem(object):
         if hasattr(self.task, "color"):
             color = self.task.color
 
+        #Current task is higlighted, display the details
+        if(highlight):
+            self.task.Display()
+
         status_length = self.status.ReturnLenString()
         first_row_size = self.width - status_length - 1
 
+        # Display Task Name
         G.screen.Display(" "*self.width,  self.x,self.y,
                          color=C.SCR_COLOR_NEUTRAL,bold=True)
         G.screen.Display(" "*(first_row_size+1), self.x,
@@ -100,15 +105,11 @@ class MenuItem(object):
 
         #Add a gray tick if it's completed
         if hasattr(self.task, 'completed') and self.task.completed:
-            color = C.SCR_COLOR_NEUTRAL
             G.screen.Display(C.SYMBOL_TICK, self.x,self.y + status_length,
-                    color=color, bold=True,highlight=highlight)
+                    color=C.SCR_COLOR_NEUTRAL, bold=True,highlight=highlight)
 
         #If we are set to delete, strikethrough the task name
-        if(self.status.attributes[C.SYMBOL_DELETE]):
-            strike=True
-        else:
-            strike=False
+        strike=self.status.attributes[C.SYMBOL_DELETE]
 
         #Print the task name
         if len(self.taskname) < first_row_size: # No need to truncate
@@ -149,53 +150,6 @@ class MenuItem(object):
 
     def HighlightName(self):
         self.DisplayName(self,highlight=True)
-
-    def HighlightName_old(self):
-        self.task.Display()
-
-        status_length = self.status.ReturnLenString()
-        first_row_size = self.width - status_length - 1
-
-        # Display Task Details
-
-        G.screen.Display(" "*self.width,  self.x,self.y,
-                         color=C.SCR_COLOR_NEUTRAL,bold=True)
-        G.screen.Highlight(" "*(first_row_size+1), self.x,
-                           self.y+status_length)
-        G.screen.Highlight(" "*self.width, self.x+1,
-                                        self.y)
-        self.status.Display()
-        if hasattr(self.task, 'completed') and self.task.completed:
-            G.screen.Highlight(C.SYMBOL_TICK, self.x,
-                                            self.y + status_length)
-        if len(self.taskname) < first_row_size:
-            if self.front:
-                G.screen.Highlight(self.taskname, self.x, self.y +
-                                                            status_length + 1)
-            else:
-                G.screen.Highlight(self.taskname, self.x, self.y)
-            G.screen.Highlight(" "*self.width, self.x+1, self.y)
-        else:
-            if self.taskname[first_row_size-1] != ' ':
-                if self.front:
-                    G.screen.Highlight(self.taskname[:first_row_size-1]+"-",
-                                         self.x, self.y + status_length + 1)
-                else:
-                    G.screen.Highlight(self.taskname[:first_row_size-1]+"-",
-                                         self.x, self.y)
-                G.screen.Highlight(truncate(self.taskname[first_row_size-1:],
-                                              self.width),
-                                              self.x+1, self.y)
-            elif self.taskname[first_row_size-1] == ' ':
-                if self.front:
-                    G.screen.Highlight(self.taskname[:first_row_size],
-                                         self.x, self.y + status_length + 1)
-                else:
-                    G.screen.Highlight(self.taskname[:first_row_size],
-                                         self.x, self.y)
-                G.screen.Highlight(truncate(self.taskname[first_row_size:],
-                                              self.width),
-                                              self.x+1, self.y)
 
     def ToggleMarkUp(self):
         self.status.ToggleMarkUp()
