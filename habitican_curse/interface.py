@@ -45,7 +45,7 @@ class Interface(object):
         G.TODOMenu.Init()
 
         # Borders
-        G.screen.Display("="*C.SCR_Y, 14, 0,bold=True,color=C.SCR_COLOR_WHITE)
+        G.screen.Display(u'\u2550'.encode('utf-8')*C.SCR_Y, 14, 0,bold=True,color=C.SCR_COLOR_WHITE)
 
         # User Stats
         G.user.PrintData()
