@@ -16,6 +16,10 @@ import helper as H
 import menu as M
 import debug as DEBUG
 
+#Set up logging
+import logging
+logger = logging.getLogger(__name__)
+logger.debug("Debug logging started for %s..." % __name__)
 
 def ValueToColor(value):
     if value < -20:
@@ -323,8 +327,7 @@ class TODO(Task):
         if self.data.has_key('date'):
             self.data['date'] = ""
         else:
-            DEBUG.logging.warn('Trying to delete due date from task without one!')
-            #DEBUG.logging.warn('%s' % str(self.data))
+            logger.warn('Trying to delete due date from task without one!')
 
         self.dueDate = ""
         self.date    = ""

@@ -19,6 +19,10 @@ import debug as DEBUG
 import content as CT
 import menu as M
 
+#Set up logging
+import logging
+logger = logging.getLogger(__name__)
+logger.debug("Debug logging started for %s..." % __name__)
 
 class Status(object):
 

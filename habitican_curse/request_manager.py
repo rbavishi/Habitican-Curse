@@ -20,6 +20,11 @@ import task as T
 import debug as DEBUG
 import user as U
 
+#Set up logging
+import logging
+logger = logging.getLogger(__name__)
+logger.debug("Debug logging started for %s..." % __name__)
+
 # URL Definitions
 API_URL = "https://habitica.com:443/api/v3"
 
@@ -53,21 +58,21 @@ class RequestManager(object):
             for param, value in params.iteritems():
                 url+=param + "=" + value
 
-        DEBUG.logging.warn("Calling V3 API: %s" % url)
+        logger.warn("Calling V3 API: %s" % url)
         resp = request_methods[method](url, headers=self.headers,json=obj)
 
         # Need some error handling here
         if resp.status_code == 200:
-            DEBUG.logging.debug("HTTP Response: 200 Okay!")
+            logger.debug("HTTP Response: 200 Okay!")
             rval = resp.json()['data']
         elif  resp.status_code == 201:
-            DEBUG.logging.debug("HTTP Response: 201 Object Created")
+            logger.debug("HTTP Response: 201 Object Created")
             rval = resp.json()['data']
         else:
             if(failure=='hard'):
                 raise ValueError("HTTP Response not recognized: %d" % resp.status_code)
             else:
-                DEBUG.logging.warn("HTTP Response not recognized: %d" % resp.status_code)
+                logger.warn("HTTP Response not recognized: %d" % resp.status_code)
                 rval = -1
 
         return rval
@@ -158,7 +163,7 @@ class RequestManager(object):
         ret_task = self.CreateTask(task)
         DEBUG.Display(" ")
 
-        DEBUG.logging.debug(ret_task)
+        logger.debug(ret_task)
 
         if task_type == "habit":
             item = T.Habit(ret_task)
@@ -210,10 +215,10 @@ class RequestManager(object):
         dailies_items = []
         todos_items   = []
 
-        DEBUG.logging.debug("Found %d tasks" % len(task_json))
+        logger.debug("Found %d tasks" % len(task_json))
 
         for i in task_json:
-            DEBUG.logging.debug("Processing a TODO: %s" % str(i['text']))
+            logger.debug("Processing a TODO: %s" % str(i['text']))
             if( i['type'] == "habit" ):
                 item = T.Habit(i)
                 habit_items += [M.MenuItem(item, "habit", item.text)]
@@ -226,9 +231,9 @@ class RequestManager(object):
                 item = T.TODO(i)
                 todos_items += [M.MenuItem(item, "todo", item.text)]
             elif( i['type'] == "reward" ):
-                DEBUG.logging.warn("Custom Rewards aren't implemented yet, but the user has one: %s" % i['text'])
+                logger.warn("Custom Rewards aren't implemented yet, but the user has one: %s" % i['text'])
             else:
-                DEBUG.logging.debug("Weird task type: %s" % str(i))
+                logger.debug("Weird task type: %s" % str(i))
                 raise ValueError("Unknown task type %s" % i['type'])
 
         # Generate the menus for the display
@@ -257,7 +262,7 @@ class RequestManager(object):
         #
         # Habits marked as +
         for i in self.MarkUpQueue:
-            DEBUG.logging.debug("Marking '%s' up" % str(i.taskname))
+            logger.debug("Marking '%s' up" % str(i.taskname))
             json = self.ScoreTask(i.task.taskID,'up')
 
             for i in diffDict:
@@ -273,7 +278,7 @@ class RequestManager(object):
         #
         # Habits marked as -
         for i in self.MarkDownQueue:
-            DEBUG.logging.debug("Marking '%s' down" % str(i))
+            logger.debug("Marking '%s' down" % str(i))
             json = self.ScoreTask(i.task.taskID,'down')
 
             for i in diffDict:

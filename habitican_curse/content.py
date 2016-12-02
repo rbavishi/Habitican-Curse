@@ -19,6 +19,10 @@ import task as T
 import debug as DEBUG
 import user as U
 
+#Set up logging
+import logging
+logger = logging.getLogger(__name__)
+logger.debug("Debug logging started for %s..." % __name__)
 
 class ContentManager(object):
     """ Class for managing Habitica content """
@@ -41,7 +45,7 @@ class Party(object):
     def __init__(self, party):
         self.party = party
 
-        #DEBUG.logging.debug("Party Object - \n %s" % str(party))
+        logger.debug("Party Object - \n %s" % str(party))
 
         # Some Basic Details
         self.name    = str(party['name'])
@@ -61,7 +65,7 @@ class Party(object):
         self.chatMenu = M.SimpleTextMenu(chat_items, C.SCR_TEXT_AREA_LENGTH)
 
         self.quest = party.get('quest', None)
-        DEBUG.logging.debug("Current Quest: %s" % str(self.quest))
+        logger.debug("Current Quest: %s" % str(self.quest))
         if self.quest != None:
             while (G.content == None):
                 DEBUG.Display("Fetching Content...")
@@ -132,7 +136,7 @@ class Party(object):
 def CheckDrops(response):
     drop = None
     if response.has_key('drop'):
-        DEBUG.logging.debug("  Found a drop!\n%s" % str(response))
+        logger.debug("  Found a drop!\n%s" % str(response))
         if response['drop'].has_key('dialog'):
             drop=str(response['drop']['dialog'])
         elif response['drop'].has_key('text'):
@@ -183,7 +187,7 @@ def GetData():
     dailiesIncomplete = 0
 
     for daily in dailies:
-        DEBUG.logging.debug("Processing Daily: %s" % str(daily['text']))
+        logger.debug("Processing Daily: %s" % str(daily['text']))
         if not H.isDueDaily(daily) or daily['completed']:
             continue
 

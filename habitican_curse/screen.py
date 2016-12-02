@@ -10,9 +10,13 @@ import math
 import threading
 
 # Custom Module Imports
-
 import config as C
 import debug as DEBUG
+
+#Set up logging
+import logging
+logger = logging.getLogger(__name__)
+logger.debug("Debug logging started for %s..." % __name__)
 
 class Screen(object):
 
@@ -157,7 +161,7 @@ class Screen(object):
             self.screen.addstr(x, y, string, options)
         except curses.error:
             #This is probably a cursor error, safe to ignore it?
-            #DEBUG.logging.debug("Curses error: Pads throw incorrect size errors")
+            logger.debug("Curses error: Pads throw incorrect size errors")
             pass
 
         self.Refresh()
