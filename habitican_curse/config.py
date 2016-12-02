@@ -64,9 +64,9 @@ SYMBOL_LEVEL = u'\u2949'.encode("utf-8")
 SYMBOL_DUE = u'\u29D6'.encode("utf-8")
 
 # Status Attributes
-HabitStatus = {'+': False, '-': False, SYMBOL_DELETE: False, SYMBOL_EDIT: False}
-HabitPosStatus = {'+': False, SYMBOL_DELETE: False, SYMBOL_EDIT: False}
-HabitNegStatus = {'-': False, SYMBOL_DELETE: False, SYMBOL_EDIT: False}
+HabitStatus = {'+': 0, '-': 0, SYMBOL_DELETE: False, SYMBOL_EDIT: False}
+HabitPosStatus = {'+': 0, SYMBOL_DELETE: False, SYMBOL_EDIT: False}
+HabitNegStatus = {'-': 0, SYMBOL_DELETE: False, SYMBOL_EDIT: False}
 TODODailyStatus = {SYMBOL_TICK: False, SYMBOL_DELETE: False, SYMBOL_EDIT: False}
 ChecklistStatus = {SYMBOL_TICK: False, SYMBOL_DELETE: False, SYMBOL_EDIT: False}
 
