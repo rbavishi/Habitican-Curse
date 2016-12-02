@@ -139,7 +139,7 @@ class Interface(object):
         self.Highlight()
 
     # Write out any unsaed changes
-    def Flush(self):
+    def FlushChangesToQueue(self):
         G.prevTask = None
         G.currentTask = None
 
@@ -152,8 +152,6 @@ class Interface(object):
         parsed = shlex.split(command)
         if Idx(parsed, 0) == "set":
 
-            DEBUG.Display("Set not implemented for API V3")
-            return
 
             if not Idx(parsed, 1) in  C.SET_COMMANDS:
                 DEBUG.Display("Invalid Set: " + command)
@@ -163,7 +161,7 @@ class Interface(object):
             # Change Difficulty
             if c == "d":
                 if (not Idx(parsed, 2) in C.DIFFS) or (Idx(parsed, 3) != "") :
-                    DEBUG.Display("Invalid set d: " + command)
+                    DEBUG.Display("Invalid set d: " + Idx(parsed, 2))
                     return
                 key = Idx(parsed, 2)
                 G.currentTask.ChangePriority(key)
@@ -175,7 +173,7 @@ class Interface(object):
                 if G.currentTask.task_type != "todo":
                     return
                 # set due remove - Remove the current due date if any
-                if Idx(parsed, 2) == "remove":
+                if Idx(parsed, 2) == "remove" or Idx(parsed, 2) == "delete":
                     G.currentTask.RemoveDueDate()
                     self.Highlight()
                     return
@@ -257,13 +255,13 @@ class Interface(object):
 
     def Command(self, command):
         if command == "w":
-            self.Flush() #Write out things to the request queue
+            self.FlushChangesToQueue() #Write out things to the request queue
             G.reqManager.Flush() #Send the queue
 
         elif command == "r":
             G.prevTask = None
             G.currentTask = None
-            self.Flush() #Write out things to the request queue
+            self.FlushChangesToQueue() #Write out things to the request queue
             G.reqManager.Flush() #Send the queue
 
             G.reqManager.FetchData()
@@ -333,12 +331,12 @@ class Interface(object):
                     break
 
                 if command == "wq":
-                    self.Flush() #Write out things to the request queue
+                    self.FlushChangesToQueue() #Write out things to the request queue
                     G.reqManager.Flush() #Send the queue
                     break
 
                 if command == "q":
-                    self.Flush()
+                    self.FlushChangesToQueue()
 
                     if(len(G.reqManager.MarkUpQueue) |
                        len(G.reqManager.MarkDownQueue) |

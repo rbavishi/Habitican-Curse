@@ -426,9 +426,9 @@ def RepeatPicker(original=C.DEFAULT_REPEAT):
         elif c == ord('c'):
             DEBUG.Display("")
             return newRepeat
-        elif c == curses.KEY_LEFT:
+        elif c == curses.KEY_LEFT or c == ord('h'):
             current = max(0, current-1)
-        elif c == curses.KEY_RIGHT:
+        elif c == curses.KEY_RIGHT or c == ord('l'):
             current = min(6, current+1)
 
 

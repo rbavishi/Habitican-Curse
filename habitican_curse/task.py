@@ -14,6 +14,7 @@ from screen import Screen
 import global_objects as G
 import helper as H
 import menu as M
+import debug as DEBUG
 
 
 def ValueToColor(value):
@@ -115,19 +116,18 @@ class Task(object):
             G.screen.Display(i+'\n',  X, Y,
                     color=self.color,bold=True)
             X += 1
-        X += 1
 
         # Difficulty
         G.screen.Display("Difficulty: ", X, Y,bold=True)
         G.screen.Display(self.difficulty, X, Y+12,
                 color=C.SCR_COLOR_MAGENTA, bold=True)
-        X += 2
+        X += 1
 
         # Date Created
         G.screen.Display("Date Created: ", X, Y,bold=True)
         G.screen.Display(self.dateCreated.DateCreatedFormat(),X, Y+14,
                          color=C.SCR_COLOR_MAGENTA,bold=True)
-        X += 2
+        X += 1
 
         return X
 
@@ -321,7 +321,10 @@ class TODO(Task):
 
     def RemoveDueDate(self):
         if self.data.has_key('date'):
-            self.data.pop('date')
+            self.data['date'] = ""
+        else:
+            DEBUG.logging.warn('Trying to delete due date from task without one!')
+            #DEBUG.logging.warn('%s' % str(self.data))
 
         self.dueDate = ""
         self.date    = ""

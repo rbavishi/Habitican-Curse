@@ -26,6 +26,7 @@ API_URL = "https://habitica.com:443/api/v3"
 #Request Methods
 request_methods = dict()
 request_methods['get'] = requests.get
+request_methods['put'] = requests.put
 request_methods['post'] = requests.post
 request_methods['delete'] = requests.delete
 
@@ -107,15 +108,19 @@ class RequestManager(object):
         return self.APIV3_call("tasks/"+task_id+"/score/"+direction,method='post')
 
     # Add a new task
-    # https://habitica.com/apidoc/#api-Task-DeleteTask
-    def DeleteTask(self, task_id):
-        return self.APIV3_call("tasks/"+task_id,method='delete')
-
-    # Add a new task
     # https://habitica.com/apidoc/#api-Task-CreateUserTasks
     def CreateTask(self, task_obj):
         return self.APIV3_call("tasks/user",method='post',obj=task_obj)
 
+    # Delete a task
+    # https://habitica.com/apidoc/#api-Task-DeleteTask
+    def DeleteTask(self, task_id):
+        return self.APIV3_call("tasks/"+task_id,method='delete')
+
+    # Update a task
+    # https://habitica.com/apidoc/#api-Task-UpdateTask
+    def UpdateTask(self, task_id, task_obj):
+        return self.APIV3_call("tasks/"+task_id,method='put',obj=task_obj)
 
     #Fetches the User Object from the API
     # https://habitica.com/apidoc/#api-Group-GetGroup
@@ -208,8 +213,6 @@ class RequestManager(object):
         DEBUG.logging.debug("Found %d tasks" % len(task_json))
 
         for i in task_json:
-            i['dateCreated'] = i['createdAt'] #TODO: Fix this V2->V3 hack
-
             DEBUG.logging.debug("Processing a TODO: %s" % str(i['text']))
             if( i['type'] == "habit" ):
                 item = T.Habit(i)
@@ -321,15 +324,8 @@ class RequestManager(object):
         #
         #
         #
-        #for i in self.EditQueue:
-        #TODO: Needs to be updated to V3 API
-        if(False):
-            URL = GET_TASKS_URL + "/" + i.task.taskID
-            response = requests.put(URL, headers=self.headers, json=i.task.data)
-
-            # Need some error handling here
-            if response.status_code!=200:
-                return
+        for i in self.EditQueue:
+            self.UpdateTask(i.task.taskID, i.task.data)
 
         if(flush_for_quit):
             return
