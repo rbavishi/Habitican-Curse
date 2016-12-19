@@ -15,6 +15,10 @@ import helper as H
 import menu as M
 import content as CT
 
+#Set up logging
+import logging
+logger = logging.getLogger(__name__)
+logger.debug("Debug logging started for %s..." % __name__)
 
 def Round(num):
     if num < 0:

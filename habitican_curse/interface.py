@@ -7,7 +7,6 @@ import curses
 import shlex # For parsing
 
 # Custom Module Imports
-
 import config as C
 from screen import Screen
 import global_objects as G
@@ -16,6 +15,10 @@ import menu as M
 import debug as DEBUG
 import content as CT
 
+#Set up logging
+import logging
+logger = logging.getLogger(__name__)
+logger.debug("Debug logging started for %s..." % __name__)
 
 def Idx(parsed, index):
     # Return element in the parsed list at index. Return "" if not present
