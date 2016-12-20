@@ -82,8 +82,19 @@ class Status(object):
                     color=C.SCR_COLOR_LIGHT_GRAY, bold=True)
             Y -= 2
 
+        #Always show the edit symbol first (it's garuanteed to be there)
+        if(self.attributes[C.SYMBOL_EDIT]):
+            G.screen.Display(C.SYMBOL_EDIT, X, Y,
+                    color=C.SCR_COLOR_YELLOW, bold=True)
+        else:
+            G.screen.Display(C.SYMBOL_EDIT, X, Y,
+                    color=C.SCR_COLOR_DARK_GRAY, bold=True)
+        Y -= 2
+
         for (key, value) in self.attributes.items():
-            if key == C.SYMBOL_DELETE:
+
+            if key == C.SYMBOL_DELETE or key == C.SYMBOL_EDIT:
+                #Edit status is always shown first
                 #Deletion status is shown with strikethrough, not needed here
                 continue
 
@@ -91,46 +102,42 @@ class Status(object):
                 if value:
                     G.screen.Display(key, X, Y,
                             color=C.SCR_COLOR_YELLOW, bold=True)
+                    if( value > 1):
+                        DEBUG.logging.debug("Upvote Value is >1, displaying: %s", str(value))
+                        G.screen.Display(str(value), X, Y+1,
+                                color=C.SCR_COLOR_YELLOW, bold=True)
+                        Y-=1
+                    else:
+                        Y-=2
                 else:
                     G.screen.Display(key, X, Y,
                             color=C.SCR_COLOR_DARK_GRAY, bold=True)
-                Y -= 2
+                    Y -= 2
 
     def ToggleMarkUp(self):
-        # Return if there is no up direction, or the delete option has already
+        # Return if the delete option has already
         # been enabled or the edit status is true
-        if ((not self.attributes.has_key("+")) or
-            self.attributes[C.SYMBOL_DELETE] or
+        if (self.attributes[C.SYMBOL_DELETE] or
             self.attributes[C.SYMBOL_EDIT]):
             return
 
-        #If it's already marked, unmark it
-        if self.attributes["+"]:
-            self.attributes["+"] = False
-
-        else:
-            self.attributes["+"] = True
-            # Only one of "-" and "+" can be activated at a time
-            if(self.attributes.has_key("-")):
-                self.attributes["-"] = False
+        #Decrement the mark down or increment mark up (if it's allowed)
+        if(self.attributes.get("-",0) > 0):
+            self.attributes["-"] -= 1
+        elif( "+" in self.attributes ):
+            self.attributes["+"] += 1
 
     def ToggleMarkDown(self):
         # Return if there is no down direction, or the delete option has already
         # been enabled or the edit status is true
-        if ((not self.attributes.has_key("-")) or
-            self.attributes[C.SYMBOL_DELETE] or
+        if (self.attributes[C.SYMBOL_DELETE] or
             self.attributes[C.SYMBOL_EDIT]):
             return
 
-        #If it's already marked, unmark it
-        if self.attributes["-"]:
-            self.attributes["-"] = False
-
-        else:
-            self.attributes["-"] = True
-            # Only one of "-" and "+" can be activated at a time
-            if(self.attributes.has_key("+")):
-                self.attributes["+"] = False
+        if(self.attributes.get("+",0) > 0):
+            self.attributes["+"] -= 1
+        elif( "-" in self.attributes ):
+            self.attributes["-"] += 1
 
     def ToggleMark(self):
         # Return if the delete option has already been enabled or the edit

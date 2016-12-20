@@ -389,13 +389,17 @@ class Menu(object):
 
     def WriteChanges(self):
         for i in self.items:
-            if i.status.attributes.get("+", False):
+
+            #Multiple changes allowed for habits
+            while( i.status.attributes.get("+", 0) > 0):
                 G.reqManager.MarkUpQueue.append(i)
-                i.status.Reset()
-            elif i.status.attributes.get("-", False):
+                i.status.attributes["+"] -= 1
+            while( i.status.attributes.get("-", 0) > 0):
                 G.reqManager.MarkDownQueue.append(i)
-                i.status.Reset()
-            elif i.status.attributes.get(C.SYMBOL_TICK, False):
+                i.status.attributes["-"] -= 1
+
+            #Process singleton edits
+            if i.status.attributes.get(C.SYMBOL_TICK, False):
                 G.reqManager.MarkQueue.append(i)
                 i.status.Reset()
             elif i.status.attributes.get(C.SYMBOL_DELETE, False):
