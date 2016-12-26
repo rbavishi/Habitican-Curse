@@ -218,7 +218,7 @@ class RequestManager(object):
         logger.debug("Found %d tasks" % len(task_json))
 
         for i in task_json:
-            logger.debug("Processing a TODO: %s" % str(i['text']))
+            logger.debug("Processing a TODO: %s" % i['text'].encode("utf-8").strip())
             if( i['type'] == "habit" ):
                 item = T.Habit(i)
                 habit_items += [M.MenuItem(item, "habit", item.text)]
@@ -233,8 +233,8 @@ class RequestManager(object):
             elif( i['type'] == "reward" ):
                 logger.warn("Custom Rewards aren't implemented yet, but the user has one: %s" % i['text'])
             else:
-                logger.debug("Weird task type: %s" % str(i))
-                raise ValueError("Unknown task type %s" % i['type'])
+                logger.debug("Weird task %s with type: %s" %(i['text'].encode("utf-8"), i['type'].encode("utf-8")))
+                raise ValueError("Unknown task type %s" % i['type'].encode("utf-8"))
 
         # Generate the menus for the display
         G.HabitMenu = M.Menu(habit_items, "Habits")

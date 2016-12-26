@@ -48,7 +48,7 @@ class Party(object):
         logger.debug("Party Object - \n %s" % str(party))
 
         # Some Basic Details
-        self.name    = str(party['name'])
+        self.name    = party['name'].encode('utf-8')
 
         #self.members = [str(i['profile']['name']) for i in party['members']]
         # V3 changes, members don't work no more :(
@@ -60,7 +60,7 @@ class Party(object):
         for i in chatList:
             timeElapsed = H.GetDifferenceTime(i['timestamp'])
             detailString = i.get('user', '') + " " + timeElapsed
-            chat_items += [M.SimpleTextItem(str(i['text']), additional=str(detailString))]
+            chat_items += [M.SimpleTextItem(str(i['text'].encode("utf-8")), additional=str(detailString))]
 
         self.chatMenu = M.SimpleTextMenu(chat_items, C.SCR_TEXT_AREA_LENGTH)
 
@@ -72,8 +72,8 @@ class Party(object):
                 time.sleep(5)
             DEBUG.Display(" ")
 
-            self.questDetails = G.content.Quest(str(self.quest['key']))
-            self.questText    = str(self.questDetails['text'])
+            self.questDetails = G.content.Quest(str(self.quest['key'].encode("utf-8")))
+            self.questText    = str(self.questDetails['text'].encode("utf-8"))
 
             self.questType = ""
             self.progress = 0
@@ -121,7 +121,7 @@ class Party(object):
                 # Display Collect Statistics
                 disp_string = "Collect "
                 for (key, value) in self.questItems.items():
-                    disp_string += value['text'] + " : " + str(self.progress[key]) + "/" + str(value['count']) + " "
+                    disp_string += value['text'].encode("utf-8") + " : " + str(self.progress[key]) + "/" + str(value['count']) + " "
 
                 G.screen.Display(disp_string, MAX_X, Y,
                                  color=C.SCR_COLOR_YELLOW, bold=True)
@@ -138,11 +138,11 @@ def CheckDrops(response):
     if response.has_key('drop'):
         logger.debug("  Found a drop!\n%s" % str(response))
         if response['drop'].has_key('dialog'):
-            drop=str(response['drop']['dialog'])
+            drop=str(response['drop']['dialog'].encode("utf-8"))
         elif response['drop'].has_key('text'):
-            drops=str(response['drop']['text'])
+            drops=str(response['drop']['text'].encode("utf-8"))
         elif response['drop'].has_key('notes'):
-            drop=str(response['drop']['notes'])
+            drop=str(response['drop']['notes'].encode("utf-8"))
 
     return drop
 
@@ -187,7 +187,7 @@ def GetData():
     dailiesIncomplete = 0
 
     for daily in dailies:
-        logger.debug("Processing Daily: %s" % str(daily['text']))
+        logger.debug("Processing Daily: %s" % str(daily['text'].encode("utf-8")))
         if not H.isDueDaily(daily) or daily['completed']:
             continue
 
