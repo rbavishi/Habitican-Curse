@@ -33,6 +33,8 @@ class Status(object):
             self.attributes = C.HabitPosStatus.copy()
         elif task_type == "habitneg":
             self.attributes = C.HabitNegStatus.copy()
+        elif task_type == "unscoredhabit":
+            self.attributes = C.UnscoredHabitStatus.copy()
         elif task_type == "checklist":
             self.attributes = C.ChecklistStatus.copy()
         else:

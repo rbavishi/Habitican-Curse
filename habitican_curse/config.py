@@ -67,6 +67,7 @@ SYMBOL_DUE = u'\u29D6'.encode("utf-8")
 HabitStatus = {'+': 0, '-': 0, SYMBOL_DELETE: False, SYMBOL_EDIT: False}
 HabitPosStatus = {'+': 0, SYMBOL_DELETE: False, SYMBOL_EDIT: False}
 HabitNegStatus = {'-': 0, SYMBOL_DELETE: False, SYMBOL_EDIT: False}
+UnscoredHabitStatus = {SYMBOL_DELETE: False, SYMBOL_EDIT: False}
 TODODailyStatus = {SYMBOL_TICK: False, SYMBOL_DELETE: False, SYMBOL_EDIT: False}
 ChecklistStatus = {SYMBOL_TICK: False, SYMBOL_DELETE: False, SYMBOL_EDIT: False}
 

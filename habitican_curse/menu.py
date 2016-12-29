@@ -39,6 +39,8 @@ class MenuItem(object):
                 self.status = H.Status("habitpos")
             elif self.task.down:
                 self.status = H.Status("habitneg")
+            else:
+                self.status = H.Status("unscoredhabit")
 
             # Set Coordinates for a task
             self.task.SetXY(C.SCR_MAX_MENU_ROWS+7, 5)
