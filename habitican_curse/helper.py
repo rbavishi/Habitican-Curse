@@ -270,6 +270,9 @@ def isDueDaily(task):
             return False
 
     elif task['frequency'] == 'daily':
+        if (task['everyX'] == 0):
+            return False # Unintuitive, but this is what happens on the main site
+
         start       = DateTime(str(task['startDate']))
         startDate   = datetime(start.date.year, start.date.month, start.date.day)
         current     = DateTime(-1)
