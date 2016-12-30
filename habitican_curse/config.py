@@ -62,6 +62,7 @@ SYMBOL_MANA = u'\u2600'.encode("utf-8")
 SYMBOL_EDIT = u'\u270E'.encode("utf-8")
 SYMBOL_LEVEL = u'\u2949'.encode("utf-8")
 SYMBOL_DUE = u'\u29D6'.encode("utf-8")
+SYMBOL_CHALLENGE_FLAG = u'\u2691'.encode("utf-8")
 
 # Status Attributes
 HabitStatus = {'+': 0, '-': 0, SYMBOL_DELETE: False, SYMBOL_EDIT: False}

@@ -26,7 +26,7 @@ logger.debug("Debug logging started for %s..." % __name__)
 
 class Status(object):
 
-    def __init__(self, task_type, checklist=[0, 0], due=''):
+    def __init__(self, task_type, checklist=[0, 0], due='', isChallenge=False):
         if task_type == "habit":
             self.attributes = C.HabitStatus.copy()
         elif task_type == "habitpos":
@@ -39,14 +39,17 @@ class Status(object):
             self.attributes = C.ChecklistStatus.copy()
         else:
             self.attributes = C.TODODailyStatus.copy()
+
         self.checklist = checklist
         self.due = due
         self.x = 0
         self.y = 0
         self.newItem = False
+        self.isChallenge = isChallenge
 
     def ReturnLenString(self):
         length = 2*len([i for i in self.attributes if self.attributes[i]!=None])
+        if self.isChallenge: length += 2 # Challenge tasks - Display a flag
         length-=2 #Deletion attribute is not shown in status line (represented with strikethrough)
         if self.checklist[1] != 0:
             # (Done/Total) - 4 extra symbols - '(', ')', '/' and a space
@@ -84,7 +87,7 @@ class Status(object):
                     color=C.SCR_COLOR_LIGHT_GRAY, bold=True)
             Y -= 2
 
-        #Always show the edit symbol first (it's garuanteed to be there)
+        #Always show the edit symbol first (it's guaranteed to be there)
         if(self.attributes[C.SYMBOL_EDIT]):
             G.screen.Display(C.SYMBOL_EDIT, X, Y,
                     color=C.SCR_COLOR_YELLOW, bold=True)
@@ -92,6 +95,13 @@ class Status(object):
             G.screen.Display(C.SYMBOL_EDIT, X, Y,
                     color=C.SCR_COLOR_DARK_GRAY, bold=True)
         Y -= 2
+
+        # Challenge tasks
+        if self.isChallenge:
+            G.screen.Display(C.SYMBOL_CHALLENGE_FLAG, X, Y,
+                    color=C.SCR_COLOR_DARK_GRAY, bold=True)
+            Y -= 2
+
 
         for (key, value) in self.attributes.items():
 
@@ -154,6 +164,11 @@ class Status(object):
             self.attributes[C.SYMBOL_TICK] = True
 
     def ToggleDelete(self):
+        # Take care of challenge tasks
+        if self.isChallenge:
+            DEBUG.Display("Challenge tasks cannot be deleted from here")
+            return
+
         # Nothing can be enabled along with delete
         for key in self.attributes:
             if key != C.SYMBOL_DELETE:

@@ -45,6 +45,9 @@ class MenuItem(object):
             # Set Coordinates for a task
             self.task.SetXY(C.SCR_MAX_MENU_ROWS+7, 5)
 
+            if self.task.isChallenge:
+                self.status.isChallenge = True
+
         elif self.task_type == "todo" or self.task_type == "daily":
             checklist_tuple = self.task.ChecklistTuple()
             dueDate = getattr(self.task, "dueDate", "")
@@ -53,8 +56,12 @@ class MenuItem(object):
             # Set Coordinates for a task
             self.task.SetXY(C.SCR_MAX_MENU_ROWS+7, 5)
 
-        else:
+            if self.task.isChallenge:
+                self.status.isChallenge = True
+
+        else: # task_type = 'checklist'
             self.status = H.Status(self.task_type)
+
 
         self.x = 0
         self.y = 0
@@ -111,7 +118,7 @@ class MenuItem(object):
                     color=C.SCR_COLOR_NEUTRAL, bold=True,highlight=highlight)
 
         #If we are set to delete, strikethrough the task name
-        strike=self.status.attributes[C.SYMBOL_DELETE]
+        strike=self.status.attributes.get(C.SYMBOL_DELETE, False)
 
         #Print the task name
         if len(self.taskname) < first_row_size: # No need to truncate

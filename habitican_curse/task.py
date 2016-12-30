@@ -91,11 +91,12 @@ class Task(object):
         self.data = data          # JSON response
 
         # Basic Details
-        self.text        = data['text'].encode("utf-8")
-        self.taskID      = data['id']
-        self.dateCreated = H.DateTime(str(data['createdAt']))
-        self.priority    = data['priority']
-        self.value       = data['value']
+        self.text         = data['text'].encode("utf-8")
+        self.taskID       = data['id']
+        self.dateCreated  = H.DateTime(str(data['createdAt']))
+        self.priority     = data['priority']
+        self.value        = data['value']
+        self.isChallenge = data.has_key('challenge') and data['challenge'] != {}
 
         # Derived Details
         self.color       = ValueToColor(self.value)
@@ -115,7 +116,11 @@ class Task(object):
         X, Y = self.x, self.y
 
         # Title Display
-        title_wrap = textwrap.wrap(self.text, C.SCR_Y-20)
+        task_title = self.text
+        if self.isChallenge:
+            task_title += " [Challenge]"
+
+        title_wrap = textwrap.wrap(task_title, C.SCR_Y-20)
         for i in title_wrap:
             G.screen.Display(i+'\n',  X, Y,
                     color=self.color,bold=True)
