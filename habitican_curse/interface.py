@@ -212,6 +212,24 @@ class Interface(object):
                 self.Highlight()
                 return
 
+            # Set Direction (Pos/Neg/Both/None) for habits
+            elif c == "direction":
+                if G.currentTask.task_type != "habit":
+                    return
+
+                direction = Idx(parsed, 2)
+                if direction == "both":
+                    G.currentTask.SetDirection(up=True, down=True)
+                elif direction == "pos":
+                    G.currentTask.SetDirection(up=True, down=False)
+                elif direction == "neg":
+                    G.currentTask.SetDirection(up=False, down=True)
+                elif direction == "none":
+                    G.currentTask.SetDirection(up=False, down=False)
+
+                self.Highlight()
+                return
+
         elif Idx(parsed, 0) == "et": # Create Todo
 
             c_title = Idx(parsed, 1)

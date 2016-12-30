@@ -189,6 +189,13 @@ class Habit(Task):
         # Something can be added here
         # Maybe use the data-display tool
 
+    def SetDirection(self, up=True, down=True):
+        self.up = up
+        self.data['up'] = up
+        
+        self.down = down
+        self.data['down'] = down
+
     def ShowChecklist(self, menuItem):
         # Dummy to avoid crashes
         return

@@ -233,6 +233,23 @@ class MenuItem(object):
         self.task.SetEvery(days)
         self.status.ToggleEdit()
 
+    def SetDirection(self, up=True, down=True):
+        if self.task_type != "habit":
+            return
+
+        self.task.SetDirection(up, down)
+        if up and down:
+            self.status = H.Status("habit", isChallenge=self.task.isChallenge)
+        elif up:
+            self.status = H.Status("habitpos", isChallenge=self.task.isChallenge)
+        elif down:
+            self.status = H.Status("habitneg", isChallenge=self.task.isChallenge)
+        else:
+            self.status = H.Status("unscoredhabit", isChallenge=self.task.isChallenge)
+
+        self.SetStatusXY()
+        self.status.ToggleEdit()
+
 
 class Menu(object):
     """ The menu class - For selecting tasks from the interface. General enough

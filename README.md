@@ -38,6 +38,8 @@
 
 * `:et`, `:ed`, `:eh` to create a TODO, Daily and a Habit respectively.
 
+* `:set <options>` will modify a task. See `:help` for more details.
+
 ### Party
 
 * If you are a member of a party, you can type `:party` to display the chat messages and quest details (if any).

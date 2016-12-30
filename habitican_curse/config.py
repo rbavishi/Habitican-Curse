@@ -82,7 +82,7 @@ def ConfigureRuntime(screen):
     SCR_FIRST_HALF_LENGTH = SCR_MAX_MENU_ROWS + 7
 
 # Parser Settings
-SET_COMMANDS = ["d", "due", "every", "weekly", "plus", "minus"]
+SET_COMMANDS = ["d", "due", "every", "weekly", "direction"]
 DIFFS      = ["trivial", "easy", "medium", "hard"]
 DATEPARSER = datetime.datetime.strptime
 DATEFORMATS = ["%d/%m/%Y", "%d/%m/%y"]
