@@ -237,6 +237,11 @@ class MenuItem(object):
         if self.task_type != "habit":
             return
 
+        if self.task_type != "checklist" and self.task.isChallenge:
+            # Cannot change direction of a challenge
+            DEBUG.Display("Cannot change directions of a challenge habit")
+            return
+
         self.task.SetDirection(up, down)
         if up and down:
             self.status = H.Status("habit", isChallenge=self.task.isChallenge)

@@ -174,6 +174,7 @@ class Interface(object):
             # Change/Remove Due Date
             elif c == "due":
                 if G.currentTask.task_type != "todo":
+                    DEBUG.Display("Cannot have due date for a non-TODO task")
                     return
                 # set due remove - Remove the current due date if any
                 if Idx(parsed, 2) == "remove" or Idx(parsed, 2) == "delete":
@@ -191,6 +192,7 @@ class Interface(object):
             # Set weekly options for dailies
             elif c == "weekly":
                 if G.currentTask.task_type != "daily":
+                    DEBUG.Display("Cannot change 'weekly' parameter for a non-daily task")
                     return
 
                 repeat = H.RepeatPicker(G.currentTask.task.repeat)
@@ -202,10 +204,11 @@ class Interface(object):
             # Set every X days option for dailies
             elif c == "every":
                 if G.currentTask.task_type != "daily":
+                    DEBUG.Display("Cannot change 'every' parameter for a non-daily task")
                     return
 
                 if not Idx(parsed, 2).isdigit():
-                    DEBUG.Display("Invalid number of days.")
+                    DEBUG.Display("Invalid number of days. Should be a valid integer")
                     return
 
                 G.currentTask.SetEvery(int(Idx(parsed, 2)))
@@ -215,6 +218,7 @@ class Interface(object):
             # Set Direction (Pos/Neg/Both/None) for habits
             elif c == "direction":
                 if G.currentTask.task_type != "habit":
+                    DEBUG.Display("Cannot change directions for a non-habit task")
                     return
 
                 direction = Idx(parsed, 2)
@@ -226,6 +230,9 @@ class Interface(object):
                     G.currentTask.SetDirection(up=False, down=True)
                 elif direction == "none":
                     G.currentTask.SetDirection(up=False, down=False)
+                else:
+                    DEBUG.Display("Invalid direction parameter. Should be one of [both, pos, neg, none]")
+                    return
 
                 self.Highlight()
                 return
