@@ -2,6 +2,10 @@
 
 * A Terminal Application for HabitRPG with basic terminal GUI features. Implemented using the curses library.
 
+### New Updates
+
+* Task modification has been added and the documentation has been updated.
+
 ### Configuring Habitican Curse
 
 * You will need to have a 256-color terminal, with support for basic unicode symbols. The shell used in the screenshots is the simple GNOME shell and will suffice.
