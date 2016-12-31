@@ -287,11 +287,21 @@ class Interface(object):
             G.reqManager.Flush() #Send the queue
 
         elif command == "r":
+            self.FlushChangesToQueue()
             G.prevTask = None
             G.currentTask = None
-            self.FlushChangesToQueue() #Write out things to the request queue
-            G.reqManager.Flush() #Send the queue
+            if(len(G.reqManager.MarkUpQueue) |
+               len(G.reqManager.MarkDownQueue) |
+               len(G.reqManager.MarkQueue) |
+               len(G.reqManager.DeleteQueue) |
+               len(G.reqManager.EditQueue) ):
+                DEBUG.Display("Some writes are pending (add ! to ignore and reload anyway)")
+                return
+           
+            self.Command("r!")
 
+        elif command == "r!":
+            G.reqManager.ClearQueues()
             G.reqManager.FetchData()
             G.screen.Erase()
             self.Init()
