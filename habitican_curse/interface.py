@@ -301,6 +301,7 @@ class Interface(object):
             self.Command("r!")
 
         elif command == "r!":
+            self.FlushChangesToQueue()
             G.reqManager.ClearQueues()
             G.reqManager.FetchData()
             G.screen.Erase()
