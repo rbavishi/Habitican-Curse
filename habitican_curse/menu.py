@@ -206,6 +206,11 @@ class MenuItem(object):
         if self.task_type != "todo":
             return
 
+        if self.task_type != "checklist" and self.task.isChallenge:
+            # Cannot change the due-date parameter of a challenge
+            DEBUG.Display("Cannot change the due-date for a challenge TODO")
+            return
+
         self.task.ChangeDueDate(date)
         self.status.SetDue(H.DateTime(date).DueDateFormat())
         self.SetStatusXY()
@@ -213,6 +218,11 @@ class MenuItem(object):
 
     def RemoveDueDate(self):
         if self.task_type != "todo":
+            return
+
+        if self.task_type != "checklist" and self.task.isChallenge:
+            # Cannot change the due-date parameter of a challenge
+            DEBUG.Display("Cannot change the due-date for a challenge TODO")
             return
 
         self.task.RemoveDueDate()
@@ -223,11 +233,21 @@ class MenuItem(object):
         if self.task_type != "daily":
             return
 
+        if self.task_type != "checklist" and self.task.isChallenge:
+            # Cannot change the 'weekdays' parameter of a challenge
+            DEBUG.Display("Cannot change the 'weekdays' parameter of a challenge daily task")
+            return
+
         self.task.SetWeekly(repeat)
         self.status.ToggleEdit()
 
     def SetEvery(self, days):
         if self.task_type != "daily":
+            return
+
+        if self.task_type != "checklist" and self.task.isChallenge:
+            # Cannot change the 'every x days' parameter of a challenge
+            DEBUG.Display("Cannot change the 'every x days' parameter of a challenge daily task")
             return
 
         self.task.SetEvery(days)
