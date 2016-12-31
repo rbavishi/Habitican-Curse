@@ -199,6 +199,11 @@ class MenuItem(object):
         self.task.ShowChecklist(self)
 
     def ChangePriority(self, key):
+        if self.task_type != "checklist" and self.task.isChallenge:
+            # Cannot change the difficulty of a challenge task
+            DEBUG.Display("Cannot change the diffifculty of a challenge task")
+            return
+
         self.task.ChangePriority(key)
         self.status.ToggleEdit()
 
