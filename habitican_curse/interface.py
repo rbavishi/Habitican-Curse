@@ -301,6 +301,8 @@ class Interface(object):
             self.Command("r!")
 
         elif command == "r!":
+            G.prevTask = None
+            G.currentTask = None
             self.FlushChangesToQueue()
             G.reqManager.ClearQueues()
             G.reqManager.FetchData()
